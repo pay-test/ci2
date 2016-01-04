@@ -18,6 +18,16 @@ if (!function_exists('lastq')){
 	}
 }
 
+if (!function_exists('permissionactionz')){
+	function permissionactionz()
+	{
+		$CI =& get_instance();
+		$grup = $CI->session->userdata("webmaster_grup");
+		if($grup == 4 || $grup==1) return 0;
+		else return 1;
+	}
+}
+
 if (!function_exists('cekIpad')){
 	function cekIpad()
 	{
@@ -31,7 +41,7 @@ function cekAccessMenu($ref_menu)
 {
 	$CI =& get_instance();
 	$CI->db->where("filez",$ref_menu);
-	$query = $CI->db->get("menu_admin");
+	$query = $CI->db->get("kg_menu_admin");
 	//die($this->db->last_query());
 	return $query;
 }
@@ -254,13 +264,13 @@ if (!function_exists('Breadcrumb')){
 		$CI =& get_instance();
 		$breadcrumb = "";//Home
 		$flag=1;
-		$id_menu = $id_menu_temp = GetValue("id","menu_admin", array("filez"=> "where/".$CI->uri->segment(1)));
+		$id_menu = $id_menu_temp = GetValue("id","kg_menu_admin", array("filez"=> "where/".$CI->uri->segment(1)));
 		if($id_menu)
 		{
 			while($flag)
 			{
 				$CI->db->where("id", $id_menu);
-				$q = $CI->db->get("menu_admin");
+				$q = $CI->db->get("kg_menu_admin");
 				foreach($q->result_array() as $r)
 				{
 					if($id_menu_temp == $id_menu) $breadcrumb = "<li>".$r['title']."</li>".$breadcrumb;
@@ -1027,13 +1037,13 @@ if (!function_exists('GetOptStatusContract')){
 if (!function_exists('GetOptPIC')){	
 	function GetOptPIC($dep=NULL)
 	{
-		$filter = array("is_active"=> "where/Active");
+		$filter = array();
 		if($dep) $filter['id_department'] = "where/".$dep;
 		$q = GetAll("employee", $filter);
 		$opt[''] = "- Karyawan -";
 		foreach($q->result_array() as $r)
 		{
-			$opt[$r['id']] = $r['name'];
+			$opt[$r['emp_no']] = $r['name'];
 		}
 		
 		return $opt;
@@ -1073,7 +1083,7 @@ if (!function_exists('GetOptDepartment')){
 	function GetOptDepartment()
 	{
 		$CI =& get_instance();
-		$q = GetAll("department");
+		$q = GetAll("kg_department");
 		$opt[''] = "- Department -";
 		if($CI->uri->segment(1) == "wp") $opt[-1] = "-";
 		foreach($q->result_array() as $r)
@@ -1106,7 +1116,7 @@ if (!function_exists('GetOptKedeputianSub')){
 if (!function_exists('GetOptMenu')){	
 	function GetOptMenu()
 	{
-		$q = GetAll("menu_admin", array("title"=> "order/asc"));
+		$q = GetAll("kg_menu_admin", array("title"=> "order/asc"));
 		$opt[''] = "- Parents Menu -";
 		foreach($q->result_array() as $r)
 		{

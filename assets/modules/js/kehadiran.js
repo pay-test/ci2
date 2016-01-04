@@ -1,7 +1,25 @@
+$(document).ready(function() {
+    $('#departement').select2();
+    $('.select2').select2();
+
+    //Date Pickers
+    $('.input-append.date').datepicker({
+        autoclose: true,
+        todayHighlight: true
+    });
+
+    //Time pickers
+    $('.clockpicker ').clockpicker({
+        autoclose: true
+    });
+
+});
+/*
 var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
+
 
     //datatables
     table = $('#table').DataTable({ 
@@ -26,7 +44,7 @@ $(document).ready(function() {
 
     });
 
-    $.fn.dataTableExt.oStdClasses["sFilter"] = "form-control text-right";
+    $('#table_wrapper .dataTables_length select').addClass("select2-wrapper span12");
 
 });
 
@@ -148,3 +166,4 @@ function delete_user(id)
 
     }
 }
+*/

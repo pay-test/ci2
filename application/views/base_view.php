@@ -15,11 +15,12 @@
     <link href="<?php echo assets_url('assets/plugins/animate.min.css')?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo assets_url('assets/plugins/jquery-scrollbar/jquery.scrollbar.css')?>" rel="stylesheet" type="text/css" />
     <!-- END PLUGIN CSS -->
+    
+    <?php echo $css; ?>
     <!-- BEGIN CORE CSS FRAMEWORK -->
     <link href="<?php echo assets_url('webarch/css/webarch.css')?>" rel="stylesheet" type="text/css" />
     <!-- END CORE CSS FRAMEWORK -->
 
-    <?php echo $css; ?>
 
   </head>
   <body class="">

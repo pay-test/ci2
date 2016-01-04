@@ -10,7 +10,7 @@
             </div>
             <div class="user-info">
               <div class="greeting">Welcome</div>
-              <div class="username">John <span class="semi-bold">Smith</span></div>
+              <div class="username">Administrator<span class="semi-bold"></span></div>
               <div class="status">Status
                 <a href="#">
                   <div class="status-icon green"></div>Online</a>
@@ -22,7 +22,7 @@
           <ul>
             <!-- BEGIN SELECTED LINK -->
             <li class="start active">
-              <a href="#">
+              <a href="<?php echo base_url()?>">
                 <i class="icon-custom-home"></i>
                 <span class="title">Dashboard</span>
                 <span class="selected"></span>
@@ -36,6 +36,10 @@
               </a>
               <ul class="sub-menu">
                 <li><a href="<?php echo base_url('absensi/kehadiran')?>">Kehadiran</a></li>
+                <li><a href="<?php echo base_url('absensi/overtime')?>">Overtime</a></li>
+                <li><a href="#">Overtime Analysis</a></li>
+                <li><a href="#">Jadwal Shift</a></li>
+                <li><a href="#">Finger Karyawan</a></li>
               </ul>
             </li>
              <li class="">

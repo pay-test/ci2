@@ -20,29 +20,6 @@ class Absensi extends MX_Controller {
 		redirect('absensi/kehadiran', 'refresh');
 	}
 
-    public function ajax_list()
-    {
-        $list = $this->users->get_datatables();//lastq();//print_mz($list);
-        $data = array();
-        $no = $_POST['start'];
-        foreach ($list as $users) {
-            $no++;
-            $row = array();
-            $row[] = $users->employee_id;
-
-            $data[] = $row;
-        }
-
-        $output = array(
-                        "draw" => $_POST['draw'],
-                        "recordsTotal" => $this->users->count_all(),
-                        "recordsFiltered" => $this->users->count_filtered(),
-                        "data" => $data,
-                );
-        //output to json format
-        echo json_encode($output);
-    }
-
 	function _render_page($view, $data=null, $render=false)
     {
         // $this->viewdata = (empty($data)) ? $this->data: $data;
