@@ -8,9 +8,6 @@ class Absensi extends MX_Controller {
 	function __construct()
 	{
 		parent::__construct();
-        $this->load->helper('mz');
-		//$this->load->model("model_admin_all");
-        $this->load->model('users_model','users');
 	}
 	
 	function index()

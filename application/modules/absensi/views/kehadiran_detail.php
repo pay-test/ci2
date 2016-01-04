@@ -29,9 +29,43 @@
             </div>
             -->
             <div class="grid-body ">
-
+            <div class="col-md-6">
+                <div class="row">
+                <div class="tiles white col-md-12  no-padding">         
+                    <div class="tiles-body">
+                        <h5 ><span class="semi-bold">Mitsubishi Chemical Indonesia</span></h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="">
+                                <img width="100" height="100" src="<?php echo assets_url('assets/img/profiles/d.jpg')?>" data-src="<?php echo assets_url('assets/img/profiles/d.jpg')?>" data-src-retina="<?php echo assets_url('assets/img/profiles/d2x.jpg')?>" alt="">
+                                </div>
+                            </div>
+                                <div class="col-md-4">
+                                    <span class="semi-bold">Name</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="semi-bold">:</span>
+                                </div>
+                                <br/><br/>
+                                <div class="col-md-4">
+                                    <span class="semi-bold">Job Title</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="semi-bold">:</span>
+                                </div>
+                                <br/><br/>
+                                <div class="col-md-4">
+                                    <span class="semi-bold">Division/Section</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="semi-bold">:</span>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            <br>
 <form id="<?php echo $filename;?>">
-  <h3><?php echo $title;?></h3>
   <table class="table table-striped table-hover">
     <tr>
     	<?php if(permissionaction()){?>

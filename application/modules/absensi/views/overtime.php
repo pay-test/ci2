@@ -75,7 +75,6 @@
                   <div class="clear"></div>
                   <div class="pagination">
                     <ul>
-                      <li class="prev disabled"><a></a></li>
                       <?php echo $pagination;?>
                     </ul>
                   </div>

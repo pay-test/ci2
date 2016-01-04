@@ -37,9 +37,9 @@
               <ul class="sub-menu">
                 <li><a href="<?php echo base_url('absensi/kehadiran')?>">Kehadiran</a></li>
                 <li><a href="<?php echo base_url('absensi/overtime')?>">Overtime</a></li>
-                <li><a href="#">Overtime Analysis</a></li>
-                <li><a href="#">Jadwal Shift</a></li>
-                <li><a href="#">Finger Karyawan</a></li>
+                <li><a href="<?php echo base_url('absensi/overtime_analysis')?>">Overtime Analysis</a></li>
+                <li><a href="<?php echo base_url('absensi/shift_schedule')?>">Jadwal Shift</a></li>
+                <li><a href="<?php echo base_url('absensi/employee_finger')?>">Finger Karyawan</a></li>
               </ul>
             </li>
              <li class="">
