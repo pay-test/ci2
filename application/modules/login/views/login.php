@@ -11,7 +11,8 @@
       </div>
       <div class="tiles grey p-t-20 p-b-20 no-margin text-black tab-content">
         <div role="tabpanel" class="tab-pane active" id="tab_login">
-          <form method="post" id="form" action="" class="animated fadeIn validate">
+          <!--<form method="post" id="form" action="" class="animated fadeIn validate">-->
+          <form method="post" id="form" action="<?php echo base_url('login/cek_login')?>" class="animated fadeIn validate">
             <div class="row form-row m-l-20 m-r-20 xs-m-l-10 xs-m-r-10">
               <div class="alert" id="error" style="display:none">
                   <button class="close" data-dismiss="alert"></button>
@@ -26,7 +27,7 @@
               <div class="col-md-6 col-sm-6">
               </div>
               <div class="col-md-6 col-sm-6">
-                <button type="button" class="btn btn-primary btn-cons pull-right" onclick="cekLogin()">Login</button>
+                <button type="submit" class="btn btn-primary btn-cons pull-right">Login</button>
               </div>
             </div>
           </form>

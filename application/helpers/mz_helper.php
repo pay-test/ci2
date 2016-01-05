@@ -110,7 +110,7 @@ if (!function_exists('json_encode'))
         }
     }
 }
-
+/*
 if (!function_exists('permission')){
 	function permission()
 	{
@@ -147,6 +147,7 @@ if (!function_exists('permission')){
 		return $CI->session->userdata("webmaster_id");
 	}
 }
+*/
 
 if (!function_exists('permissionBiasa')){
 	function permissionBiasa()
