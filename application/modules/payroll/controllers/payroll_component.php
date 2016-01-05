@@ -38,12 +38,19 @@ class Payroll_component extends MX_Controller {
             if (!$tax_component) {
                 $tax_component = "";
             }
+            //status attribute
+            if ($p_comp->is_annualized == 1) {
+                $is_annualized = "Annualized";
+            }else{
+                $is_annualized = "Not Annualized";
+            }
             $no++;
             $row = array();
             $row[] = $no;
             $row[] = $p_comp->title;
             $row[] = $p_comp->code;
             $row[] = $component_type;
+            $row[] = $is_annualized;
             $row[] = $tax_component;
 
              $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$p_comp->id."'".')"><i class="fa fa-pencil"></i></a>
@@ -76,7 +83,10 @@ class Payroll_component extends MX_Controller {
                 'title' => $this->input->post('title'),
                 'code' => $this->input->post('code'),
                 'component_type_id' => $this->input->post('component_type_id'),
-                'tax_component_id' => $this->input->post('tax_component_id')
+                'is_annualized' => $this->input->post('is_annualized'),
+                'tax_component_id' => $this->input->post('tax_component_id'),
+                'created_by' => GetUserID(),
+                'created_on' => date('Y-m-d H:i:s')
             );
         $insert = $this->payroll->save($data);
         echo json_encode(array("status" => TRUE));
@@ -89,7 +99,10 @@ class Payroll_component extends MX_Controller {
                 'title' => $this->input->post('title'),
                 'code' => $this->input->post('code'),
                 'component_type_id' => $this->input->post('component_type_id'),
-                'tax_component_id' => $this->input->post('tax_component_id')
+                'is_annualized' => $this->input->post('is_annualized'),
+                'tax_component_id' => $this->input->post('tax_component_id'),
+                'edited_by' => GetUserID(),
+                'edited_on' => date('Y-m-d H:i:s')
             );
         $this->payroll->update(array('id' => $this->input->post('id')), $data);
         echo json_encode(array("status" => TRUE));
