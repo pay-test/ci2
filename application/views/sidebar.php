@@ -45,10 +45,15 @@
               -->
             </li>
              <li class="">
-              <a href="<?php echo base_url('payroll')?>">
+              <a href="javascript:;">
                 <i class="fa fa-usd"></i>
                 <span class="title">Payroll</span>
+                <span class="arrow"></span>
               </a>
+              <ul class="sub-menu">
+                <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
+              </ul>
             </li>
             <!-- END SELECTED LINK -->
           </ul>
