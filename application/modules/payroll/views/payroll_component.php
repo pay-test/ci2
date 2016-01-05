@@ -28,15 +28,15 @@
 
             <div class="grid-body ">
             <button type="button" class="btn btn-primary" onclick="add_user()"><i class="fa fa-plus"></i> add</button><br/><br/>
-              <table class="table table-hover table-condensed" id="table">
+              <table class="table table-hover table-condensed dataTable" id="table">
                 <thead>
                   <tr>
                     <th style="width:5%">No</th>
-                    <th style="width:25%">Name</th>
-                    <th style="width:25%">Code</th>
-                    <th style="width:25%">Component Type</th>
-                    <th style="width:25%">Tax Component</th>
-                    <th style="width:10%">Action</th>
+                    <th style="width:20%">Name</th>
+                    <th style="width:20%">Code</th>
+                    <th style="width:20%">Component Type</th>
+                    <th style="width:20%">Tax Component</th>
+                    <th style="width:15%" class="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,7 +78,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Type</label>
                             <div class="col-md-9">
-                                <select name="component_type_id" class="form-control">
+                                <select name="component_type_id" class="form-control select2">
                                   <?php if ($component_type->num_rows() > 0) {
                                     foreach ($component_type->result() as $comp_type) { ?>
                                       <option value="<?php echo $comp_type->id; ?>"><?php echo $comp_type->title; ?></option>
@@ -91,7 +91,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Tax</label>
                             <div class="col-md-9">
-                                <select name="tax_component_id" class="form-control">
+                                <select name="tax_component_id" class="form-control select2">
                                   <?php if ($tax_component->num_rows() > 0) {
                                     foreach ($tax_component->result() as $tax_comp) { ?>
                                       <option value="<?php echo $tax_comp->id; ?>"><?php echo $tax_comp->title; ?></option>

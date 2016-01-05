@@ -13,6 +13,7 @@ class login extends MX_Controller {
 	
 	function index()
 	{
+        $this->data['message'] = $this->session->flashdata('message');
 		$this->data['title'] = $this->title;
 		$this->_render_page($this->filename.'/login', $this->data);
 	}
@@ -31,12 +32,12 @@ class login extends MX_Controller {
             $this->load->library("session");
             $this->session->set_userdata('user_id',$row->user_id);
             $this->session->set_userdata('person_id',$row->person_id);
-            $this->session->set_userdata('user_nm',$row->user_nm);
             redirect('dashboard');
         }
         else
         {
-            echo json_encode(array("status" => FALSE));
+            $this->session->set_flashdata('message', 'incorrect login');
+            redirect('login', 'refresh');
         }
     }
 

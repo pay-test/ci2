@@ -14,16 +14,17 @@
                       <option value="0">Tes 2</option>
                   </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-1">
                   <div class="row">
                       <label>Periode</label>
-                      <div id="datepicker_start" class="input-append date success no-padding">
-                        <input type="text" class="form-control" name="start_cuti" required>
-                        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+                      <div id="periode" class="input-append success date">
+                        <input type="text" class="form-control">
+                        <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span>
                       </div>
                   </div>
               </div>
-              
+              <div class="col-md-1">
+              </div>
 
               <div class="col-md-2">
                   <label>&nbsp;</label>
