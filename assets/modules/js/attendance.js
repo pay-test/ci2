@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    $('#departement').select2();
     $('.select2').select2();
 
     //Date Pickers
@@ -12,8 +11,45 @@ $(document).ready(function() {
     $('.clockpicker ').clockpicker({
         autoclose: true
     });
-
 });
+
+function loadOvertime()
+{
+    $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/overtime');
+}
+
+function loadAttendance()
+{
+    $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/list_attendance');
+}
+
+
+function loadShift()
+{
+    $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/Shift');
+}
+
+function detailAtt(id)
+{
+    $("#table_att").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/detail/'+id+'/0000-00-00');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 var save_method; //for save method string
 var table;
