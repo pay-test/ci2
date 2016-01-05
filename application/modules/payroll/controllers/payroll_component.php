@@ -46,8 +46,8 @@ class Payroll_component extends MX_Controller {
             $row[] = $component_type;
             $row[] = $tax_component;
 
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$p_comp->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$p_comp->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$p_comp->id."'".')"><i class="fa fa-pencil"></i></a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$p_comp->id."'".')"><i class="fa fa-trash"></i></a>';
         
 
             $data[] = $row;
@@ -114,8 +114,14 @@ class Payroll_component extends MX_Controller {
                 if(in_array($view, array($this->filename)))
                 {
                     $this->template->set_layout('default');
-                    $this->template->add_css('assets/plugins/data-tables/datatables.min.css');
+                    $this->template->add_css('assets/plugins/data-tables/DT_bootstrap.min.css');
+                    $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
+
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_css('assets/plugins/jquery-datatable/css/jquery.dataTables.css');
+                    $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
+                    $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 

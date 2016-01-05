@@ -2,9 +2,17 @@ $(document).ready(function() {
     $('.select2').select2();
 
     //Date Pickers
-    $('.input-append.date').datepicker({
+    $('.to.date').datepicker({
+        format: "dd-mm-yyyy",
         autoclose: true,
         todayHighlight: true
+    });
+
+    $("#periode").datepicker( {
+        format: "mm-yyyy",
+        startView: "months", 
+        minViewMode: "months",
+        autoclose: true,
     });
 
     //Time pickers
