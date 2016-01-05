@@ -21,7 +21,7 @@
           <!-- BEGIN LOGO NAV BUTTONS -->
           <ul class="nav pull-right notifcation-center">
             <li class="dropdown hidden-xs hidden-sm">
-              <a href="index.html" class="dropdown-toggle active" data-toggle="">
+              <a href="<?php echo base_url()?>" class="dropdown-toggle active" data-toggle="">
                 <div class="iconset top-home"></div>
               </a>
             </li>

@@ -16,7 +16,7 @@
               <div class="col-md-3">
                   <div class="row">
                       <label>Date</label>
-                      <div id="datepicker_start" class="input-append date success no-padding">
+                      <div id="datepicker_start" class="to input-append date success no-padding">
                         <input type="text" class="form-control" name="start_cuti" required>
                         <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
                       </div>
@@ -29,7 +29,7 @@
               <div class="col-md-3">
                   <div class="row">
                       <label>&nbsp;</label>
-                      <div id="datepicker_end" class="input-append date success no-padding">
+                      <div id="datepicker_end" class="to input-append date success no-padding">
                           <input type="text" class="form-control" name="end_cuti" required>
                           <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
                       </div>
