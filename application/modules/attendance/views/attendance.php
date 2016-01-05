@@ -71,7 +71,8 @@
       </div>
 
       <form id="<?php echo $filename;?>">
-        <table class="table table-bordered no-more-tables" id="table_att">
+      <div  id="table_att">
+        <table class="table table-bordered no-more-tables">
           <tr>
             <?php if(permissionaction()){?>
             <input type="hidden" id="temp_id" value="">
@@ -106,13 +107,14 @@
             if(permissionaction()){
                 echo "<td class='action text-center'>";
                 if($flag_tgl) echo "<a href='".site_url($path_file.'/detail/'.$dep.'/'.$tgl.'/'.$r['a_id'].'/'.$r['id'])."'>Edit</a> | ";
-                echo '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="Edit" onclick="detailAtt('."'".$r['a_id']."'".')"><i class="fa fa-info"></i></a>';
+                echo '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="detail" onclick="detailAtt('."'".$r['a_id']."'".')"><i class="fa fa-info"></i></a>';
                 echo "</td>";
             }
             echo "</tr>";
         }
         ?>
         </table>
+        </div>
       </form>
     </div>
   </div>

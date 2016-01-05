@@ -834,7 +834,7 @@ class attendance extends MX_Controller {
         {
             $this->load->library('template');
 
-                if(in_array($view, array('index')))
+                if(in_array($view, array('index', 'attendance_edit')))
                 {
                     $this->template->set_layout('default');
 
