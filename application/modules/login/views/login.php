@@ -14,10 +14,7 @@
           <!--<form method="post" id="form" action="" class="animated fadeIn validate">-->
           <form method="post" id="form" action="<?php echo base_url('login/cek_login')?>" class="animated fadeIn validate">
             <div class="row form-row m-l-20 m-r-20 xs-m-l-10 xs-m-r-10">
-              <div class="alert" id="error" style="display:none">
-                  <button class="close" data-dismiss="alert"></button>
-                  Username atau Password Salah !!
-               </div>
+              <div <?php (! empty($message)) && print('class="alert alert-danger text-center" role="alert"'); ?> id="infoMessage"><?php echo $message;?></div>
               <div class="col-md-6 col-sm-6">
                 <input class="form-control" id="login_username" name="username" placeholder="Username" type="text" required>
               </div>

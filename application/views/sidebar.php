@@ -10,7 +10,9 @@
             </div>
             <div class="user-info">
               <div class="greeting">Welcome</div>
-              <div class="username">Administrator<span class="semi-bold"></span></div>
+              <?php 
+              ?>
+              <div class="username"><?php echo $person_nm ?><span class="semi-bold"></span></div>
               <div class="status">Status
                 <a href="#">
                   <div class="status-icon green"></div>Online</a>
@@ -21,14 +23,14 @@
           <!-- BEGIN SIDEBAR MENU -->
           <ul>
             <!-- BEGIN SELECTED LINK -->
-            <li class="start active">
+            <li <?php echo $active1 ?>>
               <a href="<?php echo base_url()?>">
                 <i class="icon-custom-home"></i>
                 <span class="title">Dashboard</span>
                 <span class="selected"></span>
               </a>
             </li>
-            <li class="">
+            <li <?php echo $active2?>>
               <a href="<?php echo base_url('attendance')?>">
                 <i class="fa fa-sign-in"></i>
                 <span class="title">Attendance</span>
@@ -44,7 +46,7 @@
               </ul>
               -->
             </li>
-             <li class="">
+             <li <?php echo $active3 ?>>
               <a href="javascript:;">
                 <i class="fa fa-usd"></i>
                 <span class="title">Payroll</span>
