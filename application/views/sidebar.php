@@ -55,6 +55,7 @@
               <ul class="sub-menu">
                 <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Setup</a></li>
               </ul>
             </li>
             <!-- END SELECTED LINK -->

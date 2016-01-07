@@ -45,8 +45,8 @@ class Payroll_group extends MX_Controller {
             $row[] = $group->title;
             $row[] = $group->code;
 
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$group->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$group->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$group->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$group->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
 
             $data[] = $row;
@@ -70,7 +70,7 @@ class Payroll_group extends MX_Controller {
 
     public function ajax_add()
     {
-        //$this->_validate();
+        $this->_validate();
         $data = array(
                 'title' => $this->input->post('title'),
                 'code' => $this->input->post('code'),
@@ -107,7 +107,7 @@ class Payroll_group extends MX_Controller {
 
     public function ajax_update()
     {
-        //$this->_validate();
+        $this->_validate();
         $group_id = $this->input->post('id');
         $array_pcomp = $this->input->post('p_component');
         $array_thp = $this->input->post('is_thp');
@@ -148,6 +148,34 @@ class Payroll_group extends MX_Controller {
         echo json_encode(array("status" => TRUE));
     }
 
+    private function _validate()
+    {
+        $data = array();
+        $data['error_string'] = array();
+        $data['inputerror'] = array();
+        $data['status'] = TRUE;
+ 
+        if($this->input->post('title') == '')
+        {
+            $data['inputerror'][] = 'title';
+            $data['error_string'][] = 'Name is required';
+            $data['status'] = FALSE;
+        }
+ 
+        if($this->input->post('code') == '')
+        {
+            $data['inputerror'][] = 'code';
+            $data['error_string'][] = 'Code is required';
+            $data['status'] = FALSE;
+        }
+ 
+        if($data['status'] === FALSE)
+        {
+            echo json_encode($data);
+            exit();
+        }
+    }
+
     function _render_page($view, $data=null, $render=false)
     {
         // $this->viewdata = (empty($data)) ? $this->data: $data;
@@ -161,8 +189,15 @@ class Payroll_group extends MX_Controller {
                 if(in_array($view, array($this->filename)))
                 {
                     $this->template->set_layout('default');
-                    $this->template->add_css('assets/plugins/data-tables/datatables.min.css');
+                    $this->template->add_css('assets/plugins/data-tables/DT_bootstrap.min.css');
+                    $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
+                     $this->template->add_css('modules/css/'.$this->title.'/'.$this->filename.'.css');
+
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_css('assets/plugins/jquery-datatable/css/jquery.dataTables.css');
+                    $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
+                    $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 
