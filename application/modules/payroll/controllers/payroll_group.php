@@ -19,8 +19,18 @@ class Payroll_group extends MX_Controller {
         $this->data['title'] = ucfirst($this->title);
         $this->data['page_title'] = $this->page_title;
 
+        $filter = array('is_deleted' => 'where/0');
+        $this->data['p_component'] = $list_component =$this->all_model->GetAll('payroll_component',$filter);
+
         permission();
         $this->_render_page($this->filename, $this->data);
+    }
+
+    function render_group_component($group_id = 0) {
+        $filter = array('payroll_group_id' => 'where/'.$group_id,'is_deleted' => 'where/0');
+        $output = $this->all_model->GetAll('payroll_group_component',$filter);
+    
+        echo json_encode($output);
     }
 
     public function ajax_list()
@@ -63,18 +73,15 @@ class Payroll_group extends MX_Controller {
         //$this->_validate();
         $data = array(
                 'title' => $this->input->post('title'),
-                'code' => $this->input->post('code')
+                'code' => $this->input->post('code'),
+                'created_by' => GetUserID(),
+                'created_on' => date('Y-m-d H:i:s')
             );
         $insert = $this->payroll->save($data);
 
         $group_id = $insert; //last insert id
         $array_pcomp = $this->input->post('p_component');
         $array_thp = $this->input->post('is_thp');
-
-        $data = array(
-                'title' => $this->input->post('title'),
-                'code' => $this->input->post('code')
-            );
 
         //update group component
         if ($array_pcomp) {
@@ -85,7 +92,6 @@ class Payroll_group extends MX_Controller {
                     'payroll_component_id' => $pcomp
                  );
                 $this->all_model->Insert('payroll_group_component',$data2);
-                lastq();
             }
         }
         //set is thp
@@ -108,7 +114,9 @@ class Payroll_group extends MX_Controller {
 
         $data = array(
                 'title' => $this->input->post('title'),
-                'code' => $this->input->post('code')
+                'code' => $this->input->post('code'),
+                'edited_by' => GetUserID(),
+                'edited_on' => date('Y-m-d H:i:s')
             );
 
         //update group component
@@ -175,6 +183,9 @@ class Payroll_group extends MX_Controller {
     public function ajax_component_list($group_id = 0)
     {
         $list = $this->component->get_datatables();//lastq();//print_mz($list);
+
+        $group_id = $this->input->post('group_id');
+        
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $p_comp) {
