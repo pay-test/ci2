@@ -57,7 +57,7 @@
             </div>
             <div class="modal-body form">
                 <form action="#" id="form" class="form-horizontal">
-                    <input type="hidden" value="" name="id"/> 
+                    <input id="group_id" type="hidden" value="" name="id"/> 
                     <div class="form-body">
                         <div class="form-group">
                             <label class="control-label col-md-4">Name</label>
@@ -88,6 +88,17 @@
                               </tr>
                             </thead>
                             <tbody>
+                              <?php if ($p_component): ?>
+                                <?php $i = 1; foreach ($p_component as $pcomp): ?>
+                                <tr>
+                                  <td><?php echo $i; ?></td>
+                                  <td><?php echo $pcomp['title']; ?></td>
+                                  <td><?php echo $pcomp['code']; ?></td>
+                                  <td class="td_p_component"><input type="checkbox" value="<?php echo $pcomp['id']; ?>" name="p_component[]"></td>
+                                  <td class="td_is_thp"><input type="checkbox" value="<?php echo $pcomp['id']; ?>" name="is_thp[]"></td>
+                                </tr>
+                                <?php $i++; endforeach ?>
+                              <?php endif ?>
                             </tbody>
                           </table>
                         </div>

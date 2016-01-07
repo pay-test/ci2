@@ -28,15 +28,16 @@
 
             <div class="grid-body ">
             <button type="button" class="btn btn-primary" onclick="add_user()"><i class="fa fa-plus"></i> add</button><br/><br/>
-              <table class="table table-hover table-condensed dataTable" id="table">
+              <table class="table table-hover table-condensed" id="table">
                 <thead>
                   <tr>
                     <th style="width:5%">No</th>
                     <th style="width:20%">Name</th>
-                    <th style="width:20%">Code</th>
-                    <th style="width:20%">Component Type</th>
+                    <th style="width:10%">Code</th>
+                    <th style="width:15%">Component Type</th>
+                    <th style="width:15%">Attribute</th>
                     <th style="width:20%">Tax Component</th>
-                    <th style="width:15%" class="text-center">Action</th>
+                    <th style="width:15%">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -84,6 +85,16 @@
                                       <option value="<?php echo $comp_type->id; ?>"><?php echo $comp_type->title; ?></option>
                                   <?php }
                                   } ?>
+                                </select>
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Attribute</label>
+                            <div class="col-md-9">
+                                <select name="is_annualized" class="form-control select2">
+                                  <option value="0">Not Annualized</option>
+                                  <option value="1">Annualized</option>
                                 </select>
                                 <span class="help-block"></span>
                             </div>

@@ -26,22 +26,9 @@ $(document).ready(function() {
         /*"aoColumnDefs": [
           { "bSortable": false, "aTargets": [ 3,4,5 ] }
         ] */
-
     });
-});
 
-
-
-function add_user()
-{
-    save_method = 'add';
-    $('#form')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-    $('#modal_form').modal('show'); // show bootstrap modal
-    $('.modal-title').text('Add Payroll Group'); // Set Title to Bootstrap modal title
-
-    table_component = $('#table-group-component').DataTable({
+    /*table_component = $('#table-group-component').DataTable({
             "retrieve": true,
             "paging": false, 
             "processing": true, //Feature control the processing indicator.
@@ -51,7 +38,10 @@ function add_user()
             // Load data for the table's content from an Ajax source
             "ajax": {
                 "url": "payroll_group/ajax_component_list/",
-                "type": "POST"
+                "type": "POST",
+                "data": function ( d ) {
+                 d.group_id = $('#group_id').val();
+            }
             },
 
             //Set column definition initialisation properties.
@@ -64,10 +54,20 @@ function add_user()
             "bFilter": false,
             "bPaginate": false,
             "info": false,
-            /*"aoColumnDefs": [
-              { "bSortable": false, "aTargets": [ 3,4,5 ] }
-            ] */
-    });
+    });*/
+});
+
+
+
+function add_user()
+{
+    save_method = 'add';
+    $('#form')[0].reset(); // reset form on modals
+    $('#group_id').val(0);
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_form').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Add Payroll Group'); // Set Title to Bootstrap modal title
 }
 
 function edit_user(id)
@@ -76,6 +76,8 @@ function edit_user(id)
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
+    var array_comp = [];
+    var array_thp = [];
 
     //Ajax Load data from ajax
     $.ajax({
@@ -85,41 +87,32 @@ function edit_user(id)
         success: function(data)
         {
 
+            $.ajax({
+                url : "payroll_group/render_group_component/"+data.id,
+                type : "GET",
+                dataType: "JSON",
+                success: function(data2)
+                {
+                    for (index = 0; index < data2.length; ++index) {
+                        array_comp.push(data2[index].payroll_component_id);
+                        if (data2[index].is_thp == 1) {
+                            $(".td_is_thp").find('[value=' + data2[index].payroll_component_id + ']').prop("checked", true);
+                        };
+                    }
+                    $(".td_p_component").find('[value=' + array_comp.join('], [value=') + ']').prop("checked", true);
+                    //alert(array_comp);
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    alert('Error get data from ajax');
+                }
+            });
+
             $('[name="id"]').val(data.id);
             $('[name="title"]').val(data.title);
             $('[name="code"]').val(data.code);
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Group'); // Set title to Bootstrap modal title
-
-        //datatables
-        table_component = $('#table-group-component').DataTable({
-            "retrieve": true,
-            "paging": false, 
-            "processing": true, //Feature control the processing indicator.
-            "serverSide": true, //Feature control DataTables' server-side processing mode.
-            "order": [], //Initial no order.
-
-            // Load data for the table's content from an Ajax source
-            "ajax": {
-                "url": "payroll_group/ajax_component_list/"+ id,
-                "type": "POST"
-            },
-
-            //Set column definition initialisation properties.
-            "columnDefs": [
-            { 
-                "targets": [], //last column
-                "orderable": false, //set not orderable
-            },
-            ],
-            "bFilter": false,
-            "bPaginate": false,
-            "info": false,
-            /*"aoColumnDefs": [
-              { "bSortable": false, "aTargets": [ 3,4,5 ] }
-            ] */
-
-    });
 
         },
         error: function (jqXHR, textStatus, errorThrown)
@@ -132,7 +125,6 @@ function edit_user(id)
 function reload_table()
 {
     table.ajax.reload(null,false); //reload datatable ajax 
-    //table_component.ajax.reload(null,false);
 }
 
 function save()
@@ -191,7 +183,7 @@ function delete_user(id)
     {
         // ajax delete data to database
         $.ajax({
-            url : "payroll/ajax_delete/"+id,
+            url : "payroll_group/ajax_delete/"+id,
             type: "POST",
             dataType: "JSON",
             success: function(data)
