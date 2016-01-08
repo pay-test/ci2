@@ -10,6 +10,7 @@ class Monthly_income extends MX_Controller {
 	{
 		parent::__construct();
         $this->load->model('monthly_income_model','payroll');
+        $this->load->model('payroll_setup_model','setup');
         //$this->load->model('all_model','all_model');
 	}
 	
@@ -20,6 +21,8 @@ class Monthly_income extends MX_Controller {
 
         permission();
 
+         $year_now = date('Y');
+        $this->data['period'] = $this->setup->render_periode($year_now);
         $this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
 		$this->_render_page($this->filename, $this->data);
 	}
@@ -110,6 +113,16 @@ class Monthly_income extends MX_Controller {
 
         $q = $this->data['component'] = $this->payroll->get_component($id)->result();//lastq();print_mz($q);
         $this->load->view('monthly_income/component_table', $this->data);
+    }
+
+    public function get_periode_status()
+    {
+        $id = $this->input->post('id');
+
+        $status = getValue('status','payroll_period', array('id'=>'where/'.$id));
+        $status = ($status == 1) ? 'Period Closed' : 'Period Open';
+
+        echo $status;
     }
 
 	function _render_page($view, $data=null, $render=false)

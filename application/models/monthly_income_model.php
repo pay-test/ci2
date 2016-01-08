@@ -8,7 +8,8 @@ class Monthly_income_model extends CI_Model {
 	var $table_join2 = 'hris_persons';
 	var $table_join3 = 'payroll_group';
 	var $table_join4 = 'payroll_monthly_income';
-	var $table_join5 = 'payroll_monthly_component';
+	var $table_join5 = 'payroll_monthly_income_component';
+	var $table_join6 = 'payroll_period';
 	var $column = array('user_nm','person_nm'); //set column field database for order and search
 	//var $order = array('employee_id' => 'asc'); // default order 
 
@@ -100,13 +101,14 @@ class Monthly_income_model extends CI_Model {
 			$this->table.'.employee_id as employee_id,
 			'.$this->table_join1.'.user_nm as user_nm,
 			'.$this->table_join2.'.person_nm as person_nm,
-			'.$this->table_join4.'.payroll_group_id as group_id,
+			'.$this->table_join5.'.payroll_group_id as group_id,
 			');
 
 		$this->db->from($this->table);
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
-		$this->db->join($this->table_join4, $this->table_join4.'.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join($this->table_join5, $this->table_join4.'.id = '.$this->table_join5.'.payroll_monthly_income_id', 'left');
+		$this->db->join($this->table_join6, $this->table_join4.'.payroll_period_id = '.$this->table_join6.'.id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);

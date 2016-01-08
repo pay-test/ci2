@@ -52,6 +52,24 @@ function getComponent(Id)
     });
 }
 
+$("#periode").change(function() {
+        var Id = $(this).val();
+        getStatus(Id);
+    })
+    .change();
+
+function getStatus(Id)
+{
+    $.ajax({
+        type: 'POST',
+        url: 'monthly_income/get_periode_status/',
+        data: {id : Id},
+        success: function(data) {
+            $('#periode-status').text(data);
+        }
+    });
+}
+
 function edit_user(id)
 {
     save_method = 'update';
@@ -59,29 +77,36 @@ function edit_user(id)
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-
+    var period = $('#periode option:selected').val()
     //Ajax Load data from ajax
-    $.ajax({
-        url : "monthly_income/ajax_edit/" + id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(data)
-        {
-            var d = data.data2;
-            $('[name="employee_id"]').val(data.data1.employee_id);
-            $('[name="user_nm"]').val(data.data1.user_nm);
-            $('[name="person_nm"]').val(data.data1.person_nm);
-            $('[name="group_id"]').select2().select2('val',data.data1.group_id);
-            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Edit Monthly Income'); // Set title to Bootstrap modal title
-            if(data.data2 != null)drawTable(data.data2);
+    if(period == 0){
+        alert('Please Choose Period !!');
+    }else{
+        $.ajax({
+            url : "monthly_income/ajax_edit/" + id +"/" + period,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
 
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error get data from ajax');
-        }
-    });
+                var period = $('#periode option:selected').text()
+                var d = data.data2;
+                var period = $('#periode option:selected').text()
+                $('[name="employee_id"]').val(data.data1.employee_id);
+                $('[name="user_nm"]').val(data.data1.user_nm);
+                $('[name="person_nm"]').val(data.data1.person_nm);
+                $('[name="group_id"]').select2().select2('val',data.data1.group_id);
+                $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Monthly Income '+period); // Set title to Bootstrap modal title
+                if(data.data2 != null)drawTable(data.data2);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+    }
 
     function drawTable(data) {
     for (var i = 0; i < data.length; i++) {
