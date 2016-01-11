@@ -77,13 +77,13 @@ function edit_user(id)
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-    var period = $('#periode option:selected').val()
+    var period_id = $('#periode option:selected').val()
     //Ajax Load data from ajax
-    if(period == 0){
+    if(period_id == 0){
         alert('Please Choose Period !!');
     }else{
         $.ajax({
-            url : "monthly_income/ajax_edit/" + id +"/" + period,
+            url : "monthly_income/ajax_edit/" + id +"/" + period_id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
@@ -92,6 +92,7 @@ function edit_user(id)
                 var period = $('#periode option:selected').text()
                 var d = data.data2;
                 var period = $('#periode option:selected').text()
+                $('[name="period_id"]').val(period_id);
                 $('[name="employee_id"]').val(data.data1.employee_id);
                 $('[name="user_nm"]').val(data.data1.user_nm);
                 $('[name="person_nm"]').val(data.data1.person_nm);
