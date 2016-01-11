@@ -1,29 +1,53 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Payroll_component extends MX_Controller {
-	
-	var $title = "payroll";
-    var $page_title = "Component";
-	var $filename = "payroll_component";
-	public $data;
-	function __construct()
-	{
-		parent::__construct();
-        $this->load->model('payroll_component_model','payroll');
+class Payroll_setup extends MX_Controller {
+    
+    var $title = "payroll";
+    var $page_title = "Setup";
+    var $filename = "payroll_setup";
+    public $data;
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->model('payroll_setup_model','payroll');
         $this->load->model('all_model','all_model');
-	}
-	
-	function index()
-	{
+    }
+    
+    function index()
+    {
         $this->data['title'] = ucfirst($this->title);
-		$this->data['page_title'] = $this->page_title;
+        $this->data['page_title'] = $this->page_title;
 
-        $this->data['component_type'] = $this->payroll->get_component_type();
-        $this->data['tax_component'] = $this->payroll->get_tax_component();
+        $year_now = date('Y');
+        $this->data['period'] = $this->payroll->render_periode($year_now);
 
         permission();
-		$this->_render_page($this->filename, $this->data);
-	}
+        $this->_render_page($this->filename, $this->data);
+    }
+
+    public function ajax_period($period = 0) {
+
+        $result = $this->payroll->get_period($period);
+        $row = $result->row();
+        $status = $row->status;
+        echo json_encode(array("status" => $status));
+    }
+
+    public function process() {
+        $period = $this->input->post('period');
+        $period_m = substr($period,0,2);
+        $period_y = substr($period,3,4);
+        echo json_encode(array("month" => $period_m,"year" => $period_y));
+    }
+
+    public function set_periode() {
+        $period_id = $this->input->post('periode2');
+        $status = $this->input->post('status');
+        $data = array('status' => $status);
+        $where = array('id' => $period_id);
+        $update = $this->payroll->update($where,$data);
+        echo json_encode(array("periode" => $period_id, "status"=> $status, "is_update" => $update));
+    }
 
     public function ajax_list()
     {
@@ -32,7 +56,7 @@ class Payroll_component extends MX_Controller {
         $no = $_POST['start'];
         foreach ($list as $p_comp) {
             //get component type
-            $component_type = $this->all_model->GetValue('title','payroll_component_type','id = '.$p_comp->component_type_id);
+            $component_type = $this->all_model->GetValue('title','payroll_setup_type','id = '.$p_comp->component_type_id);
             //get tax component
             $tax_component = $this->all_model->getValue('title','payroll_tax_component','id = '.$p_comp->tax_component_id);
             if (!$tax_component) {
@@ -142,7 +166,7 @@ class Payroll_component extends MX_Controller {
         }
     }
 
-	function _render_page($view, $data=null, $render=false)
+    function _render_page($view, $data=null, $render=false)
     {
         // $this->viewdata = (empty($data)) ? $this->data: $data;
         // $view_html = $this->load->view($view, $this->viewdata, $render);
@@ -157,7 +181,9 @@ class Payroll_component extends MX_Controller {
                     $this->template->set_layout('default');
                     $this->template->add_css('assets/plugins/data-tables/DT_bootstrap.min.css');
                     $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
+                    $this->template->add_css('assets/plugins/bootstrap-datepicker/css/datepicker.css');
 
+                    $this->template->add_js('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_css('assets/plugins/jquery-datatable/css/jquery.dataTables.css');
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');

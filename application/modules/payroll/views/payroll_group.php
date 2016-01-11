@@ -76,8 +76,8 @@
                         <div class="form-group">
                             <label class="control-label col-md-4">Component</label>
                         </div>
-                        <div class="form-table">
-                          <table class="table table-hover table-condensed" id="table-group-component">
+                        <div class="form-table modal-table">
+                          <table class="table table-bordered" id="table-group-component">
                             <thead>
                               <tr>
                                 <th style="width:5%">No</th>
@@ -94,8 +94,18 @@
                                   <td><?php echo $i; ?></td>
                                   <td><?php echo $pcomp['title']; ?></td>
                                   <td><?php echo $pcomp['code']; ?></td>
-                                  <td class="td_p_component"><input type="checkbox" value="<?php echo $pcomp['id']; ?>" name="p_component[]"></td>
-                                  <td class="td_is_thp"><input type="checkbox" value="<?php echo $pcomp['id']; ?>" name="is_thp[]"></td>
+                                  <td class="td_p_component">
+                                    <div class="checkbox check-success">
+                                      <input type="checkbox" id="checkbox_comp<?php echo $i; ?>" value="<?php echo $pcomp['id']; ?>" name="p_component[]">
+                                      <label for="checkbox_comp<?php echo $i; ?>"></label>
+                                    </div>
+                                  </td>
+                                  <td class="td_is_thp">
+                                    <div class="checkbox check-success">
+                                      <input type="checkbox" id="checkbox_thp<?php echo $i; ?>" value="<?php echo $pcomp['id']; ?>" name="is_thp[]">
+                                      <label for="checkbox_thp<?php echo $i; ?>"></label>
+                                    </div>
+                                  </td>
                                 </tr>
                                 <?php $i++; endforeach ?>
                               <?php endif ?>

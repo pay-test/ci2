@@ -56,6 +56,7 @@
                 <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
                 <li><a href="<?php echo base_url('payroll/monthly_income')?>">Monthly Income</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Setup</a></li>
               </ul>
             </li>
             <!-- END SELECTED LINK -->
