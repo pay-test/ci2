@@ -10,6 +10,7 @@ class Monthly_income extends MX_Controller {
 	{
 		parent::__construct();
         $this->load->model('monthly_income_model','payroll');
+        $this->load->model('payroll_setup_model','setup');
         //$this->load->model('all_model','all_model');
 	}
 	
@@ -20,6 +21,8 @@ class Monthly_income extends MX_Controller {
 
         permission();
 
+         $year_now = date('Y');
+        $this->data['period'] = $this->setup->render_periode($year_now);
         $this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
 		$this->_render_page($this->filename, $this->data);
 	}
@@ -53,11 +56,11 @@ class Monthly_income extends MX_Controller {
         echo json_encode($output);
     }
 
-    public function ajax_edit($id)
+    public function ajax_edit($id, $period_id)
     {
-        $data = $this->payroll->get_by_id($id);//print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
-        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$id));
-        $data2 = $this->payroll->get_monthly_component($id, $monthly_income_id)->result_array();
+        $data = $this->payroll->get_by_id($id, $period_id);//print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
+        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id));
+        $data2 = $this->payroll->get_monthly_component($monthly_income_id)->result_array();
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
     }
 
@@ -66,34 +69,38 @@ class Monthly_income extends MX_Controller {
         //print_mz($this->input->post('monthly_component_id'));
         //$this->_validate();
         $employee_id = $this->input->post('employee_id');
-        $num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$employee_id))->num_rows();
-        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$employee_id));
-        $old_group = getValue('payroll_group_id', 'payroll_monthly_income', array('employee_id'=>'where/'.$employee_id));
+        $period_id = $this->input->post('period_id');
+        $num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_period_id'=>'where/'.$period_id))->num_rows();
+        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_period_id'=>'where/'.$period_id));
+        $old_group = getValue('payroll_group_id', 'payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_period_id'=>'where/'.$period_id));
         $group_id = $this->input->post('group_id');
+        if($old_group != $group_id)$this->db->where('payroll_monthly_income_id', $monthly_income_id)->update('payroll_monthly_income_component', array('is_deleted' => 1));
         $data = array(
                 'employee_id' => $employee_id,
                 'payroll_group_id' => $group_id,
+                'payroll_period_id' => $period_id,
             );
-        if($num_rows>0)$this->db->where('employee_id', $employee_id)->update('payroll_monthly_income', $data);
+        if($num_rows>0)$this->db->where('employee_id', $employee_id)->where('payroll_period_id', $period_id)->update('payroll_monthly_income', $data);
             else $this->db->insert('payroll_monthly_income', $data);
             //print_r($this->db->last_query());
         $monthly_income_id = ($num_rows>0) ? $monthly_income_id : $this->db->insert_id();
         $monthly_group = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_group_id'=>'where/'.$old_group))->num_rows();//print_mz($monthly_group);
+        $component_num_rows = getAll('payroll_monthly_income_component', array('payroll_monthly_income_id'=>'where/'.$monthly_income_id))->num_rows;
         $component = array('monthly_component_id' => $this->input->post('monthly_component_id'),
                            'component_id' => $this->input->post('component_id'),
                            'value' => $this->input->post('value'),
                     );
         //print_mz($component);
-        if($old_group != $group_id)$this->db->where('payroll_monthly_income_id', $monthly_income_id)->update('payroll_monthly_income_component', array('is_deleted' => 1));
+        
         for($i=0;$i<sizeof($component['component_id']);$i++):
             $data2 = array(
                     'payroll_monthly_income_id'=>$monthly_income_id,
                     'payroll_component_id' =>$component['component_id'][$i],
                     'value' =>$component['value'][$i],
                 );
-            if($monthly_group>0)$this->db->where('id', $component['monthly_component_id'][$i])->update('payroll_monthly_income_component', $data2);
+            if($old_group == $group_id)$this->db->where('id', $component['monthly_component_id'][$i])->update('payroll_monthly_income_component', $data2);
                 else $this->db->insert('payroll_monthly_income_component', $data2);
-                //print_r($this->db->last_query());
+                //rint_r($this->db->last_query());
         endfor;
         echo json_encode(array("status" => TRUE));
     }
@@ -110,6 +117,16 @@ class Monthly_income extends MX_Controller {
 
         $q = $this->data['component'] = $this->payroll->get_component($id)->result();//lastq();print_mz($q);
         $this->load->view('monthly_income/component_table', $this->data);
+    }
+
+    public function get_periode_status()
+    {
+        $id = $this->input->post('id');
+
+        $status = getValue('status','payroll_period', array('id'=>'where/'.$id));
+        $status = ($status == 1) ? 'Period Closed' : 'Period Open';
+
+        echo $status;
     }
 
 	function _render_page($view, $data=null, $render=false)

@@ -27,18 +27,42 @@
             </div>
 
             <div class="grid-body ">
-              <table class="table table-hover table-condensed" id="table">
-                <thead>
-                  <tr>
-                    <th style="width:5%">No</th>
-                    <th style="width:25%">NIK</th>
-                    <th style="width:25%">Name</th>
-                    <th style="width:10%">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
+              <div class="row">
+                <div class="col-md-4">
+                  <label class="control-label col-md-3">Period</label>
+                    <div class="col-md-9">
+                        <select class="form-control select2" name="periode" id="periode">
+                          <option value="0">Select session..</option>
+                          <?php if ($period->num_rows() > 0) {
+                            foreach ($period->result_array() as $p) { ?>
+                            <option value="<?php echo $p['id']; ?>"><?php echo $p['title']; ?></option>
+                            <?php }
+                          } ?>
+                        </select>
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                  <h3 class="text-center" id="periode-status"></h3>
+                </div>
+              </div>
+              <hr/>
+              <div class="row">
+                <div class="col-md-12">
+                  <table class="table table-hover table-condensed" id="table">
+                    <thead>
+                      <tr>
+                        <th style="width:5%">No</th>
+                        <th style="width:25%">NIK</th>
+                        <th style="width:25%">Name</th>
+                        <th style="width:10%">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +80,7 @@
         </div>
         <form action="#" id="form" class="form">
           <input type="hidden" name="employee_id" value="">
+          <input type="text" name="period_id" value="">
           <div class="modal-body">
               <div class="row form-row">
                 <label class="control-label col-md-3">NIK</label>
