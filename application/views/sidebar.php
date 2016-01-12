@@ -55,7 +55,18 @@
               <ul class="sub-menu">
                 <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
+                <li><a href="<?php echo base_url('payroll/monthly_income')?>">Monthly Income</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Setup</a></li>
+              </ul>
+            </li>
+            <li <?php echo $active2?>>
+              <a href="javascript:;">
+                <i class="fa fa-file-text-o"></i>
+                <span class="title">Report</span>
+                <span class="arrow"></span>
+              </a>
+              <ul class="sub-menu">
+                <li><a href="<?php echo base_url('report/payroll_monthly_report')?>">Payroll Invoice</a></li>
               </ul>
             </li>
             <!-- END SELECTED LINK -->
