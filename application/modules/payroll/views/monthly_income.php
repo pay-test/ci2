@@ -80,7 +80,7 @@
         </div>
         <form action="#" id="form" class="form">
           <input type="hidden" name="employee_id" value="">
-          <input type="text" name="period_id" value="">
+          <input type="hidden" name="period_id" value="">
           <div class="modal-body">
               <div class="row form-row">
                 <label class="control-label col-md-3">NIK</label>

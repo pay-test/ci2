@@ -3,7 +3,7 @@
 class Payroll_monthly_report extends MX_Controller {
     
     var $title = "report";
-    var $page_title = "Monthtly Report";
+    var $page_title = "Monthly Report";
     var $filename = "payroll_monthly_report";
     public $data;
     function __construct()
