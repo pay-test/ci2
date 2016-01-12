@@ -110,7 +110,7 @@ if (!function_exists('json_encode'))
         }
     }
 }
-/*
+
 if (!function_exists('permission')){
 	function permission()
 	{
@@ -147,7 +147,6 @@ if (!function_exists('permission')){
 		return $CI->session->userdata("webmaster_id");
 	}
 }
-*/
 
 if (!function_exists('permissionBiasa')){
 	function permissionBiasa()
@@ -616,7 +615,7 @@ if (!function_exists('GetColumns')){
 	function GetColumns($tbl)
 	{
 		$CI =& get_instance();
-		if(substr($tbl,0,3) != "kg_") $tbl = "kg_".$tbl;
+		//if(substr($tbl,0,3) != "kg_") $tbl = "kg_".$tbl;
 		$query = $CI->db->query("SHOW COLUMNS FROM ".$tbl);
 		return $query->result_array();
 	}
@@ -817,7 +816,7 @@ if (!function_exists('GetMonthIndex')){
 if (!function_exists('GetMonth')){	
 	function GetMonth($id)
 	{
-		$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nop","Des");
+		$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Oct","Nov","Dec");
 		//$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Dec");
 		return $bln[$id];
 	}
@@ -1443,17 +1442,21 @@ if(!function_exists('GetJumlahLembur')){
 	}
 }
 
-if (!function_exists('GetOptKeanggotaan')){
-	function GetOptKeanggotaan()
+if (!function_exists('GetShift')){
+	function GetShift($val)
 	{
-		$q = array("+"=>"+","-"=>"-");
-		$opt[''] = "- Keanggotaan -";
-		foreach($q as $r)
-		{
-			$opt[$r] = $r;
-		}
+		$q = array("1"=>"P", "2"=>"S", "3"=>"M", "off"=>"OFF");
 		
-		return $opt;
+		return $q[$val];
+	}
+}
+
+if (!function_exists('GetJumHari')){
+	function GetJumHari($bln, $thn)
+	{
+		$jml_hari = date("t", mktime(0, 0, 0, $bln, 1, $thn));
+		
+		return $jml_hari;
 	}
 }
 ?>
