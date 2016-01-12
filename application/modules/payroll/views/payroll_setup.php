@@ -31,11 +31,15 @@
                   <div class="form-group">
                     <label class="control-label col-md-3">Period</label>
                     <div class="col-md-9">
-                        <div id="period" class="input-append success date">
-                          <input type="text" class="form-control" name="period">
-                          <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span>
-                        </div>
-                          <span class="help-block"></span>
+                        <select class="form-control select2 period" name="periode">
+                          <option value="0">Select session..</option>
+                          <?php if ($period->num_rows() > 0) {
+                            foreach ($period->result_array() as $p) { ?>
+                            <option value="<?php echo $p['id']; ?>"><?php echo $p['title']; ?></option>
+                            <?php }
+                          } ?>
+                        </select>
+                        <span class="help-block"></span>
                     </div>
                   </div>
                   <div class="form-group">
@@ -57,7 +61,7 @@
                   <div class="form-group">
                     <label class="control-label col-md-3">Period</label>
                     <div class="col-md-9">
-                        <select class="form-control select2" name="periode2">
+                        <select class="form-control select2 period2" name="periode2">
                           <option value="0">Select session..</option>
                           <?php if ($period->num_rows() > 0) {
                             foreach ($period->result_array() as $p) { ?>
