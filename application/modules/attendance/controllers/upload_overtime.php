@@ -4,7 +4,7 @@ class upload_overtime extends MX_Controller {
 function index(){
         $file = fopen('D:\DAY122015.csv', "r");
 
-        $count = 0;                                         // add this line
+        $count = 0;
         while (($emapData = fgetcsv($file, 10000, ",")) !== FALSE)
         {
             $count++; 
