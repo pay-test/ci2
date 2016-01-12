@@ -2,23 +2,118 @@ $(document).ready(function() {
     $('.select2').select2();
 
     //Date Pickers
-    $('.to.date').datepicker({
-        format: "dd-mm-yyyy",
+    $('.tgl').datepicker({
+        format: 'yyyy-mm-dd', 
         autoclose: true,
         todayHighlight: true
     });
-
-    $("#periode").datepicker( {
-        format: "mm-yyyy",
-        startView: "months", 
-        minViewMode: "months",
-        autoclose: true,
+    
+    $('#periode').datepicker({
+        format: 'M yyyy', 
+        minViewMode: 1,
+				autoclose: true,
+				todayHighlight: true
     });
 
     //Time pickers
     $('.clockpicker ').clockpicker({
         autoclose: true
     });
+    
+    //Search Att
+    $(".btn-search").click(function(){
+			var start = $(".start_att").val();
+			var end = $(".end_att").val();
+			$("#content").html('<img src="assets/assets/img/loading.gif"> loading...');
+			
+			$.ajax({
+			 type: "POST",
+			 url: "attendance/list_attendance/0/"+start+"~"+end,
+			 data: 'flag=hitung',
+			 cache: false,
+			 success: function(data) 
+			 {
+				$("#content").html(data);
+			 }
+			});
+		});
+		
+		//Search Edit Att
+    $(".btn-submit-att").click(function(){
+    	var act = $("#form_edit_att").attr("action");
+    	var dataz = $("#form_edit_att").serialize();
+			$("#content").html('<img src="assets/assets/img/loading.gif"> loading...');
+			$.post(act, dataz,  function(response) {
+				//$("#content").html(response);
+		  	$("#content").load('attendance/list_attendance');
+		  });
+		});
+		
+		//Back Att
+		$(".btn-cancel-att").click(function(){
+			$("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/list_attendance');
+		});
+		
+		//Search Shift
+    $(".btn-search-shift").click(function(){
+			var period = $("#periode").val();
+			$("#content").html('<img src="assets/assets/img/loading.gif"> loading...');
+			
+			$.ajax({
+			 type: "POST",
+			 url: "attendance/shift/0/"+period,
+			 data: 'flag=hitung',
+			 cache: false,
+			 success: function(data) 
+			 {
+				$("#content").html(data);
+			 }
+			});
+		});
+		
+		//Search Edit Shift
+    $(".btn-submit-shift").click(function(){
+    	var act = $("#form_edit_shift").attr("action");
+    	var dataz = $("#form_edit_shift").serialize();
+			$("#content").html('<img src="assets/assets/img/loading.gif"> loading...');
+			$.post(act, dataz,  function(response) {
+		  	$("#content").load('attendance/shift');
+		  });
+		});
+		
+    //Sync
+    $(".btn-sync").click(function(){
+			var tgl = $(".tgl_absen").val();
+			$("#table_att").html('<img src="assets/assets/img/loading.gif"> loading...');
+			$.ajax({
+			 type: "POST",
+			 url: "load/baca_absen_bulan/"+tgl,
+			 data: 'flag=hitung',
+			 cache: false,
+			 success: function(data) 
+			 {
+				$("#table_att").load('attendance/list_attendance');
+			 }
+			});
+		});
+		
+		//Search Ovt
+    $(".btn-search-ovt").click(function(){
+			var start = $(".start_att").val();
+			var end = $(".end_att").val();
+			$("#content").html('<img src="assets/assets/img/loading.gif"> loading...');
+			
+			$.ajax({
+			 type: "POST",
+			 url: "attendance/overtime/0/"+start+"~"+end,
+			 data: 'flag=hitung',
+			 cache: false,
+			 success: function(data) 
+			 {
+				$("#content").html(data);
+			 }
+			});
+		});
 });
 
 function loadOvertime()
@@ -31,7 +126,6 @@ function loadAttendance()
     $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/list_attendance');
 }
 
-
 function loadShift()
 {
     $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/Shift');
@@ -39,9 +133,40 @@ function loadShift()
 
 function detailAtt(id)
 {
-    $("#table_att").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/detail/'+id+'/0000-00-00');
+	var start = $(".start_att").val();
+	var end = $(".end_att").val();
+  $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/detail/'+id+'/'+start+'~'+end);
 }
 
+function editAtt(id)
+{
+  $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/edit/'+id);
+}
+
+function backAtt(start, end)
+{
+	$("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/list_attendance/0/'+start+'~'+end);
+}
+
+function editShift(id)
+{
+  $("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/shift_detail/'+id);
+}
+
+function backShift(periode)
+{
+	$("#content").html('<img src="assets/assets/img/loading.gif"> loading...').load('attendance/shift/0/'+periode);
+}
+
+$('.ot_inc').change(function(){
+	var jam = $(this).val();
+	var hr = $("#hariraya").is(':checked');
+	if(jam > 0) {
+		overtime = (jam * 2) - 0.5;
+	} else overtime = 0;
+	
+	$("#acc_ot_incidental").attr("value", overtime);
+});
 
 
 
