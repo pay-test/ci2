@@ -80,9 +80,11 @@
                 <label class="control-label col-md-3">Payroll Group</label>
                 <div class="col-md-3">
                   <?php 
-                    $js = 'class="select2" style="width:100%" id="group" disabled';
-                    echo form_dropdown('group_id', $options_group,'',$js); 
+                    //$js = 'class="select2" style="width:100%" id="group" readonly';
+                    //echo form_dropdown('group_id', $options_group,'',$js); 
                   ?>
+                  <input type="hidden" class="form-control" name="group_id" value="">
+                  <input type="text" class="form-control" name="job_class_nm" value="">
                 </div>
               </div>
               <br/>

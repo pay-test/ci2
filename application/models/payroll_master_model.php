@@ -101,13 +101,18 @@ class Payroll_master_model extends CI_Model {
 			$this->table.'.employee_id as employee_id,
 			'.$this->table_join1.'.user_nm as user_nm,
 			'.$this->table_join2.'.person_nm as person_nm,
-			'.$this->table_join4.'.payroll_group_id as group_id,
-			');
+			'.$this->table_join3.'.id as group_id,
+			hris_job_class.job_class_nm,
+			hris_jobs.job_class_id,');
 
 		$this->db->from($this->table);
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join4, $this->table_join4.'.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join('hris_employee_job', 'hris_employee_job.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join('hris_jobs', 'hris_jobs.job_id = hris_employee_job.job_id', 'left');
+		$this->db->join($this->table_join3, $this->table_join3.'.job_class_id = hris_jobs.job_class_id', 'left');
+		$this->db->join('hris_job_class', 'hris_job_class.job_class_id = '.$this->table_join3.'.job_class_id', 'left');
 		//$this->db->join($this->table_join5, $this->table_join4.'.id = '.$this->table_join5.'.payroll_master_id', 'left');
 		//$this->db->join($this->table_join6, $this->table_join4.'.payroll_period_id = '.$this->table_join6.'.id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
@@ -144,11 +149,12 @@ class Payroll_master_model extends CI_Model {
 						  		)
 				 ->from('payroll_group_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_group_component.payroll_component_id')
-				 ->where('payroll_group_component.payroll_group_id', $id)
+				 ->join('payroll_group','payroll_group.id = payroll_group_component.payroll_group_id')
+				 ->where('payroll_group.id', $id)
 				 ->get();
 	}
 
-	public function get_monthly_component($monthly_id)
+	public function get_master_component($payroll_master_id)
 	{
 		return $this->db->select('payroll_master_component.id as id,
 								  payroll_component.title as component, 
@@ -158,7 +164,7 @@ class Payroll_master_model extends CI_Model {
 						  		)
 				 ->from('payroll_master_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id')
-				 ->where('payroll_master_component.payroll_master_id', $monthly_id)
+				 ->where('payroll_master_component.payroll_master_id', $payroll_master_id)
 				 ->where('payroll_master_component.is_deleted', 0)
 				 ->get();
 	}
@@ -168,15 +174,5 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where($this->table_join3.'.is_deleted',0);
 		$this->db->order_by($this->table_join3.'.job_class_id','asc');
 		return $this->db->get($this->table_join3);
-	}
-
-	public function get_job_class_id($employee_id) {
-		$query = $this->db->select('hris_jobs.job_class_id')
-					->from('hris_jobs')
-					->join('hris_employee_job','hris_employee_job.job_id = hris_jobs.job_id','left')
-					->where('hris_employee_job.employee_id', $employee_id)
-					->get();
-
-		return $query;
 	}
 }

@@ -134,7 +134,7 @@ class Monthly_income_model extends CI_Model {
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join7, $this->table_join7.'.employee_id = '.$this->table.'.employee_id', 'left');
-		$this->db->join($this->table_join3, $this->table_join7.'.payroll_group_id = '.$this->table_join3.'.id', 'left');
+		$this->db->join($this->table_join3, $this->table_join7.'.payroll_group_id = '.$this->table_join3.'.job_class_id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);

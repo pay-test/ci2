@@ -2,7 +2,7 @@ var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
-    $(".select2").select2();
+    //$(".select2").select2();
     //datatables
 
 
@@ -33,12 +33,12 @@ $(document).ready(function() {
     $(".select2-wrapper").select2({minimumResultsForSearch: -1});
 });
 
-$("#group").change(function() {
+/*$("#group").change(function() {
         $("#component_table_body").empty();
         var Id = $(this).val();
         getComponent(Id);
     })
-    .change();
+    .change();*/
 
 function getComponent(Id)
 {
@@ -87,28 +87,21 @@ function edit_user(id)
             {
                 var d = data.data2;
 
-                $.ajax({
-                    url: "payroll_master/get_job_class/"+id,
-                    type: "GET",
-                    dataType: "JSON",
-                    success: function(result) {
-                        //alert(result);
-                        $("#group").select2("val", result);
-                        //getComponent(result);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown)
-                    {
-                        alert('Error get data from ajax');
-                    }
-                });
-
+                //$("#group").select2("val", data.data1.group_id);
                 $('[name="employee_id"]').val(data.data1.employee_id);
                 $('[name="user_nm"]').val(data.data1.user_nm);
                 $('[name="person_nm"]').val(data.data1.person_nm);
-                $('[name="group_id"]').select2().select2('val',data.data1.group_id);
+                $('[name="job_class_nm"]').val(data.data1.job_class_nm);
+                //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
+                $('[name="group_id"]').val(data.data1.group_id);
                 $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Payroll Master'); // Set title to Bootstrap modal title
-                if(data.data2 != null)drawTable(data.data2);
+                if(data.data2 != ""){
+                    drawTable(data.data2);
+                }else{
+                     //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
+                    getComponent(data.data1.group_id);
+                }
 
             },
             error: function (jqXHR, textStatus, errorThrown)
