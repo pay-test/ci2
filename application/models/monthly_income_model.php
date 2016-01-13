@@ -10,6 +10,7 @@ class Monthly_income_model extends CI_Model {
 	var $table_join4 = 'payroll_monthly_income';
 	var $table_join5 = 'payroll_monthly_income_component';
 	var $table_join6 = 'payroll_period';
+	var $table_join7 = 'payroll_master';
 	var $column = array('user_nm','person_nm'); //set column field database for order and search
 	//var $order = array('employee_id' => 'asc'); // default order 
 
@@ -102,14 +103,38 @@ class Monthly_income_model extends CI_Model {
 			'.$this->table_join1.'.user_nm as user_nm,
 			'.$this->table_join2.'.person_nm as person_nm,
 			'.$this->table_join4.'.payroll_group_id as group_id,
+			'.$this->table_join3.'.title as group_title,
 			');
 
 		$this->db->from($this->table);
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join4, $this->table_join4.'.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join($this->table_join3, $this->table_join4.'.payroll_group_id = '.$this->table_join3.'.id', 'left');
 		//$this->db->join($this->table_join5, $this->table_join4.'.id = '.$this->table_join5.'.payroll_monthly_income_id', 'left');
 		//$this->db->join($this->table_join6, $this->table_join4.'.payroll_period_id = '.$this->table_join6.'.id', 'left');
+		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
+		$this->db->where('hris_employee.status_cd', 'normal');
+		$this->db->where($this->table.'.employee_id', $id);
+		$query = $this->db->get();
+
+		return $query->row();
+	}
+
+	function get_master($id){
+		$this->db->select(
+			$this->table.'.employee_id as employee_id,
+			'.$this->table_join1.'.user_nm as user_nm,
+			'.$this->table_join2.'.person_nm as person_nm,
+			'.$this->table_join7.'.payroll_group_id as group_id,
+			'.$this->table_join3.'.title as group_title,
+			');
+
+		$this->db->from($this->table);
+		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join($this->table_join7, $this->table_join7.'.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join($this->table_join3, $this->table_join7.'.payroll_group_id = '.$this->table_join3.'.id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);
@@ -160,6 +185,21 @@ class Monthly_income_model extends CI_Model {
 				 ->join('payroll_component', 'payroll_component.id = payroll_monthly_income_component.payroll_component_id')
 				 ->where('payroll_monthly_income_component.payroll_monthly_income_id', $monthly_id)
 				 ->where('payroll_monthly_income_component.is_deleted', 0)
+				 ->get();
+	}
+
+	function get_master_payroll_component($master_payroll_id)
+	{
+		return $this->db->select('payroll_master_component.id as id,
+								  payroll_component.title as component, 
+							      payroll_component.code as code, 
+							      payroll_master_component.value as value,
+							      payroll_master_component.payroll_component_id as component_id'
+						  		)
+				 ->from('payroll_master_component')
+				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id')
+				 ->where('payroll_master_component.payroll_master_id', $master_payroll_id)
+				 ->where('payroll_master_component.is_deleted', 0)
 				 ->get();
 	}
 

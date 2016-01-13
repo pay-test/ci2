@@ -4,11 +4,6 @@ var table;
 $(document).ready(function() {
     $(".select2").select2();
     //datatables
-    $('#btnAdd').on('click', function () {
-        $(document).find("select.select2").select2();
-        $('#btnRemove').show();
-    });
-
     table = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
@@ -17,118 +12,100 @@ $(document).ready(function() {
 
         // Load data for the table's content from an Ajax source
         "ajax": {
-            "url": "monthly_income/ajax_list/",
+            "url": "payroll_tax_component/ajax_list/",
             "type": "POST"
         },
 
         //Set column definition initialisation properties.
         "columnDefs": [
         { 
-            "targets": [0, 2, -1], //last column
+            "targets": [], //last column
             "orderable": false, //set not orderable
         },
-        { "sClass": "text-center", "aTargets": [-1] }
         ],
-
+        /*"aoColumnDefs": [
+          { "bSortable": false, "aTargets": [ 3,4,5 ] }
+        ] */
     });
 
     $('#table_wrapper .dataTables_length select').addClass("select2-wrapper span12");
     $(".select2-wrapper").select2({minimumResultsForSearch: -1});
+
+    //set input/textarea/select event when change value, remove class error and remove text help block
+    $("input").change(function(){
+        $(this).parent().parent().removeClass('has-error');
+        $(this).next().empty();
+    });
+
+    /*table_component = $('#table-group-component').DataTable({
+            "retrieve": true,
+            "paging": false, 
+            "processing": true, //Feature control the processing indicator.
+            "serverSide": true, //Feature control DataTables' server-side processing mode.
+            "order": [], //Initial no order.
+
+            // Load data for the table's content from an Ajax source
+            "ajax": {
+                "url": "payroll_tax_component/ajax_component_list/",
+                "type": "POST",
+                "data": function ( d ) {
+                 d.group_id = $('#group_id').val();
+            }
+            },
+
+            //Set column definition initialisation properties.
+            "columnDefs": [
+            { 
+                "targets": [], //last column
+                "orderable": false, //set not orderable
+            },
+            ],
+            "bFilter": false,
+            "bPaginate": false,
+            "info": false,
+    });*/
 });
 
-$("#group").change(function() {
-        $("#component_table_body").empty();
-        var Id = $(this).val();
-        getComponent(Id);
-    })
-    .change();
 
-function getComponent(Id)
+
+function add_user()
 {
-    $.ajax({
-        type: 'POST',
-        url: 'monthly_income/get_component_table/',
-        data: {id : Id},
-        success: function(data) {
-            $('#component_table_body').html(data);
-        }
-    });
-}
-
-$("#periode").change(function() {
-        var Id = $(this).val();
-        getStatus(Id);
-    })
-    .change();
-
-function getStatus(Id)
-{
-    $.ajax({
-        type: 'POST',
-        url: 'monthly_income/get_periode_status/',
-        data: {id : Id},
-        success: function(data) {
-            $('#periode-status').text(data);
-        }
-    });
+    save_method = 'add';
+    $('#form')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_form').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Add Payroll Tax Component'); // Set Title to Bootstrap modal title
 }
 
 function edit_user(id)
 {
     save_method = 'update';
-    $("#component_table_body").empty();
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-    var period_id = $('#periode option:selected').val()
+    var array_comp = [];
+    var array_thp = [];
+
     //Ajax Load data from ajax
-    if(period_id == 0){
-        alert('Please Choose Period !!');
-    }else{
-        $.ajax({
-            url : "monthly_income/ajax_edit/" + id +"/" + period_id,
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                if(data.master_num_rows < 1){
-                    alert('Employee Payroll Master Is Empty');
-                }else{
-                    var period = $('#periode option:selected').text()
-                    var d = data.data2;
-                    var period = $('#periode option:selected').text()
-                    $('[name="period_id"]').val(period_id);
-                    $('[name="employee_id"]').val(data.data1.employee_id);
-                    $('[name="user_nm"]').val(data.data1.user_nm);
-                    $('[name="person_nm"]').val(data.data1.person_nm);
-                    $('[name="group_id"]').val(data.data1.group_id);
-                    $('[name="group_title"]').val(data.data1.group_title);
-                    $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-                    $('.modal-title').text('Monthly Income '+period); // Set title to Bootstrap modal title
-                    if(data.data2 != null)drawTable(data.data2);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error get data from ajax');
-            }
-        });
-    }
+    $.ajax({
+        url : "payroll_tax_component/ajax_edit/" + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+            $('[name="id"]').val(data.id);
+            $('[name="title"]').val(data.title);
+            $('[name="column"]').val(data.column);
+            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Edit Tax Component'); // Set title to Bootstrap modal title
 
-    function drawTable(data) {
-    for (var i = 0; i < data.length; i++) {
-        drawRow(data[i]);
-    }
-    }
-
-    function drawRow(rowData) {
-        var row = $("<tr />")
-        $("#component_table_body").append(row);
-        row.append($("<td>" + rowData.component + "</td>"));
-        row.append($("<td>" + rowData.code + "</td>"));
-        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input type='text' name='value[]' value='"+rowData.value +"'></td>"));
-    }
-
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
 }
 
 function reload_table()
@@ -142,17 +119,15 @@ function save()
     $('#btnSave').attr('disabled',true); //set button disable 
     var url;
 
-    /*
     if(save_method == 'add') {
-        url = "monthly_income/ajax_add";
+        url = "payroll_tax_component/ajax_add";
     } else {
-        url = "monthly_income/ajax_update";
+        url = "payroll_tax_component/ajax_update";
     }
-    */
 
     // ajax adding data to database
     $.ajax({
-        url : 'monthly_income/ajax_update',
+        url : url,
         type: "POST",
         data: $('#form').serialize(),
         dataType: "JSON",
@@ -162,6 +137,7 @@ function save()
             if(data.status) //if success close modal and reload ajax table
             {
                 $('#modal_form').modal('hide');
+
                 reload_table();
             }
             else
@@ -193,7 +169,7 @@ function delete_user(id)
     {
         // ajax delete data to database
         $.ajax({
-            url : "monthly_income/ajax_delete/"+id,
+            url : "payroll_tax_component/ajax_delete/"+id,
             type: "POST",
             dataType: "JSON",
             success: function(data)
@@ -210,7 +186,6 @@ function delete_user(id)
 
     }
 }
-
 
 /*************************************
   * Created : Jan 2016
