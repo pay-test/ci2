@@ -22,6 +22,10 @@ class Payroll_group extends MX_Controller {
         $filter = array('is_deleted' => 'where/0');
         $this->data['p_component'] = $list_component =$this->all_model->GetAll('payroll_component',$filter);
 
+        $filter = array('status_cd' => 'where/normal');
+        $this->data['job_class'] = $this->all_model->GetAll('hris_job_class',$filter,'job_class_level');
+        //lastq();
+
         permission();
         $this->_render_page($this->filename, $this->data);
     }
@@ -44,7 +48,6 @@ class Payroll_group extends MX_Controller {
             $row[] = $no;
             $row[] = $group->title;
             $row[] = $group->code;
-
              $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$group->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$group->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
@@ -71,9 +74,14 @@ class Payroll_group extends MX_Controller {
     public function ajax_add()
     {
         $this->_validate();
+        $job_class_id = $this->input->post('job_class_id');
+        $job_class_nm = $this->all_model->GetValue('job_class_nm','hris_job_class','job_class_id = '.$job_class_id);
+        $job_class_abbr = $this->all_model->GetValue('job_class_abbr','hris_job_class','job_class_id = '.$job_class_id);
+        //lastq();
         $data = array(
-                'title' => $this->input->post('title'),
-                'code' => $this->input->post('code'),
+                'job_class_id' => $job_class_id,
+                'title' => $job_class_nm,
+                'code' => $job_class_abbr,
                 'created_by' => GetUserID(),
                 'created_on' => date('Y-m-d H:i:s')
             );
@@ -109,12 +117,16 @@ class Payroll_group extends MX_Controller {
     {
         $this->_validate();
         $group_id = $this->input->post('id');
+        $job_class_id = $this->input->post('job_class_id');
+        $job_class_nm = $this->all_model->GetValue('job_class_nm','hris_job_class','job_class_id = '.$job_class_id);
+        $job_class_abbr = $this->all_model->GetValue('job_class_abbr','hris_job_class','job_class_id = '.$job_class_id);
         $array_pcomp = $this->input->post('p_component');
         $array_thp = $this->input->post('is_thp');
 
         $data = array(
-                'title' => $this->input->post('title'),
-                'code' => $this->input->post('code'),
+                'job_class_id' => $job_class_id,
+                'title' => $job_class_nm,
+                'code' => $job_class_abbr,
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );
@@ -155,19 +167,13 @@ class Payroll_group extends MX_Controller {
         $data['inputerror'] = array();
         $data['status'] = TRUE;
  
-        if($this->input->post('title') == '')
+        if($this->input->post('job_class_id') == '')
         {
             $data['inputerror'][] = 'title';
             $data['error_string'][] = 'Name is required';
             $data['status'] = FALSE;
         }
  
-        if($this->input->post('code') == '')
-        {
-            $data['inputerror'][] = 'code';
-            $data['error_string'][] = 'Code is required';
-            $data['status'] = FALSE;
-        }
  
         if($data['status'] === FALSE)
         {

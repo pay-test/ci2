@@ -62,14 +62,13 @@
                         <div class="form-group">
                             <label class="control-label col-md-4">Name</label>
                             <div class="col-md-8">
-                                <input name="title" placeholder="Name" class="form-control" type="text">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-4">Code</label>
-                            <div class="col-md-8">
-                                <input name="code" placeholder="Code" class="form-control" type="text">
+                                <select name="job_class_id" class="job_class_id form-control select2">
+                                  <?php if ($job_class) {
+                                    foreach ($job_class as $jc) { ?>
+                                      <option value="<?php echo $jc['job_class_id']; ?>"><?php echo $jc['job_class_nm']." (".$jc['job_class_cd'].")"; ?></option>
+                                    <?php }
+                                  } ?>
+                                </select>
                                 <span class="help-block"></span>
                             </div>
                         </div>
