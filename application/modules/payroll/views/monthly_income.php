@@ -100,10 +100,8 @@
               <div class="row form-row">
                 <label class="control-label col-md-3">Payroll Group</label>
                 <div class="col-md-3">
-                  <?php 
-                    $js = 'class="select2" style="width:100%" id="group"';
-                    echo form_dropdown('group_id', $options_group,'',$js); 
-                  ?>
+                  <input name="group_id" placeholder="" class="form-control" value="" type="hidden">
+                  <input name="group_title" placeholder="" class="form-control" value="" type="text" disabled="">
                 </div>
               </div>
               <br/>
@@ -122,6 +120,7 @@
                       <tbody id="component_table_body">
                       </tbody>
                     </table>
+                    <button type="button" id="btnAdd" class="btn btn-primary btn-lg" onclick="addRow('component_table')"><i class="icon-plus"></i>&nbsp;Add Component</button>
                   </div>
                 </div>
               </div>
@@ -138,3 +137,17 @@
     </div>
   </div>
   <!-- End Bootstrap modal -->
+
+  <script type="text/javascript">
+  function addRow(tableID){
+  var table=document.getElementById(tableID);
+  var rowCount=table.rows.length;
+  var row=table.insertRow(rowCount);
+
+  var cell1=row.insertCell(0);
+  cell1.innerHTML = "<select name='component_id[]' class='select2' style='width:100%'><?php foreach($component as $c):?><option value='<?php echo $c->id?>'><?php echo $c->title.' - '.$c->code?></option><?php endforeach;?></select>";  
+  cell1.colSpan = 2;
+  var cell3=row.insertCell(1);
+  cell3.innerHTML = "<input type='text' value='0' name='value[]'/ >";  
+}
+  </script>

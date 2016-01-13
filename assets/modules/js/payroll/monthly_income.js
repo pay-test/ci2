@@ -4,7 +4,10 @@ var table;
 $(document).ready(function() {
     $(".select2").select2();
     //datatables
-
+    $('#btnAdd').on('click', function () {
+        $(document).find("select.select2").select2();
+        $('#btnRemove').show();
+    });
 
     table = $('#table').DataTable({ 
 
@@ -88,19 +91,22 @@ function edit_user(id)
             dataType: "JSON",
             success: function(data)
             {
-
-                var period = $('#periode option:selected').text()
-                var d = data.data2;
-                var period = $('#periode option:selected').text()
-                $('[name="period_id"]').val(period_id);
-                $('[name="employee_id"]').val(data.data1.employee_id);
-                $('[name="user_nm"]').val(data.data1.user_nm);
-                $('[name="person_nm"]').val(data.data1.person_nm);
-                $('[name="group_id"]').select2().select2('val',data.data1.group_id);
-                $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('Monthly Income '+period); // Set title to Bootstrap modal title
-                if(data.data2 != null)drawTable(data.data2);
-
+                if(data.master_num_rows < 1){
+                    alert('Employee Payroll Master Is Empty');
+                }else{
+                    var period = $('#periode option:selected').text()
+                    var d = data.data2;
+                    var period = $('#periode option:selected').text()
+                    $('[name="period_id"]').val(period_id);
+                    $('[name="employee_id"]').val(data.data1.employee_id);
+                    $('[name="user_nm"]').val(data.data1.user_nm);
+                    $('[name="person_nm"]').val(data.data1.person_nm);
+                    $('[name="group_id"]').val(data.data1.group_id);
+                    $('[name="group_title"]').val(data.data1.group_title);
+                    $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+                    $('.modal-title').text('Monthly Income '+period); // Set title to Bootstrap modal title
+                    if(data.data2 != null)drawTable(data.data2);
+                }
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
