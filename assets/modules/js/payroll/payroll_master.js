@@ -77,19 +77,31 @@ function edit_user(id)
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-    var period_id = $('#periode option:selected').val()
+
     //Ajax Load data from ajax
-    if(period_id == 0){
-        alert('Please Choose Period !!');
-    }else{
         $.ajax({
-            url : "payroll_master/ajax_edit/" + id +"/" + period_id,
+            url : "payroll_master/ajax_edit/" + id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
             {
                 var d = data.data2;
-                $('[name="period_id"]').val(period_id);
+
+                $.ajax({
+                    url: "payroll_master/get_job_class/"+id,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function(result) {
+                        //alert(result);
+                        $("#group").select2("val", result);
+                        //getComponent(result);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown)
+                    {
+                        alert('Error get data from ajax');
+                    }
+                });
+
                 $('[name="employee_id"]').val(data.data1.employee_id);
                 $('[name="user_nm"]').val(data.data1.user_nm);
                 $('[name="person_nm"]').val(data.data1.person_nm);
@@ -104,7 +116,7 @@ function edit_user(id)
                 alert('Error get data from ajax');
             }
         });
-    }
+    
 
     function drawTable(data) {
     for (var i = 0; i < data.length; i++) {

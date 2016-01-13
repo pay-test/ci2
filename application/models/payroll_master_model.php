@@ -166,7 +166,17 @@ class Payroll_master_model extends CI_Model {
 	public function get_group()
 	{	
 		$this->db->where($this->table_join3.'.is_deleted',0);
-		$this->db->order_by($this->table_join3.'.title','asc');
+		$this->db->order_by($this->table_join3.'.job_class_id','asc');
 		return $this->db->get($this->table_join3);
+	}
+
+	public function get_job_class_id($employee_id) {
+		$query = $this->db->select('hris_jobs.job_class_id')
+					->from('hris_jobs')
+					->join('hris_employee_job','hris_employee_job.job_id = hris_jobs.job_id','left')
+					->where('hris_employee_job.employee_id', $employee_id)
+					->get();
+
+		return $query;
 	}
 }
