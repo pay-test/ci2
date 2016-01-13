@@ -102,7 +102,8 @@ function edit_user(id)
                 dataType: "JSON",
                 success: function(data2)
                 {
-                    for (index = 0; index < data2.length; ++index) {
+                    if(data2.length > 0) {
+                        for (index = 0; index < data2.length; ++index) {
                         array_comp.push(data2[index].payroll_component_id);
                         if (data2[index].is_thp == 1) {
                             $(".td_is_thp").find('[value=' + data2[index].payroll_component_id + ']').prop("checked", true);
@@ -110,6 +111,7 @@ function edit_user(id)
                     }
                     $(".td_p_component").find('[value=' + array_comp.join('], [value=') + ']').prop("checked", true);
                     //alert(array_comp);
+                    }
                 },
                 error: function (jqXHR, textStatus, errorThrown)
                 {
@@ -118,8 +120,7 @@ function edit_user(id)
             });
 
             $('[name="id"]').val(data.id);
-            $('[name="title"]').val(data.title);
-            $('[name="code"]').val(data.code);
+            $('.select2').select2('val',data.job_class_id);
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Group'); // Set title to Bootstrap modal title
 

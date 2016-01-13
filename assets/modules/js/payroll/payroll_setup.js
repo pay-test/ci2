@@ -2,7 +2,8 @@ var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
-    $(".select2").select2()
+    $(".period").select2();
+    $(".period2").select2()
     .on("change", function (e){
         $.ajax({
             url: 'payroll_setup/ajax_period/'+e.target.value,

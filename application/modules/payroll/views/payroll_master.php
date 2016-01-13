@@ -28,26 +28,6 @@
 
             <div class="grid-body ">
               <div class="row">
-                <div class="col-md-4">
-                  <label class="control-label col-md-3">Period</label>
-                    <div class="col-md-9">
-                        <select class="form-control select2" name="periode" id="periode">
-                          <option value="0">Select session..</option>
-                          <?php if ($period->num_rows() > 0) {
-                            foreach ($period->result_array() as $p) { ?>
-                            <option value="<?php echo $p['id']; ?>"><?php echo $p['title']; ?></option>
-                            <?php }
-                          } ?>
-                        </select>
-                        <span class="help-block"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                  <h3 class="text-center" id="periode-status"></h3>
-                </div>
-              </div>
-              <hr/>
-              <div class="row">
                 <div class="col-md-12">
                   <table class="table table-hover table-condensed" id="table">
                     <thead>
