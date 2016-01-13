@@ -60,7 +60,6 @@
         </div>
         <form action="#" id="form" class="form">
           <input type="hidden" name="employee_id" value="">
-          <input type="hidden" name="period_id" value="">
           <div class="modal-body">
               <div class="row form-row">
                 <label class="control-label col-md-3">NIK</label>
@@ -81,7 +80,7 @@
                 <label class="control-label col-md-3">Payroll Group</label>
                 <div class="col-md-3">
                   <?php 
-                    $js = 'class="select2" style="width:100%" id="group"';
+                    $js = 'class="select2" style="width:100%" id="group" disabled';
                     echo form_dropdown('group_id', $options_group,'',$js); 
                   ?>
                 </div>
