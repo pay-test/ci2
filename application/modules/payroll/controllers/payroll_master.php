@@ -11,7 +11,7 @@ class Payroll_master extends MX_Controller {
 		parent::__construct();
         $this->load->model('payroll_master_model','payroll');
         $this->load->model('payroll_setup_model','setup');
-        //$this->load->model('all_model','all_model');
+        $this->load->model('all_model','all_model');
 	}
 	
 	function index()
@@ -23,7 +23,7 @@ class Payroll_master extends MX_Controller {
 
          $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
-        $this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
+        $this->data['options_group'] = options_row('payroll', 'get_group','job_class_id','title', '-- Choose Payroll Group --');
 		$this->_render_page($this->filename, $this->data);
 	}
 
@@ -56,9 +56,9 @@ class Payroll_master extends MX_Controller {
         echo json_encode($output);
     }
 
-    public function ajax_edit($id, $period_id)
+    public function ajax_edit($id)
     {
-        $data = $this->payroll->get_by_id($id, $period_id);//print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
+        $data = $this->payroll->get_by_id($id);//print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
         $data2 = $this->payroll->get_monthly_component($payroll_master_id)->result_array();
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
@@ -128,19 +128,10 @@ class Payroll_master extends MX_Controller {
         echo $status;
     }
 
-    public function print_slip($id)
-    {
-        $this->data['employee_id'] = $id;
-
-        
-        $this->load->library('mpdf60/mpdf');
-        $html = $this->load->view('payroll/payroll_master/payroll_slip', $this->data, true);
-        $stylesheet = file_get_contents('assets/modules/css/payroll/mpdfstyletables.css');
-        $mpdf = new mPDF();
-        $mpdf = new mPDF('A4');
-        $mpdf->WriteHTML($stylesheet,1);    // The parameter 1 tells that this is css/style only and no body/html/text 
-        $mpdf->WriteHTML($html,2);
-        $mpdf->Output('payroll_slip_'.$id.'.pdf', 'I');
+    public function get_job_class($employee_id) {
+        $job_class_id = $this->payroll->get_job_class_id($employee_id)->row()->job_class_id;
+        //lastq();
+        echo json_encode($job_class_id);
     }
 
 	function _render_page($view, $data=null, $render=false)
