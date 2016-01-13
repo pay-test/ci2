@@ -41,7 +41,8 @@ class Monthly_income extends MX_Controller {
 
 
             //add html for action
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="Edit" onclick="edit_user('."'".$payroll->employee_id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>';
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="Edit" onclick="edit_user('."'".$payroll->employee_id."'".')"><i class="fa fa-pencil"></i></a>
+                <a class="btn btn-sm btn-danger" href="'.site_url().'payroll/monthly_income/print_slip/'.$payroll->employee_id.'" title="Print"><i class="glyphicon glyphicon-print"></i></a>';
         
             $data[] = $row;
         }
@@ -127,6 +128,21 @@ class Monthly_income extends MX_Controller {
         $status = ($status == 1) ? 'Period Closed' : 'Period Open';
 
         echo $status;
+    }
+
+    public function print_slip($id)
+    {
+        $this->data['employee_id'] = $id;
+
+        
+        $this->load->library('mpdf60/mpdf');
+        $html = $this->load->view('payroll/monthly_income/payroll_slip', $this->data, true);
+        $stylesheet = file_get_contents('assets/modules/css/payroll/mpdfstyletables.css');
+        $mpdf = new mPDF();
+        $mpdf = new mPDF('A4');
+        $mpdf->WriteHTML($stylesheet,1);    // The parameter 1 tells that this is css/style only and no body/html/text 
+        $mpdf->WriteHTML($html,2);
+        $mpdf->Output('payroll_slip_'.$id.'.pdf', 'I');
     }
 
 	function _render_page($view, $data=null, $render=false)

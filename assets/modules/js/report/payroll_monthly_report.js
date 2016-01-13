@@ -2,26 +2,6 @@ var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
-    $(".select2").select2()
-    .on("change", function (e){
-        $.ajax({
-            url: 'payroll_slip/ajax_period/'+e.target.value,
-            type: 'GET',
-            dataType: 'JSON',
-            success: function(data){
-                if(data.status == 1){
-                     $('.radio').find(':radio[name=status][value="1"]').prop('checked', true)
-                }else{
-                    $('.radio').find(':radio[name=status][value="0"]').prop('checked', true)
-                }
-                
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-
-            }
-        })
-        //console.log("Session: ", e.target.value)
-    });
 
     $("#period").datepicker( {
         format: "MM yyyy",
@@ -39,21 +19,7 @@ $(document).ready(function() {
 
     $("#form-process").submit(function(e) {
     // ajax adding data to database
-    $.ajax({
-        url : 'payroll_slip/process',
-        type: "POST",
-        data: $('#form-process').serialize(),
-        dataType: "JSON",
-        success: function(data)
-        {
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error Process');
-
-        }
-    });
+        alert($("#period").value);
     e.preventDefault();
     });
 
