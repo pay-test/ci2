@@ -97,7 +97,9 @@ function edit_user(id)
                 $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Payroll Master'); // Set title to Bootstrap modal title
                 if(data.data2 != ""){
+                    getComponent(data.data1.group_id);
                     drawTable(data.data2);
+
                 }else{
                      //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
                     getComponent(data.data1.group_id);
@@ -118,11 +120,17 @@ function edit_user(id)
     }
 
     function drawRow(rowData) {
-        var row = $("<tr />")
+        /*var row = $("<tr />")
         $("#component_table_body").append(row);
         row.append($("<td>" + rowData.component + "</td>"));
         row.append($("<td>" + rowData.code + "</td>"));
-        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input type='text' name='value[]' value='"+rowData.value +"'></td>"));
+        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input type='text' name='value[]' value='"+rowData.value +"'></td>"));*/
+        //$('input[name^="value[]"]').val(rowData.value);
+        //var form = $('#form');
+        $('#val_'+rowData.id).val(rowData.value)
+        //alert(rowData.id+' '+rowData.value)
+        //alert($('input[name^="component_id['+rowData.value+']"]').value);
+
     }
 
 }
