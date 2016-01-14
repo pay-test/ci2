@@ -66,26 +66,36 @@ class Payroll_master extends MX_Controller {
 
     public function ajax_update()
     {
-        //print_mz($this->input->post('monthly_component_id'));
+        //print_mz($this->input->post('value'));
         //$this->_validate();
         $employee_id = $this->input->post('employee_id');
-        $period_id = $this->input->post('period_id');
+        $group_id = $this->input->post('group_id');
+
         $num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id))->num_rows();
+        //lastq();
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
         $old_group = getValue('payroll_group_id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
-        $group_id = $this->input->post('group_id');
-        if($old_group != $group_id)$this->db->where('payroll_master_id', $payroll_master_id)->update('payroll_master_component', array('is_deleted' => 1));
+
+        if($old_group != $group_id) {
+            $this->db->where('payroll_master_id', $payroll_master_id)->update('payroll_master_component', array('is_deleted' => 1));
+        }
+            
         $data = array(
                 'employee_id' => $employee_id,
                 'payroll_group_id' => $group_id
             );
-        if($num_rows>0)$this->db->where('employee_id', $employee_id)->update('payroll_master', $data);
-            else $this->db->insert('payroll_master', $data);
-            //print_r($this->db->last_query());
+
+        if($num_rows>0) {
+            $this->db->where('employee_id', $employee_id)->update('payroll_master', $data);   
+        }else{
+            $this->db->insert('payroll_master', $data);
+        }
+        //print_r($this->db->last_query());
         $payroll_master_id = ($num_rows>0) ? $payroll_master_id : $this->db->insert_id();
+
         $monthly_group = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id, 'payroll_group_id'=>'where/'.$old_group))->num_rows();//print_mz($monthly_group);
-        $component_num_rows = getAll('payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id))->num_rows;
-        $component = array('monthly_component_id' => $this->input->post('monthly_component_id'),
+        //$component_num_rows = getAll('payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id))->num_rows;
+        $component = array('master_component_id' => $this->input->post('master_component_id'),
                            'component_id' => $this->input->post('component_id'),
                            'value' => $this->input->post('value'),
                     );
@@ -97,9 +107,13 @@ class Payroll_master extends MX_Controller {
                     'payroll_component_id' =>$component['component_id'][$i],
                     'value' =>$component['value'][$i],
                 );
-            if($old_group == $group_id)$this->db->where('id', $component['monthly_component_id'][$i])->update('payroll_master_component', $data2);
-                else $this->db->insert('payroll_master_component', $data2);
-                //rint_r($this->db->last_query());
+            if($old_group == $group_id) {
+                $this->db->where('id', $component['master_component_id'][$i])->update('payroll_master_component', $data2);   
+            } else {
+                 $this->db->insert('payroll_master_component', $data2);
+            }
+                //print_r($this->db->last_query());
+            //lastq();
         endfor;
         echo json_encode(array("status" => TRUE));
     }
@@ -116,6 +130,15 @@ class Payroll_master extends MX_Controller {
 
         $q = $this->data['component'] = $this->payroll->get_component($id)->result();//lastq();print_mz($q);
         $this->load->view('payroll_master/component_table', $this->data);
+    }
+
+    public function get_component_table_val()
+    {
+        $id = $this->input->post('id');
+
+        $q = $this->data['component'] = $this->payroll->get_component($id)->result();//lastq();print_mz($q);
+        $this->data['component_value'] = $this->input->post('value');
+        $this->load->view('payroll_master/component_table_val', $this->data);
     }
 
     public function get_periode_status()
