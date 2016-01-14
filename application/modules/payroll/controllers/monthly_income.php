@@ -61,7 +61,7 @@ class Monthly_income extends MX_Controller {
     public function ajax_edit($id, $period_id)
     {
         $master_num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$id))->num_rows();
-        $monthly_income_num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$id))->num_rows();//print_mz($monthly_income_num_rows);
+        $monthly_income_num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id))->num_rows();//print_mz($monthly_income_num_rows);
         if($monthly_income_num_rows>0){$data = $this->payroll->get_by_id($id, $period_id);}else{$data = $this->payroll->get_master($id);}//print_r($this->db->last_query());
         $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id));
         $master_payroll_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
