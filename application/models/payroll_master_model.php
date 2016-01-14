@@ -151,6 +151,7 @@ class Payroll_master_model extends CI_Model {
 				 ->join('payroll_component', 'payroll_component.id = payroll_group_component.payroll_component_id')
 				 ->join('payroll_group','payroll_group.id = payroll_group_component.payroll_group_id')
 				 ->where('payroll_group.id', $id)
+				 ->order_by('payroll_group_component.payroll_component_id')
 				 ->get();
 	}
 
