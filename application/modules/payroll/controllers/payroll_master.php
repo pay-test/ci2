@@ -23,7 +23,7 @@ class Payroll_master extends MX_Controller {
 
          $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
-        $this->data['options_group'] = options_row('payroll', 'get_group','job_class_id','title', '-- Choose Payroll Group --');
+        //$this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
 		$this->_render_page($this->filename, $this->data);
 	}
 
@@ -58,9 +58,9 @@ class Payroll_master extends MX_Controller {
 
     public function ajax_edit($id)
     {
-        $data = $this->payroll->get_by_id($id);//print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
+        $data = $this->payroll->get_by_id($id);//;print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
-        $data2 = $this->payroll->get_monthly_component($payroll_master_id)->result_array();
+        $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
     }
 
@@ -126,12 +126,6 @@ class Payroll_master extends MX_Controller {
         $status = ($status == 1) ? 'Period Closed' : 'Period Open';
 
         echo $status;
-    }
-
-    public function get_job_class($employee_id) {
-        $job_class_id = $this->payroll->get_job_class_id($employee_id)->row()->job_class_id;
-        //lastq();
-        echo json_encode($job_class_id);
     }
 
 	function _render_page($view, $data=null, $render=false)
