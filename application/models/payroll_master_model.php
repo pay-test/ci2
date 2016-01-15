@@ -163,8 +163,8 @@ class Payroll_master_model extends CI_Model {
 							      payroll_master_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_master_component')
-				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id')
-				 ->where('payroll_master_component.payroll_master_id', $payroll_master_id)
+				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id', 'left')
+				 ->where('payroll_master_component.payroll_master_id', 3)
 				 ->where('payroll_master_component.is_deleted', 0)
 				 ->get();
 	}

@@ -73,6 +73,32 @@ function getStatus(Id)
     });
 }
 
+function print(id)
+{
+    var period_id = $('#periode option:selected').val()
+    //Ajax Load data from ajax
+    if(period_id == 0){
+        alert('Please Choose Period !!');
+    }else{
+        $.ajax({
+            url : "monthly_income/cek_period/" + id +"/" + period_id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                if(data < 1){
+                    alert('Employee Payroll Is Empty In This Period');
+                }else{
+                    window.open("monthly_income/print_slip/" + id +"/" + period_id,'_blank');
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+    }
+}
 function edit_user(id)
 {
     save_method = 'update';

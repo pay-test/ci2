@@ -43,7 +43,7 @@ class Monthly_income extends MX_Controller {
 
             //add html for action
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="Edit" onclick="edit_user('."'".$payroll->employee_id."'".')"><i class="fa fa-pencil"></i></a>
-                <a class="btn btn-sm btn-danger" href="'.site_url().'payroll/monthly_income/print_slip/'.$payroll->employee_id.'" title="Print"><i class="glyphicon glyphicon-print"></i></a>';
+                <a class="btn btn-sm btn-danger" href="javascript:void(0);" title="Edit" onclick="print('."'".$payroll->employee_id."'".')"><i class="glyphicon glyphicon-print"></i></a>';
         
             $data[] = $row;
         }
@@ -135,11 +135,28 @@ class Monthly_income extends MX_Controller {
         echo $status;
     }
 
-    public function print_slip($id)
+    function cek_period($id, $period_id)
+    {
+        $num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id))->num_rows();
+
+        echo $num_rows;
+    }
+
+    public function print_slip($id, $period_id)
     {
         $this->data['employee_id'] = $id;
-
+        $this->data['monthly_income'] = $this->payroll->get_by_id($id, $period_id);
+        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id));
         
+        $this->data['period'] = getValue('title', 'payroll_period', array('id'=>'where/'.$period_id));
+
+        $table = 'payroll_monthly_income_component';
+        $table_join = 'payroll_component';
+        $condition = 'payroll_monthly_income_component.payroll_component_id = payroll_component.id';
+        $select = "$table.value as value,$table_join.title as component,$table_join.component_type_id as type";
+        $this->data['income'] = getJoin($table, $table_join, $condition,'left',$select, array('payroll_monthly_income_id'=>'where/'.$monthly_income_id, 'component_type_id'=>'where/1'))->result();
+        $this->data['deduction'] = getJoin($table, $table_join, $condition,'left',$select, array('payroll_monthly_income_id'=>'where/'.$monthly_income_id, 'component_type_id'=>'where/3'))->result();
+        //print_mz($this->data['component']);
         $this->load->library('mpdf60/mpdf');
         $html = $this->load->view('payroll/monthly_income/payroll_slip', $this->data, true);
         $stylesheet = file_get_contents('assets/modules/css/payroll/mpdfstyletables.css');
