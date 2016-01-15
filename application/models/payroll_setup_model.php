@@ -15,6 +15,23 @@ class Payroll_setup_model extends CI_Model {
 
 	//custom model
 
+	function get_monthly_income($period_id = 0,$employee_id = 0) {
+		$this->db->select('
+			payroll_monthly_income.employee_id,
+			payroll_component.id,
+			payroll_component.title,
+			payroll_monthly_income_component.value,
+			payroll_component.tax_component_id');
+		$this->db->from('payroll_monthly_income_component');
+		$this->db->join('payroll_monthly_income', 'payroll_monthly_income.id = payroll_monthly_income_component.payroll_monthly_income_id', 'left');
+		$this->db->join('payroll_component', 'payroll_component.id = payroll_monthly_income_component.payroll_component_id', 'left');
+		$this->db->where('payroll_monthly_income.payroll_period_id', $period_id);
+		$this->db->where('payroll_monthly_income.employee_id', $employee_id);
+		$result = $this->db->get();
+
+		return $result;
+	}
+
 	function render_periode($year_now = 0) {
 		$this->db->from('payroll_period');
 		$this->db->where('year', $year_now);

@@ -34,10 +34,37 @@ class Payroll_setup extends MX_Controller {
     }
 
     public function process() {
-        $period = $this->input->post('period');
-        $period_m = substr($period,0,2);
-        $period_y = substr($period,3,4);
-        echo json_encode(array("month" => $period_m,"year" => $period_y));
+        $i = 0;
+        $employee_id = "";
+        $tax_column_1 = 0;
+        $tax_column_2 = 0;
+        $period_id = $this->input->post('period');
+
+        $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();
+        
+       foreach ($query as $row => $value) {
+           //print_mz($value->employee_id);
+            $q = $this->payroll->get_monthly_income($period_id,$value->employee_id)->result();
+           //lastq();
+            foreach ($q as $rowx => $valuex) {
+                //print_mz($valuex->id);
+                if ($valuex->tax_component_id == 1) {
+                    $tax_column_1 = $tax_column_1 + $valuex->value;
+                }
+            }
+            print_mz($tax_column_1);
+       }
+
+        $query = $this->payroll->get_monthly_income($period_id)->result(); //get all monthly income on the same period
+        foreach ($query as $row => $value) {
+            $employee_id = $value->employee_id;
+            $component_id = $value->component_id;
+            $component_value = $value->value;
+            $tax_component_id = $value->tax_component_id;
+
+
+        }
+        echo json_encode(array("result" => $employee_id));
     }
 
     public function set_periode() {
