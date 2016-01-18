@@ -1,106 +1,131 @@
-<div>
-<table width="100%">
-<tr>
-	<td width="50%" style="color:#0000BB; "><span style="font-weight: bold; font-size: 14pt;">PT. Mitsubishi Chemical Indonesia</span></td>
-	<td width="50%" style="text-align: right;">Payslip No.<br /><span style="font-weight: bold; font-size: 12pt;">0012345</span></td>
-</tr></table>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style type="text/css">
+<!--
+-->
+</style>
+</head>
+<body>
+  <div style="float: left; width: 50%;">PT Mitsubishi Chemical Indonesia</div><div style="float: right; width: 50%; text-align:right;">Slip Gaji</div>
+  <hr style="width:100%">
+  <div style="float: right; width: 50%; text-align:right; font-size:12px">Period <?php echo $period ?></div>
+<br/><p></p>
+<table width="50%" border="0.0">
+  <tbody>
+    <tr>
+      <td width="56%">Name</td>
+      <td width="4%">:</td>
+      <td width="40%">Tes</td>
+    </tr>
+    <tr>
+      <td>Position</td>
+      <td>:</td>
+      <td>Tes</td>
+    </tr>
+    <tr>
+      <td>Section</td>
+      <td>:</td>
+      <td>Tes</td>
+    </tr>
+  </tbody>
+</table>
+<hr style="width:100%">
+<table width="100%" border="0.0">
+    <tr>
+      <th colspan="2">INCOME</th>
+	<hr style="width:100%">
+      <th>&nbsp;</th>
+	<hr style="width:100%">
+      <th colspan="2">DEDUCTION</th>
+	<hr style="width:100%">
+    </tr>
+    <tr class="oddrow">
+		<td>
+		<?php foreach($income as $in):?>
+			<p><?php echo $in->component?></p><br/>
+		<?php endforeach?>
+		</td>
+		<td align="right">
+		<?php $tincome = 0;foreach($income as $in):?>
+			<p><?php echo $in->value;$tincome+=$in->value;?></p><br/>
+		<?php endforeach;?>
+		</td>
+		<td></td>
+		<td>
+		<?php foreach($deduction as $de):?>
+			<p><?php echo $de->component?></p><br/>
+		<?php endforeach;?>
+		</td>
+		<td align="right">
+			<?php $tdeduction=0;foreach($deduction as $de):?>
+			<p><?php echo $de->value;$tdeduction+=$de->value;?></p><br/>
+		<?php endforeach;?>
+		</td>
+	</tr>
+
+	<!--
+	<td>
+		<?php foreach($income as $in):?>
+		    <tr>
+		      <td width="30%">gaji</td>
+		      <td width="15%" align="right"><?php echo $in->value?></td>
+		    </tr>
+		<?php endforeach;?>
+	</td>
+	<td>
+		<?php foreach($deduction as $de):?>
+			<tr>
+		    	<td width="30%">potongan</td>
+		    	<td width="15%" align="right"><?php echo $de->value?></td>
+		    </tr>
+		<?php endforeach;?>
+	</td>
+	-->
+</table>
+
+	<hr style="width:100%">
+<br/>
+  <table width="100%" border="0.0">
+    <tbody>
+    <tr >
+      <td width="30%" height="30">Total Penerimaan</td>
+      <td width="15%" align="right"><?php echo $tincome?></td>
+      <td width="10%">&nbsp;</td>
+      <td width="30%">Total Potongan</td>
+      <td width="15%" align="right"><?php echo $tdeduction?></td>
+    </tr>
+    <tr >
+	    <td width="30%">Take Home Pay</td>
+      <td width="15%" align="right" style="border:1"><?php echo $tincome-$tdeduction?></td>
+      <td width="10%">&nbsp;</td>
+      <td width="30%"></td>
+      <td width="15%" align="right"></td>
+    </tr>
+    </tbody>
+  </table>
+
+<div style="float: left; width: 50%; margin-top: 50px; text-align:center; font-size:12px">
+Disetujui
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+HRD
 </div>
-<div>
-<table>
-<tr>
-	<td>Name</td>
-	<td>John Doe</td>
-</tr>
-<tr>
-	<td>Division</td>
-	<td>HR</td>
-</tr>
-<tr>
-	<td>Period</td>
-	<td>Januari 2016</td>
-</tr>
-</table>
+
+<div style="float: right; width: 50%; text-align:center; font-size:12px">
+	Diterima Oleh
+	<p></p>
+	<p></p>
+	<p></p>
+	<p></p>
+	<p></p>
+	<p></p>
+	Tes
 </div>
-<div>
-<table width="100%;" style="border-collapse: collapse;">
-<tr style="border-top:1px solid #000000;border-bottom:1px solid #000000;">
-<td>INCOME</td>
-<td>DEDUCTION</td>
-</tr>
-<tr>
-<td>
-<table width="100%;">
-	<tr>
-		<td>Sallary</td>
-		<td>5.000.000</td>
-	</tr>
-	<tr>
-		<td>Meal</td>
-		<td>500.000</td>
-	</tr>
-</table>
-</td>
-<td>
-<table width="100%;">
-	<tr>
-		<td>Income Tax</td>
-		<td>50.000</td>
-	</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>
-<table width="100%;">
-	<tr>
-		<td>Total</td>
-		<td>5.000.000</td>
-	</tr>
-</table>
-</td>
-<td>
-<table width="100%;">
-	<tr>
-		<td>Total</td>
-		<td>50.000</td>
-	</tr>
-</table>
-</td>
-</tr>
-<tr>
-<td>
-<table width="100%;">
-	<tr>
-		<td>Take Home Pay</td>
-		<td><span style="font-weight:bold;">5.500.000</span></td>
-	</tr>
-</table>
-</td>
-<td>
-</td>
-</tr>
-<tr>
-<td>
-</td>
-<td>
-	<table>
-		<tr>
-			<td>Approval,</td>
-			<td>Accepted,</td>
-		</tr>
-		<tr style="height:50px;">
-			<td> </td>
-			<td> </td>
-		</tr>
-		<tr>
-			<td>John Doe</td>
-			<td>John Doe</td>
-		</tr>
-		<tr>
-			<td>HRD Manager</td>
-		</tr>
-	</table>
-</td>
-</tr>
-</table>
-</div>
+</body>
+</html>
