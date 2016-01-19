@@ -14,21 +14,31 @@
 <br/><p></p>
 <table width="50%" border="0.0">
   <tbody>
+  	<?php 
+  	if ($employee_detail->num_rows() > 0) { 
+  		$row = $employee_detail->row();
+  	?>
     <tr>
       <td width="56%">Name</td>
       <td width="4%">:</td>
-      <td width="40%">Tes</td>
+      <td width="40%"><?php echo $row->person_nm ?></td>
+    </tr>
+    <tr>
+      <td width="56%">NIK</td>
+      <td width="4%">:</td>
+      <td width="40%"><?php echo $row->user_nm ?></td>
     </tr>
     <tr>
       <td>Position</td>
       <td>:</td>
-      <td>Tes</td>
+      <td><?php echo $row->job_nm." (".$row->job_abbr.")" ?></td>
     </tr>
     <tr>
       <td>Section</td>
       <td>:</td>
-      <td>Tes</td>
+      <td><?php echo $row->org_nm ?></td>
     </tr>
+    <?php } ?>
   </tbody>
 </table>
 <hr style="width:100%">

@@ -38,7 +38,8 @@ class Payroll_master extends MX_Controller {
             $row[] = $no;
             $row[] = $payroll->user_nm;
             $row[] = $payroll->person_nm;
-
+            $row[] = $payroll->job_abbr;
+            $row[] = $payroll->org_nm;
 
             //add html for action
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="Edit" onclick="edit_user('."'".$payroll->employee_id."'".')"><i class="fa fa-pencil"></i></a>';
