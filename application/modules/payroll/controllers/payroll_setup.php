@@ -44,8 +44,8 @@ class Payroll_setup extends MX_Controller {
         
        foreach ($query as $row => $value) {
            //print_mz($value->employee_id);
-        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$value->employee_id, 'payroll_period_id'=>'where/'.$period_id));
-            $q = $this->payroll->get_monthly_income($period_id,$value->employee_id)->result();//print_mz($q);
+        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$value->employee_id, 'payroll_period_id'=>'where/'.$period_id));//print_mz($monthly_income_id);
+            $q = $this->payroll->get_monthly_income($monthly_income_id)->result();
            //lastq();
             foreach ($q as $rowx => $valuex) {
                 //print_r('*'.$valuex->tax_component_id);

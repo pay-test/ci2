@@ -98,14 +98,14 @@ class Monthly_income extends MX_Controller {
         //print_mz($component);
         
         for($i=0;$i<sizeof($component['component_id']);$i++):
-            $component_num_rows = getAll('payroll_monthly_income_component', array('id'=>'where/'.$component['component_id'][$i],'payroll_monthly_income_id'=>'where/'.$monthly_income_id))->num_rows;
+            $component_num_rows = getAll('payroll_monthly_income_component', array('payroll_component_id'=>'where/'.$component['component_id'][$i],'payroll_monthly_income_id'=>'where/'.$monthly_income_id))->num_rows;
             $data2 = array(
                     'payroll_monthly_income_id'=>$monthly_income_id,
                     'payroll_component_id' =>$component['component_id'][$i],
                     'value' =>$component['value'][$i],
                 );
-            if($component_num_rows>0)$this->db->where('id', $component['monthly_component_id'][$i])->update('payroll_monthly_income_component', $data2);
-                else $this->db->insert('payroll_monthly_income_component', $data2);
+            if($component_num_rows>0){$this->db->where('id', $component['monthly_component_id'][$i])->update('payroll_monthly_income_component', $data2);}
+                else{$this->db->insert('payroll_monthly_income_component', $data2);}
                 //print_r($this->db->last_query());
         endfor;
         echo json_encode(array("status" => TRUE));
