@@ -17,11 +17,12 @@
   	<?php 
   	if ($employee_detail->num_rows() > 0) { 
   		$row = $employee_detail->row();
+  		$employee_nm = $row->person_nm;
   	?>
     <tr>
       <td width="56%">Name</td>
       <td width="4%">:</td>
-      <td width="40%"><?php echo $row->person_nm ?></td>
+      <td width="40%"><?php echo $employee_nm ?></td>
     </tr>
     <tr>
       <td width="56%">NIK</td>
@@ -135,7 +136,7 @@ HRD
 	<p></p>
 	<p></p>
 	<p></p>
-	Tes
+	<?php echo $employee_nm ?>
 </div>
 </body>
 </html>
