@@ -4,6 +4,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Payroll_setup_model extends CI_Model {
 
 	var $table = 'payroll_period';
+	var $table_join1 = 'payroll_monthly_income';
+	var $table_join2 = 'payroll_monthly_income_component';
+	var $table_join3 = 'payroll_component';
+
 	var $column = array('title','code','component_type_id','tax_component_id'); //set column field database for order and search
 	var $order = array('id' => 'asc'); // default order 
 
@@ -15,18 +19,20 @@ class Payroll_setup_model extends CI_Model {
 
 	//custom model
 
-	function get_monthly_income($period_id = 0,$employee_id = 0) {
-		$this->db->select('
-			payroll_monthly_income.employee_id,
-			payroll_component.id,
-			payroll_component.title,
-			payroll_monthly_income_component.value,
-			payroll_component.tax_component_id');
-		$this->db->from('payroll_monthly_income_component');
-		$this->db->join('payroll_monthly_income', 'payroll_monthly_income.id = payroll_monthly_income_component.payroll_monthly_income_id', 'left');
-		$this->db->join('payroll_component', 'payroll_component.id = payroll_monthly_income_component.payroll_component_id', 'left');
-		$this->db->where('payroll_monthly_income.payroll_period_id', $period_id);
-		$this->db->where('payroll_monthly_income.employee_id', $employee_id);
+	function get_monthly_income($monthly_id) {
+
+		$this->db->select(
+			$this->table_join1.'.employee_id as employee_id,
+			'.$this->table_join2.'.value as value,
+			'.$this->table_join3.'.id as component_id,
+			'.$this->table_join3.'.component_type_id as component_type_id,
+			');
+
+		$this->db->from($this->table_join1);
+		$this->db->join($this->table_join2, $this->table_join1.'.id = '.$this->table_join2.'.payroll_monthly_income_id', 'left');
+		$this->db->join($this->table_join3, $this->table_join2.'.payroll_component_id = '.$this->table_join3.'.id', 'left');
+		$this->db->where('payroll_monthly_income_id', $monthly_id);
+
 		$result = $this->db->get();
 
 		return $result;
