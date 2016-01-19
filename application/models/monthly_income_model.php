@@ -209,4 +209,25 @@ class Monthly_income_model extends CI_Model {
 		$this->db->order_by($this->table_join3.'.title','asc');
 		return $this->db->get($this->table_join3);
 	}
+
+	public function get_employee_detail($employee_id) {
+		$this->db->select(
+			$this->table.'.employee_id as employee_id,
+			'.$this->table_join1.'.user_nm as user_nm,
+			'.$this->table_join2.'.person_nm as person_nm,
+			hris_jobs.job_nm as job_nm,
+			hris_jobs.job_abbr as job_abbr,
+			hris_orgs.org_nm as org_nm
+			');
+
+		$this->db->from($this->table);
+		$this->db->join('hris_persons', 'hris_persons.person_id = '.$this->table.'.person_id', 'left');
+		$this->db->join('hris_users', 'hris_users'.'.person_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join('hris_employee_job', 'hris_employee_job.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join('hris_jobs', 'hris_jobs.job_id = hris_employee_job.job_id', 'left');
+		$this->db->join('hris_orgs', 'hris_orgs.org_id = hris_jobs.org_id', 'left');
+		$this->db->where('hris_employee.employee_id', $employee_id);
+
+		return $this->db->get();
+	}
 }

@@ -25,11 +25,16 @@ class Payroll_master_model extends CI_Model {
 			$this->table.'.employee_id as employee_id,
 			'.$this->table_join1.'.user_nm as user_nm,
 			'.$this->table_join2.'.person_nm as person_nm,
+			hris_jobs.job_abbr as job_abbr,
+			hris_orgs.org_nm as org_nm
 			');
 
 		$this->db->from($this->table);
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join('hris_employee_job', 'hris_employee_job.employee_id = '.$this->table.'.employee_id', 'left');
+		$this->db->join('hris_jobs', 'hris_jobs.job_id = hris_employee_job.job_id', 'left');
+		$this->db->join('hris_orgs', 'hris_orgs.org_id = hris_jobs.org_id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 

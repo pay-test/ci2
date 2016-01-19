@@ -33,8 +33,10 @@
                     <thead>
                       <tr>
                         <th style="width:5%">No</th>
-                        <th style="width:25%">NIK</th>
+                        <th style="width:20%">NIK</th>
                         <th style="width:25%">Name</th>
+                        <th style="width:20%">Position</th>
+                        <th style="width:20%">Section</th>
                         <th style="width:10%">Action</th>
                       </tr>
                     </thead>

@@ -145,6 +145,9 @@ class Monthly_income extends MX_Controller {
     public function print_slip($id, $period_id)
     {
         $this->data['employee_id'] = $id;
+        //render employee detail
+        $this->data['employee_detail'] = $this->payroll->get_employee_detail($id);
+        //lastq();
         $this->data['monthly_income'] = $this->payroll->get_by_id($id, $period_id);
         $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id));
         

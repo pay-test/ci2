@@ -82,6 +82,7 @@
                                 <th style="width:5%">No</th>
                                 <th style="width:25%">Name</th>
                                 <th style="width:25%">Code</th>
+                                <th style="width:25%">Type</th>
                                 <th style="width:10%">Include</th>
                                 <th style="width:10%">THP</th>
                               </tr>
@@ -93,6 +94,14 @@
                                   <td><?php echo $i; ?></td>
                                   <td><?php echo $pcomp['title']; ?></td>
                                   <td><?php echo $pcomp['code']; ?></td>
+                                  <?php if ($pcomp['component_type_id'] == 1) {
+                                    $component_t = "Income";
+                                  }elseif ($pcomp['component_type_id'] == 2) {
+                                    $component_t = "Deduction";
+                                  }else{
+                                    $component_t = "All";
+                                  } ?>
+                                  <td><?php echo $component_t; ?></td>
                                   <td class="td_p_component">
                                     <div class="checkbox check-success">
                                       <input type="checkbox" id="checkbox_comp<?php echo $i; ?>" value="<?php echo $pcomp['id']; ?>" name="p_component[]">
