@@ -40,7 +40,7 @@ $(document).ready(function() {
         dataType: "JSON",
         success: function(data)
         {
-
+            alert('Process Finished');
         },
         error: function (jqXHR, textStatus, errorThrown)
         {

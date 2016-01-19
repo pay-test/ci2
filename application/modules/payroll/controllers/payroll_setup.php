@@ -36,35 +36,59 @@ class Payroll_setup extends MX_Controller {
     public function process() {
         $i = 0;
         $employee_id = "";
-        $tax_column_1 = 0;
-        $tax_column_2 = 0;
+        $income = 0;
+        $deduction = 0;
         $period_id = $this->input->post('period');
 
-        $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();
+        $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         
        foreach ($query as $row => $value) {
            //print_mz($value->employee_id);
-            $q = $this->payroll->get_monthly_income($period_id,$value->employee_id)->result();
+        $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$value->employee_id, 'payroll_period_id'=>'where/'.$period_id));
+            $q = $this->payroll->get_monthly_income($period_id,$value->employee_id)->result();//print_mz($q);
            //lastq();
             foreach ($q as $rowx => $valuex) {
-                //print_mz($valuex->id);
-                if ($valuex->tax_component_id == 1) {
-                    $tax_column_1 = $tax_column_1 + $valuex->value;
+                //print_r('*'.$valuex->tax_component_id);
+                
+                if ($valuex->component_type_id == 1) {
+                    //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
+                    $income = $income + $valuex->value;
+                    //print_r($income."<br>");
+                }
+
+                if ($valuex->component_type_id == 2) {
+                    //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
+                    $deduction = $deduction + $valuex->value;
+                    //print_r($income."<br>");
                 }
             }
-            print_mz($tax_column_1);
+            $ptkp = getValue('value',' payroll_ptkp', array('title'=>'where/'.'TK/0'));
+            //$income_bruto = $income - $deduction;
+            $biaya_jabatan= $income * (5/100);
+            $income_netto = $income - $deduction - $biaya_jabatan;
+            $income_netto_year = round($income_netto * 12);//echo $income_netto_year;
+            $income_netto_year_pembulatan = substr_replace($income_netto_year, '000', -3);
+            //print_mz($income_netto_year_pembulatan);
+            $pkp = $income_netto_year_pembulatan - $ptkp;
+            $pph_tahun = $pkp * (5/100);
+            $pph_bulan = round($pph_tahun / 12);
+            $pph_component_id = 55;
+            $pph_num_rows = GetAllSelect('payroll_monthly_income_component','payroll_component_id', array('payroll_monthly_income_id' => 'where/'.$monthly_income_id, 'payroll_component_id'=>'where/'.$pph_component_id))->num_rows();
+            $data = array('payroll_monthly_income_id' => $monthly_income_id,
+                          'payroll_component_id' => $pph_component_id,
+                          'value' => $pph_bulan,
+             );
+            if($pph_num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $pph_component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);} 
        }
-
+       
         $query = $this->payroll->get_monthly_income($period_id)->result(); //get all monthly income on the same period
         foreach ($query as $row => $value) {
             $employee_id = $value->employee_id;
             $component_id = $value->component_id;
             $component_value = $value->value;
-            $tax_component_id = $value->tax_component_id;
-
-
+            $tax_component_id = $value->component_type_id;
         }
-        echo json_encode(array("result" => $employee_id));
+        echo json_encode(array("result" => TRUE));
     }
 
     public function set_periode() {
