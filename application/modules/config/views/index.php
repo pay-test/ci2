@@ -14,11 +14,11 @@
       <li>
         <p>YOU ARE HERE</p>
       </li>
-      <li><a href="<?php echo base_url('employee')?>" class="active"><?php echo ucwords(lang('employee'))?></a> </li>
+      <li><a href="<?php echo base_url('employee')?>" class="active"><?php echo ucwords(lang('config'))?></a> </li>
     </ul>
-    <div class="page-title"> <i class="icon-custom-left" onclick="javascript:window.location='<?php echo site_url("dashboard");?>'"></i>
+    <!--<div class="page-title"> <i class="icon-custom-left" onclick="javascript:window.location='<?php echo site_url("dashboard");?>'"></i>
       <h3><span class="semi-bold"><?php echo ucwords(lang('employee'))?></span></h3>
-    </div>
+    </div>-->
     <div class="row-fluid">
       <div class="span12">
           <div class="col-md-12">
@@ -31,4 +31,4 @@
   </div>
 </div>
 
-<script type="text/javascript">window.onload = function(){loadEmp();};</script>
+<script type="text/javascript">window.onload = function(){loadConfig();};</script>

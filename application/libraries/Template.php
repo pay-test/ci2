@@ -168,15 +168,18 @@ class Template {
         $data['person_nm'] = getValue('person_nm', 'hris_persons', array('person_id'=>'where/'.$person_id));
 
         $menu = $this->_ci->uri->segment(1, 0);
-        $data['active1']= $data['active2']=$data['active3']="";
+        $data['active']=$data['active1']=$data['active2']=$data['active3']="";
         switch ($menu) {
             case 'dashboard':
+                $data['active'] = "class='active'";
+                break;
+            case 'employee':
                 $data['active1'] = "class='active'";
                 break;
             case 'attendance':
                 $data['active2'] = "class='active'";
                 break;
-            case 'payroll':
+            case 'config':
                 $data['active3'] = "class='active'";
                 break;
             default:

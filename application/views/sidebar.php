@@ -10,9 +10,7 @@
             </div>
             <div class="user-info">
               <div class="greeting">Welcome</div>
-              <?php 
-              ?>
-              <div class="username"><?php echo $person_nm ?><span class="semi-bold"></span></div>
+              <div class="username">Administrator<span class="semi-bold"></span></div>
               <div class="status">Status
                 <a href="#">
                   <div class="status-icon green"></div>Online</a>
@@ -23,14 +21,20 @@
           <!-- BEGIN SIDEBAR MENU -->
           <ul>
             <!-- BEGIN SELECTED LINK -->
-            <li <?php echo $active1 ?>>
+            <li <?php echo $active;?>>
               <a href="<?php echo base_url()?>">
                 <i class="icon-custom-home"></i>
                 <span class="title">Dashboard</span>
                 <span class="selected"></span>
               </a>
             </li>
-            <li <?php echo $active2?>>
+            <li <?php echo $active1;?>>
+              <a href="<?php echo base_url('employee')?>">
+                <i class="fa fa-user"></i>
+                <span class="title">Employee</span>
+              </a>
+            </li>
+            <li <?php echo $active2;?>>
               <a href="<?php echo base_url('attendance')?>">
                 <i class="fa fa-sign-in"></i>
                 <span class="title">Attendance</span>
@@ -46,18 +50,11 @@
               </ul>
               -->
             </li>
-             <li <?php echo $active3 ?>>
-              <a href="javascript:;">
-                <i class="fa fa-usd"></i>
-                <span class="title">Payroll</span>
-                <span class="arrow"></span>
+            <li <?php echo $active3;?>>
+              <a href="<?php echo base_url('config')?>">
+                <i class="fa fa-puzzle-piece"></i>
+                <span class="title">Config</span>
               </a>
-              <ul class="sub-menu">
-                <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
-                <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
-                <li><a href="<?php echo base_url('payroll/monthly_income')?>">Monthly Income</a></li>
-                <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Setup</a></li>
-              </ul>
             </li>
             <!-- END SELECTED LINK -->
           </ul>

@@ -1,3 +1,6 @@
+<style>
+.form-label{width:100px;}
+</style>
 <div class="grid simple transparent">
 	<div class="grid-title">
 		<h4>Edit <span class="semi-bold">Employee</span></h4></a>
@@ -12,7 +15,7 @@
         <div class="row">
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
-							<label class="form-label">Nama</label>
+							<label class="form-label">Name</label>
 							<?php
 								echo form_hidden("id", $val['person_id']);
 								$nm_f = "person_nm";
@@ -39,6 +42,24 @@
             </div>
             
             <div class="form-group">
+              <label class="form-label">Group Active</label>
+              <div id="datepicker_start" class="input-append date success no-padding">
+              	<input type="text" class="tgl form-control" value="<?php echo $val['employee_grup_active'];?>" name="employee_grup_active">
+                <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="grid simple">
+      <div class="grid-body no-border">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
 							<label class="form-label">Gender</label>
 							<?php 
 								$nm_f = "adm_gender_cd";
@@ -53,18 +74,8 @@
 								echo form_radio($nm_f, 'f', $chk_2)." Female";
 							?>
 						</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-6">
-    <div class="grid simple">
-      <div class="grid-body no-border">
-        <div class="row">
-          <div class="col-md-12 col-sm-12 col-xs-12">
-            <div class="form-group">
+						
+						<div class="form-group">
 							<label class="form-label">Place of Birth</label>
 							<?php 
 								$nm_f = "birthplace";

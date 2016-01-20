@@ -1,187 +1,165 @@
-<!-- BEGIN PAGE CONTAINER-->
-<div class="page-content">
-    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
-	<div id="portlet-config" class="modal hide">
-      <div class="modal-header">
-        <button data-dismiss="modal" class="close" type="button"></button>
-        <h3>Widget Settings</h3>
-      </div>
-      <div class="modal-body"> Widget settings form goes here </div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="content">
-      <ul class="breadcrumb">
-        <li>
-          <p>YOU ARE HERE</p>
-        </li>
-        <li><a href="<?php echo base_url('absensi/kehadiran')?>">Kehadiran</a> </li>
-        <li><a href="<?php echo base_url($this->uri->uri_string())?>" class="active">Ubah</a> </li>
-      </ul>
-      <div class="page-title"> <i class="icon-custom-left" onclick="javascript:window.location='<?php echo site_url("dashboard");?>'"></i>
-        <h3><span class="semi-bold">Ubah Kehadiran</span></h3>
-      </div>
-      	<div class="row-fluid">
-        	<div class="span12">
-          		<div class="grid simple ">
-            		<div class="grid-body ">
-
-            			<div class="row">
-				            <div class="col-md-6">
-				              <div class="grid simple">
-				                <div class="grid-title no-border">
-				                  <h4><span class="semi-bold">Kehadiran</span></h4>
-				                </div>
-				                <div class="grid-body no-border">
-				                  <div class="row">
-				                    <div class="col-md-12 col-sm-12 col-xs-12">
-				                      <div class="form-group">
-				                        <label class="form-label">Nama Karyawan</label>
-				                        <select class="select2" style="width:100%">
-		                                    <option value="0">-- Pilih Karyawan --</option>
-		                                    <option value="0">Tes</option>
-		                                    <option value="0">Tes 2</option>
-		                                </select>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Tanggal</label>
-				                        <div class="row">
-				                        	<div class="col-md-12">
-						                        <div id="datepicker_start" class="input-append date success no-padding">
-			                                      <input type="text" class="form-control" name="start_cuti" required>
-			                                      <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
-			                                    </div>
-			                                </div>
-		                                </div>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Absensi</label>
-				                        <div class="row">
-						                    <div class="col-md-12">
-						                      <div class="radio">
-						                      	<?php for($i=0;$i<14;$i++):?>
-						                        <input id="<?php echo $absensi[$i]?>" type="radio" name="absen" value="<?php echo $absensi[$i]?>" checked="checked">
-						                        <label for="<?php echo $absensi[$i]?>"><?php echo $absensi[$i]?></label>
-						                    	<?php endfor?>
-						                      </div>
-						                    </div>
-						                </div>
-				                      </div>
-				                      <div class="form-group">
-			                      		<div class="row">
-					                    	<div class="col-md-12">
-					                        	<label class="form-label">Scan Masuk</label>
-							                    <div class="input-group transparent clockpicker col-md-5">
-							                      <input type="text" class="form-control" placeholder="Pick a time">
-							                      <span class="input-group-addon ">
-							                       <i class="fa fa-clock-o"></i>
-							                      </span>
-							                    </div>
-					                        	<label class="form-label">Scan Pulang</label>
-							                    <div class="input-group transparent clockpicker col-md-5">
-							                      <input type="text" class="form-control" placeholder="Pick a time">
-							                      <span class="input-group-addon ">
-							                       <i class="fa fa-clock-o"></i>
-							                      </span>
-							                    </div>
-					                    	</div>
-					                    </div>
-				                      </div>
-				                      <div class="form-group">
-			                      		<div class="row">
-					                    	<div class="col-md-12">
-					                        	<label class="form-label">Pulang Cepat</label>
-							                    <div class="input-group transparent clockpicker col-md-5">
-							                      <input type="text" class="form-control" placeholder="Pick a time">
-							                      <span class="input-group-addon ">
-							                       <i class="fa fa-clock-o"></i>
-							                      </span>
-							                    </div>
-					                    	</div>
-					                    </div>
-				                      </div>
-				                    </div>
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-
-				            <div class="col-md-6">
-				              <div class="grid simple">
-				                <div class="grid-title no-border">
-				                  <h4><span class="semi-bold">Overtime</span></h4>
-				                </div>
-				                <div class="grid-body no-border">
-				                  <div class="row">
-				                    <div class="col-md-12 col-sm-12 col-xs-12">
-				                      <div class="form-group">
-				                        <label class="form-label">OT Incidental</label>
-				                        <select class="select2" style="width:100%">
-		                                    <option value="0">-- Pilih OT Incidental --</option>
-		                                    <option value="0">Tes</option>
-		                                    <option value="0">Tes 2</option>
-		                                </select>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Acc OT Incidental</label>
-				                        <div class="controls">
-				                          <input type="password" class="form-control">
-				                        </div>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">OT Kelebihan Jam</label>
-				                        <select class="select2" style="width:100%">
-		                                    <option value="0">-- Pilih OT Kelebihan Jam --</option>
-		                                    <option value="0">Tes</option>
-		                                    <option value="0">Tes 2</option>
-		                                </select>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Acc OT Kelebihan Jam</label>
-				                        <div class="controls">
-				                          <input type="text" placeholder="0" class="form-control">
-				                        </div>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Tunjangan Hari Kerja</label>
-				                        <select class="select2" style="width:100%">
-		                                    <option value="0">-- Pilih Tunjangan Hari Kerja --</option>
-		                                    <option value="0">Tes</option>
-		                                    <option value="0">Tes 2</option>
-		                                </select>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Acc Tunjangan Hari Kerja</label>
-				                        <div class="controls">
-				                          <input type="text" placeholder="0" class="form-control">
-				                        </div>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Alasan Overtime</label>
-				                        <select class="select2" style="width:100%">
-		                                    <option value="0">-- Pilih Alasan Overtime --</option>
-		                                    <option value="0">Tes</option>
-		                                    <option value="0">Tes 2</option>
-		                                </select>
-				                      </div>
-				                      <div class="form-group">
-				                        <label class="form-label">Keterangan</label>
-				                        <textarea class="form-control"></textarea>
-				                      </div>
-				                    </div>
-				                  </div>
-				                </div>
-				              </div>
-				            </div>
-				          </div>
-              			  <div class="form-actions">
-			                <div class="pull-right">
-			                	<button class="btn btn-success btn-cons" type="submit"><i class="icon-ok"></i> Ubah</button>
-			                    <a href="<?php echo site_url('absensi/kehadiran') ?>"><button class="btn btn-white btn-cons" type="button"> Batal</button></a>
-			                </div>
-			              </div>
-              			</div>
-        		</div>
-        	</div>
-    	</div>
-    </div>
+<div class="grid simple transparent">
+	<div class="grid-title">
+		<h4>Edit <span class="semi-bold">Attendance</span></h4></a>
+	</div>
 </div>
+
+<form id="form_edit_att" action="attendance/update" method="post" enctype="multipart/form-data">
+<!--<table class="table table-striped">-->
+<div class="row">
+  <div class="col-md-6">
+    <div class="grid simple">
+      <div class="grid-title no-border">
+        <h4><span class="semi-bold">Attendance</span></h4>
+      </div>
+      <div class="grid-body no-border">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <?php 
+              echo form_hidden("id", $val['id']);
+              echo form_hidden("id_employee", $val['id_employee']);
+              echo GetValue("person_nm", "hris_persons", array("person_id"=>"where/".$val['id_employee']));?>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <div class="row">
+              	<div class="col-md-12">
+                  <div id="datepicker_start" class="input-append date success no-padding">
+                  	<input type="text" class="tgl form-control" value="<?php echo $tgl;?>" name="tgl" required>
+                    <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Absensi</label>
+              <div class="row">
+              <div class="col-md-12">
+                <div class="radio">
+                	<?php for($i=0;$i<count($absensi);$i++):
+                	$chk = $val[$absensi[$i][0]]==1 ? "checked='checked'" : ""; ?>
+                  <input id="<?php echo $absensi[$i][0]?>" type="radio" name="absen" value="<?php echo $absensi[$i][0]?>" <?php echo $chk;?>>
+                  <label for="<?php echo $absensi[$i][0]?>"><?php echo $absensi[$i][1]?></label>
+              	<?php endfor?>
+                </div>
+              </div>
+          </div>
+            </div>
+            <div class="form-group">
+          		<div class="row">
+            	<div class="col-md-12">
+                	<label class="form-label">Scan In</label>
+                <div class="input-group transparent clockpicker col-md-5">
+                  <input type="text" class="form-control" placeholder="Pick a time" name="scan_masuk" value="<?php echo $val['scan_masuk'];?>">
+                  <span class="input-group-addon ">
+                   <i class="fa fa-clock-o"></i>
+                  </span>
+                </div>
+                	<label class="form-label">Scan Out</label>
+                <div class="input-group transparent clockpicker col-md-5">
+                  <input type="text" class="form-control" placeholder="Pick a time" name="scan_pulang" value="<?php echo $val['scan_pulang'];?>">
+                  <span class="input-group-addon ">
+                   <i class="fa fa-clock-o"></i>
+                  </span>
+                </div>
+            	</div>
+            </div>
+            </div>
+            <!--<div class="form-group">
+          		<div class="row">
+            	<div class="col-md-12">
+                	<label class="form-label">Pulang Cepat</label>
+                <div class="input-group transparent clockpicker col-md-5">
+                  <input type="text" class="form-control" placeholder="Pick a time">
+                  <span class="input-group-addon ">
+                   <i class="fa fa-clock-o"></i>
+                  </span>
+                </div>
+            	</div>
+            </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="grid simple">
+      <div class="grid-title no-border">
+        <h4><span class="semi-bold">Overtime</span></h4>
+      </div>
+      <div class="grid-body no-border">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="form-group" style="display:none;">
+              <label class="form-label">OT Incidental</label>
+              <?php
+              $nm_f = "ot_incidental";
+              echo form_dropdown($nm_f, $opt_lembur, isset($val[$nm_f]) ? $val[$nm_f] : 0, "id='".$nm_f."' class='span2 ot_inc'");
+              ?>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hour SUM</label>
+              <div class="controls">
+                <input name="acc_ot_incidental" id="acc_ot_incidental" value="<?php echo $val['acc_ot_incidental'];?>" class="form-control">
+              </div>
+            </div>
+            <!--<div class="form-group">
+              <label class="form-label">OT Kelebihan Jam</label>
+              <select class="select2" style="width:100%">
+                      <option value="0">-- Pilih OT Kelebihan Jam --</option>
+                      <option value="0">Tes</option>
+                      <option value="0">Tes 2</option>
+                  </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Acc OT Kelebihan Jam</label>
+              <div class="controls">
+                <input type="text" placeholder="0" class="form-control">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tunjangan Hari Kerja</label>
+              <select class="select2" style="width:100%">
+                      <option value="0">-- Pilih Tunjangan Hari Kerja --</option>
+                      <option value="0">Tes</option>
+                      <option value="0">Tes 2</option>
+                  </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Acc Tunjangan Hari Kerja</label>
+              <div class="controls">
+                <input type="text" placeholder="0" class="form-control">
+              </div>
+            </div>-->
+            <div class="form-group">
+              <label class="form-label">Reason</label>
+              <select name="alasan_lembur" class="select2" style="width:100%">
+                <option value="0">-- Select Reason --</option>
+                <option value="General Work" <?php if($val['ovt_reason']=="General Work") echo "selected";?>>General Work</option>
+                <option value="SDM/PSDM/TSDM" <?php if($val['ovt_reason']=="SDM/PSDM/TSDM") echo "selected";?>>SDM/PSDM/TSDM</option>
+                <option value="Mengganti orang cuti" <?php if($val['ovt_reason']=="Mengganti orang cuti") echo "selected";?>>Mengganti orang cuti</option>
+                <option value="OT Auto" <?php if($val['ovt_reason']=="OT Auto") echo "selected";?>>OT Auto</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea name="ovt_detail_reason" class="form-control"><?php echo $val['ovt_detail_reason'];?></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="clearfix_button pull-right">
+		<button type="submit" class="btn btn-success btn-submit-att">&nbsp;Submit</button>
+		<button type="submit" class="btn btn-cancel-att">&nbsp;Cancel</button>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+	</div>
+</div>
+</form>
+
+<script src="<?php echo assets_url('modules/js/attendance.js')?>"></script>
