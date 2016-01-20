@@ -35,7 +35,7 @@ class Payroll_component_model extends CI_Model {
 
 	private function _get_datatables_query()
 	{
-		
+		$this->db->where('is_active', 1);
 		$this->db->from($this->table);
 
 		$i = 0;
@@ -83,6 +83,7 @@ class Payroll_component_model extends CI_Model {
 
 	public function count_all()
 	{
+		$this->db->where('is_active', 1);
 		$this->db->from($this->table);
 		return $this->db->count_all_results();
 	}

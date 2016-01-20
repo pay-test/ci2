@@ -24,7 +24,8 @@ class Monthly_income extends MX_Controller {
          $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
         $this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
-        $this->data['component'] = getAll('payroll_component')->result();
+        $filter = array('is_deleted' => 'where/0', 'is_active'=> 'where/1');
+        $this->data['component'] = getAll('payroll_component', $filter)->result();
         $this->_render_page($this->filename, $this->data);
     }
 
@@ -93,7 +94,7 @@ class Monthly_income extends MX_Controller {
         
         $component = array('monthly_component_id' => $this->input->post('monthly_component_id'),
                            'component_id' => $this->input->post('component_id'),
-                           'value' => $this->input->post('value'),
+                           'value' => str_replace(',', '', $this->input->post('value')),
                     );
         //print_mz($component);
         
@@ -191,6 +192,7 @@ class Monthly_income extends MX_Controller {
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
                     $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
+                    $this->template->add_js('assets/plugins/jquery-autonumeric/autoNumeric.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 

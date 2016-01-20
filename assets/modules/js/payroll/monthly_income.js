@@ -3,9 +3,11 @@ var table;
 
 $(document).ready(function() {
     $(".select2").select2();
+    $('.auto').autoNumeric('init');
     //datatables
     $('#btnAdd').on('click', function () {
         $(document).find("select.select2").select2();
+        $(document).find('.auto').autoNumeric('init');
         $('#btnRemove').show();
     });
 
@@ -20,7 +22,7 @@ $(document).ready(function() {
             "url": "monthly_income/ajax_list/",
             "type": "POST"
         },
-
+        "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r><'row'<'pull-left m-l-20'pi>>t",
         //Set column definition initialisation properties.
         "columnDefs": [
         { 

@@ -98,7 +98,7 @@ class Payroll_master extends MX_Controller {
         //$component_num_rows = getAll('payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id))->num_rows;
         $component = array('master_component_id' => $this->input->post('master_component_id'),
                            'component_id' => $this->input->post('component_id'),
-                           'value' => $this->input->post('value'),
+                           'value' => str_replace(',', '', $this->input->post('value')),
                     );
         //print_mz($component);
         
@@ -173,6 +173,7 @@ class Payroll_master extends MX_Controller {
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
                     $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
+                    $this->template->add_js('assets/plugins/jquery-autonumeric/autoNumeric.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 

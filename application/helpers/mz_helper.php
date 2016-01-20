@@ -818,7 +818,7 @@ if (!function_exists('GetMonth')){
 	{
 		$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Oct","Nov","Dec");
 		//$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Dec");
-		return $bln[$id];
+		return $bln[intval($id)];
 	}
 }
 
@@ -1442,21 +1442,32 @@ if(!function_exists('GetJumlahLembur')){
 	}
 }
 
-if (!function_exists('GetShift')){
-	function GetShift($val)
-	{
-		$q = array("1"=>"P", "2"=>"S", "3"=>"M", "off"=>"OFF");
-		
-		return $q[$val];
-	}
-}
-
 if (!function_exists('GetJumHari')){
 	function GetJumHari($bln, $thn)
 	{
 		$jml_hari = date("t", mktime(0, 0, 0, $bln, 1, $thn));
 		
 		return $jml_hari;
+	}
+}
+
+if (!function_exists('GetPeriod')){
+	function GetPeriod($param)
+	{
+		$exp = explode(" ", $param);
+		$bln = GetMonthIndex($exp[0]);
+		$tgl_start = GetValue("value", "kg_config", array("title"=> "where/att_start_period"));
+		$tgl_start = sprintf("%02d", $tgl_start);
+		$tgl_end = GetValue("value", "kg_config", array("title"=> "where/att_end_period"));
+		if($tgl_start >= $tgl_end) {
+			$start = date("Y-m-d", mktime(0, 0, 0, $bln-1, $tgl_start, $exp[1]));
+			$end = $exp[1]."-".$bln."-".$tgl_end;
+		} else {
+			$start = $exp[1]."-".$bln."-".$tgl_start;
+			$end = $exp[1]."-".$bln."-".$tgl_end;
+		}
+		
+		return $start."~".$end;
 	}
 }
 ?>

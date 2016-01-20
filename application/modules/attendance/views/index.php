@@ -14,17 +14,17 @@
       <li>
         <p>YOU ARE HERE</p>
       </li>
-      <li><a href="<?php echo base_url('absensi/attendance')?>" class="active"><?php echo ucwords(lang('attendance'))?></a> </li>
+      <li><a href="<?php echo base_url('attendance')?>" class="active"><?php echo ucwords(lang('attendance'))?></a> </li>
     </ul>
-    <div class="page-title"> <i class="icon-custom-left" onclick="javascript:window.location='<?php echo site_url("dashboard");?>'"></i>
+    <!--<div class="page-title"> <i class="icon-custom-left" onclick="javascript:window.location='<?php echo site_url("dashboard");?>'"></i>
       <h3><span class="semi-bold"><?php echo ucwords(lang('attendance'))?></span></h3>
-    </div>
+    </div>-->
     <div class="row-fluid">
       <div class="span12">
           <div class="col-md-12">
             <ul class="nav nav-tabs" role="tablist">
               <li class="active">
-                <a href="#" onclick="loadAttendance()" role="tab" data-toggle="tab"><?php echo lang('list_attendance')?></a>
+                <a href="#" onclick="loadAttendance()" role="tab" data-toggle="tab"><?php echo ucwords(lang('attendance'))?></a>
               </li>
               <li>
                 <a href="#" onclick="loadOvertime()" role="tab" data-toggle="tab"><?php echo  ucwords(lang('overtime'))?></a>

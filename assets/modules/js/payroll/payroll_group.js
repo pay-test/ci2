@@ -15,7 +15,7 @@ $(document).ready(function() {
             "url": "payroll_group/ajax_list/",
             "type": "POST"
         },
-
+        "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r><'row'<'pull-left m-l-20'pi>>t",
         //Set column definition initialisation properties.
         "columnDefs": [
         { 

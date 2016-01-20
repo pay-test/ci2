@@ -148,6 +148,6 @@
   cell1.innerHTML = "<select name='component_id[]' class='select2' style='width:100%'><?php foreach($component as $c):?><option value='<?php echo $c->id?>'><?php echo $c->title.' - '.$c->code?></option><?php endforeach;?></select>";  
   cell1.colSpan = 2;
   var cell3=row.insertCell(1);
-  cell3.innerHTML = "<input type='text' value='0' name='value[]'/ >";  
+  cell3.innerHTML = '<input class="form-control auto text-right" data-a-sep="," data-a-dec="." type="text" value="" name="value[]"></input>';  
 }
   </script>

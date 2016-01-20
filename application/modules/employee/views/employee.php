@@ -3,7 +3,7 @@
     <div class="col-md-12">
     	<div class="grid simple transparent">
 				<div class="grid-title">
-					<h4>List <span class="semi-bold">Employee</span></h4>
+					<h4>List of <span class="semi-bold">Employee</span></h4>
 				</div>
 			</div>
 
