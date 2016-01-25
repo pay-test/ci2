@@ -61,61 +61,86 @@
           <h3 class="modal-title">Form</h3>
         </div>
         <form action="#" id="form" class="form">
-          <input type="hidden" name="employee_id" value="">
-          <div class="modal-body">
-              <div class="row form-row">
-                <label class="control-label col-md-3">NIK</label>
-                <div class="col-md-3">
-                  <input name="user_nm" placeholder="" class="form-control" type="text" disabled>
-                  <span class="help-block"></span>
-                </div>
+        <input type="hidden" name="employee_id" value="">
+        <div class="modal-body">
+          <div class="col-md-6">
+            <div class="row form-row">
+              <label class="control-label col-md-4">NIK</label>
+              <div class="col-md-8">
+                <input name="user_nm" placeholder="" class="form-control" type="text" disabled>
+                <span class="help-block"></span>
               </div>
+            </div>
 
-              <div class="row form-row">
-                <label class="control-label col-md-3">Name</label>
-                <div class="col-md-3">
-                <input name="person_nm" placeholder="" class="form-control" type="text" disabled>
-                </div>
+            <div class="row form-row">
+              <label class="control-label col-md-4">Name</label>
+              <div class="col-md-8">
+              <input name="person_nm" placeholder="" class="form-control" type="text" disabled>
               </div>
+            </div>
 
-              <div class="row form-row">
-                <label class="control-label col-md-3">Payroll Group</label>
-                <div class="col-md-3">
-                  <?php 
-                    //$js = 'class="select2" style="width:100%" id="group" readonly';
-                    //echo form_dropdown('group_id', $options_group,'',$js); 
-                  ?>
-                  <input type="hidden" class="form-control" name="group_id" value="">
-                  <input type="text" class="form-control" name="job_class_nm" value="">
-                </div>
+            <div class="row form-row">
+              <label class="control-label col-md-4">Payroll Group</label>
+              <div class="col-md-8">
+                <input type="hidden" class="form-control" name="group_id" value="">
+                <input type="text" class="form-control" name="job_class_nm" value="" readonly="">
               </div>
-              <br/>
-              <br/>
-              <div class="row form-row">
-                <div class="col-md-12">
-                  <div>
-                    <table class="table table-bordered no-more-tables" id="component_table">
-                      <thead>
-                        <tr>
-                          <th style="width:25%">Payroll Component</th>
-                          <th style="width:25%">Code</th>
-                          <th style="width:25%">Value</th>
-                        </tr>
-                      </thead>
-                      <tbody id="component_table_body">
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-
+            </div>
           </div>
-          <div class="modal-footer">
-            <input type="hidden" value="" name="id" class="form-control"> 
-            <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+          <div class="col-md-6">
+            <div class="row form-row">
+              <label class="control-label col-md-4">Expatriate</label>
+              <div class="col-md-8">
+                <select class="select2" style="width:100%" name="currency">
+                  <option value="idr">Non-Expatriate</option>
+                  <option value="usd">Expatriate</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row form-row">
+              <label class="control-label col-md-4">Currency</label>
+              <div class="col-md-8">
+                <select class="select2" style="width:100%" name="currency">
+                  <option value="idr">IDR(Rp.)</option>
+                  <option value="usd">USD($)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row form-row">
+              <label class="control-label col-md-4">Tax Status</label>
+              <div class="col-md-8">
+                <?php 
+                  $js = 'class="select2" style="width:100%" id="group" readonly';
+                  echo form_dropdown('ptkp', $ptkp,'',$js); 
+                ?>
+              </div>
+            </div>
           </div>
+          <br/>
+          <br/>
+          <div class="row form-row">
+            <div class="col-md-12">
+              <div>
+                <table class="table table-bordered no-more-tables" id="component_table">
+                  <thead>
+                    <tr>
+                      <th style="width:25%">Payroll Component</th>
+                      <th style="width:25%">Code</th>
+                      <th style="width:25%">Value</th>
+                    </tr>
+                  </thead>
+                  <tbody id="component_table_body">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" value="" name="id" class="form-control"> 
+        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
         </form>
       </div>
     </div>

@@ -14,10 +14,24 @@ $(document).ready(function() {
 				autoclose: true,
 				todayHighlight: true
     });
+    
+    $('.s_periode').change(function(){
+    	$.ajax({
+			 type: "POST",
+			 url: "attendance/get_period/"+$(this).val(),
+			 data: 'flag=hitung',
+			 cache: false,
+			 success: function(data) 
+			 {
+				$(".start_att").val(data.substr(0,10));
+    		$(".end_att").val(data.substr(11,10));
+			 }
+			});
+    });
 
     //Time pickers
     $('.clockpicker ').clockpicker({
-        autoclose: true
+       autoclose: true
     });
     
     //Search Att
@@ -113,6 +127,16 @@ $(document).ready(function() {
 				$("#content").html(data);
 			 }
 			});
+		});
+		
+		$(".detail-OT").click(function(){
+			var rel = $(this).attr("rel");
+			var rel_temp = $("#temp_open").attr("rel");
+			//$("#listz-"+rel).find("td").attr("style", "font-weight:bold;");
+			if(rel_temp) $("#OT"+rel_temp).slideUp(500);
+			$("#OT"+rel).slideDown(500);
+			$("#temp_open").attr("rel", rel);
+			//$("#listz-"+rel_temp).find("td").attr("style", "font-weight:normal;");
 		});
 });
 

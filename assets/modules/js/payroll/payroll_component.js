@@ -16,13 +16,14 @@ $(document).ready(function() {
             "type": "POST"
         },
 
+        "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r><'row'<'pull-left m-l-20'pi>>t",
         //Set column definition initialisation properties.
         "columnDefs": [
         { 
             "targets": [0, -1], //last column
             "orderable": false, //set not orderable
         },
-        { "sClass": "text-center", "aTargets": [-1] }
+        { "sClass": "text-center", "aTargets": [-1] },
         ],
 
     });

@@ -8,11 +8,11 @@
 </style>
 </head>
 <body>
-  <div style="float: left; width: 50%;">PT Mitsubishi Chemical Indonesia</div><div style="float: right; width: 50%; text-align:right;">Slip Gaji</div>
+  <div style="float: left; width: 50%;">PT Mitsubishi Chemical Indonesia</div><div style="float: right; width: 50%; text-align:right;">Payroll Slip</div>
   <hr style="width:100%">
   <div style="float: right; width: 50%; text-align:right; font-size:12px">Period <?php echo $period ?></div>
 <br/><p></p>
-<table width="50%" border="0.0">
+<table width="75%" border="0.0">
   <tbody>
   	<?php 
   	if ($employee_detail->num_rows() > 0) { 
@@ -20,14 +20,14 @@
   		$employee_nm = $row->person_nm;
   	?>
     <tr>
-      <td width="56%">Name</td>
-      <td width="4%">:</td>
-      <td width="40%"><?php echo $employee_nm ?></td>
+      <td width="20%">Name</td>
+      <td width="2%">:</td>
+      <td width="78%"><?php echo $employee_nm ?></td>
     </tr>
     <tr>
-      <td width="56%">NIK</td>
-      <td width="4%">:</td>
-      <td width="40%"><?php echo $row->user_nm ?></td>
+      <td>NIK</td>
+      <td>:</td>
+      <td><?php echo $row->user_nm ?></td>
     </tr>
     <tr>
       <td>Position</td>
@@ -55,23 +55,31 @@
     <tr class="oddrow">
 		<td>
 		<?php foreach($income as $in):?>
-			<p><?php echo $in->component?></p><br/>
+      <?php if($in->value != 0): ?>
+			<p><?php echo ucwords(strtolower($in->component))?></p><br/>
+      <?php endif;?>
 		<?php endforeach?>
 		</td>
 		<td align="right">
 		<?php $tincome = 0;foreach($income as $in):?>
+      <?php if($in->value != 0): ?>
 			<p><?php echo $in->value;$tincome+=$in->value;?></p><br/>
+      <?php endif;?>
 		<?php endforeach;?>
 		</td>
 		<td></td>
 		<td>
 		<?php foreach($deduction as $de):?>
-			<p><?php echo $de->component?></p><br/>
+      <?php if($de->value != 0): ?>
+			<p><?php echo ucwords(strtolower($de->component))?></p><br/>
+      <?php endif;?>
 		<?php endforeach;?>
 		</td>
 		<td align="right">
 			<?php $tdeduction=0;foreach($deduction as $de):?>
+      <?php if($de->value != 0): ?>
 			<p><?php echo $de->value;$tdeduction+=$de->value;?></p><br/>
+      <?php endif;?>
 		<?php endforeach;?>
 		</td>
 	</tr>
@@ -101,10 +109,10 @@
   <table width="100%" border="0.0">
     <tbody>
     <tr >
-      <td width="30%" height="30">Total Penerimaan</td>
+      <td width="30%" height="30">Income Total</td>
       <td width="15%" align="right"><?php echo $tincome?></td>
       <td width="10%">&nbsp;</td>
-      <td width="30%">Total Potongan</td>
+      <td width="30%">Deduction Total</td>
       <td width="15%" align="right"><?php echo $tdeduction?></td>
     </tr>
     <tr >
@@ -116,9 +124,9 @@
     </tr>
     </tbody>
   </table>
-
+<!--
 <div style="float: left; width: 50%; margin-top: 50px; text-align:center; font-size:12px">
-Disetujui
+Approved,
 <p></p>
 <p></p>
 <p></p>
@@ -129,7 +137,7 @@ HRD
 </div>
 
 <div style="float: right; width: 50%; text-align:center; font-size:12px">
-	Diterima Oleh
+	Received by,
 	<p></p>
 	<p></p>
 	<p></p>
@@ -138,5 +146,6 @@ HRD
 	<p></p>
 	<?php echo $employee_nm ?>
 </div>
+-->
 </body>
 </html>

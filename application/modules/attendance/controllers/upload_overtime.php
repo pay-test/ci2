@@ -13,8 +13,8 @@ function index(){
                 $data = array(
                     'acc_ot_incidental'=>$emapData[13],
                     'ovt_flag' => $emapData[14],
-                    'ovt_reason' => $emapData[15],
-                    'ovt_detail_reason'=>$emapData[14],
+                    'ovt_reason' => $emapData[16],
+                    'ovt_detail_reason'=>$emapData[15],
                 );
 
                 $this->db->where('id_employee', getPersonIdFromNik($emapData[2]))->where('tanggal', $date[0])->where('bulan', getMonthNumber($date[1]))->where('tahun', $emapData[12])->update('kg_kehadirandetil', $data);

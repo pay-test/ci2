@@ -4,6 +4,13 @@ var table;
 $(document).ready(function() {
     $(".select2").select2();
     //datatables
+    $("#check-inc").change(function () {
+        $(".inc").prop('checked', $(this).prop("checked"));
+    });
+
+    $("#check-thp").change(function () {
+        $(".thp").prop('checked', $(this).prop("checked"));
+    });
     table = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
@@ -15,7 +22,7 @@ $(document).ready(function() {
             "url": "payroll_group/ajax_list/",
             "type": "POST"
         },
-
+        "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r><'row'<'pull-left m-l-20'pi>>t",
         //Set column definition initialisation properties.
         "columnDefs": [
         { 
