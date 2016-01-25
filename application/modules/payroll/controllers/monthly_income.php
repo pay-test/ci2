@@ -21,7 +21,7 @@ class Monthly_income extends MX_Controller {
 
         permission();
 
-         $year_now = date('Y');
+        $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
         $this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
         $filter = array('is_deleted' => 'where/0', 'is_active'=> 'where/1');

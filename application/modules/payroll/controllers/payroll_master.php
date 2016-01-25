@@ -96,6 +96,10 @@ class Payroll_master extends MX_Controller {
 
         $monthly_group = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id, 'payroll_group_id'=>'where/'.$old_group))->num_rows();//print_mz($monthly_group);
         //$component_num_rows = getAll('payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id))->num_rows;
+        $n = array(
+            ',',
+            '.'
+            );
         $component = array('master_component_id' => $this->input->post('master_component_id'),
                            'component_id' => $this->input->post('component_id'),
                            'value' => str_replace(',', '', $this->input->post('value')),
@@ -173,7 +177,7 @@ class Payroll_master extends MX_Controller {
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
                     $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
-                    $this->template->add_js('assets/plugins/jquery-autonumeric/autoNumeric.js');
+                     //$this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 
