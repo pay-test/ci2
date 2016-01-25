@@ -8,7 +8,7 @@
 </style>
 </head>
 <body>
-  <div style="float: left; width: 50%;">PT Mitsubishi Chemical Indonesia</div><div style="float: right; width: 50%; text-align:right;">Slip Gaji</div>
+  <div style="float: left; width: 50%;">PT Mitsubishi Chemical Indonesia</div><div style="float: right; width: 50%; text-align:right;">Payroll Slip</div>
   <hr style="width:100%">
   <div style="float: right; width: 50%; text-align:right; font-size:12px">Period <?php echo $period ?></div>
 <br/><p></p>
@@ -56,7 +56,7 @@
 		<td>
 		<?php foreach($income as $in):?>
       <?php if($in->value != 0): ?>
-			<p><?php echo $in->component?></p><br/>
+			<p><?php echo ucwords(strtolower($in->component))?></p><br/>
       <?php endif;?>
 		<?php endforeach?>
 		</td>
@@ -71,7 +71,7 @@
 		<td>
 		<?php foreach($deduction as $de):?>
       <?php if($de->value != 0): ?>
-			<p><?php echo $de->component?></p><br/>
+			<p><?php echo ucwords(strtolower($de->component))?></p><br/>
       <?php endif;?>
 		<?php endforeach;?>
 		</td>
@@ -124,7 +124,7 @@
     </tr>
     </tbody>
   </table>
-
+<!--
 <div style="float: left; width: 50%; margin-top: 50px; text-align:center; font-size:12px">
 Approved,
 <p></p>
@@ -146,5 +146,6 @@ HRD
 	<p></p>
 	<?php echo $employee_nm ?>
 </div>
+-->
 </body>
 </html>

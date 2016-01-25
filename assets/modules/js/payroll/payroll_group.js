@@ -4,6 +4,13 @@ var table;
 $(document).ready(function() {
     $(".select2").select2();
     //datatables
+    $("#check-inc").change(function () {
+        $(".inc").prop('checked', $(this).prop("checked"));
+    });
+
+    $("#check-thp").change(function () {
+        $(".thp").prop('checked', $(this).prop("checked"));
+    });
     table = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.

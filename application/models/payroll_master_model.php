@@ -10,6 +10,7 @@ class Payroll_master_model extends CI_Model {
 	var $table_join4 = 'payroll_master';
 	var $table_join5 = 'payroll_master_component';
 	var $table_join6 = 'payroll_period';
+	var $table_join7 = 'payroll_ptkp';
 	var $column = array('user_nm','person_nm'); //set column field database for order and search
 	//var $order = array('employee_id' => 'asc'); // default order 
 
@@ -180,5 +181,12 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where($this->table_join3.'.is_deleted',0);
 		$this->db->order_by($this->table_join3.'.job_class_id','asc');
 		return $this->db->get($this->table_join3);
+	}
+
+	public function get_ptkp()
+	{	
+		$this->db->where($this->table_join7.'.is_deleted',0);
+		$this->db->order_by($this->table_join7.'.id','asc');
+		return $this->db->get($this->table_join7);
 	}
 }

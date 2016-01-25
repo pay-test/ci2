@@ -23,7 +23,7 @@ class Payroll_master extends MX_Controller {
 
          $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
-        //$this->data['options_group'] = options_row('payroll', 'get_group','id','title', '-- Choose Payroll Group --');
+        $this->data['ptkp'] = options_row('payroll', 'get_ptkp','id','title', '-- Choose Tax Status --');
 		$this->_render_page($this->filename, $this->data);
 	}
 
