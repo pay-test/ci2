@@ -134,6 +134,7 @@ function edit_user(id)
                     $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
                     $('.modal-title').text('Monthly Income '+period); // Set title to Bootstrap modal title
                     if(data.data2 != null)drawTable(data.data2);
+                    //getComponentVal(data.data1.group_id,data.data2);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -152,13 +153,23 @@ function edit_user(id)
     function drawRow(rowData) {
         var row = $("<tr />")
         $("#component_table_body").append(row);
+        var v = parseFloat(rowData.value);
         row.append($("<td>" + rowData.component + "</td>"));
         row.append($("<td>" + rowData.code + "</td>"));
-        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input type='text' name='value[]' value='"+rowData.value +"'></td>"));
+        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input class='text-right' type='text' name='value[]' value='"+v.formatMoney() +"'></td>"));
     }
 
 }
-
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, 
+    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+    d = d == undefined ? "." : d, 
+    t = t == undefined ? "," : t, 
+    s = n < 0 ? "-" : "", 
+    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+    j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+ };
 function reload_table()
 {
     table.ajax.reload(null,false); //reload datatable ajax 

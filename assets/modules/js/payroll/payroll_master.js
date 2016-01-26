@@ -4,9 +4,6 @@ var table;
 $(document).ready(function() {
     //$(".select2").select2();
     //datatables
-    $('.auto').autoNumeric('init');
-
-
     table = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
@@ -90,7 +87,6 @@ function edit_user(id)
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-
     //Ajax Load data from ajax
         $.ajax({
             url : "payroll_master/ajax_edit/" + id,
@@ -123,8 +119,8 @@ function edit_user(id)
             {
                 alert('Error get data from ajax');
             }
+
         });
-    
 
     function drawTable(data) {
     for (var i = 0; i < data.length; i++) {

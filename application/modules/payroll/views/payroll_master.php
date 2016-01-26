@@ -135,12 +135,16 @@
                   </tbody>
                 </table>
               </div>
+              <div class="pull-right">
+                <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+              </div>
             </div>
+              
           </div>
         </div>
         <input type="hidden" value="" name="id" class="form-control"> 
-        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        
         </form>
       </div>
     </div>
