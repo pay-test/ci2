@@ -1,61 +1,39 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Payroll_component extends MX_Controller {
-	
-	var $title = "payroll";
-    var $page_title = "Component";
-	var $filename = "payroll_component";
-	public $data;
-	function __construct()
-	{
-		parent::__construct();
-        $this->load->model('payroll_component_model','payroll');
-        $this->load->model('all_model','all_model');
-	}
-	
-	function index()
-	{
+class Job_value extends MX_Controller {
+    
+    var $title = "payroll";
+    var $page_title = "Job Value";
+    var $filename = "job_value";
+    public $data;
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->model('payroll_job_value_model','payroll');
+    }
+    
+    function index()
+    {
         $this->data['title'] = ucfirst($this->title);
-		$this->data['page_title'] = $this->page_title;
+        $this->data['page_title'] = $this->page_title;
 
-        $this->data['component_type'] = $this->payroll->get_component_type();
-        $this->data['tax_component'] = $this->payroll->get_tax_component();
-        $this->data['component_job_value'] = getAll('payroll_component_job_value');
-        $this->data['job_value'] = getAll('payroll_job_value');
         permission();
-		$this->_render_page($this->filename, $this->data);
-	}
+        $this->_render_page($this->filename, $this->data);
+    }
 
     public function ajax_list()
     {
-        $list = $this->payroll->get_datatables();//lastq();//print_mz($list);
+        $list = $this->payroll->get_datatables();//lastq();print_mz($list);
         $data = array();
         $no = $_POST['start'];
-        foreach ($list as $p_comp) {
-            //get component type
-            $component_type = $this->all_model->GetValue('title','payroll_component_type','id = '.$p_comp->component_type_id);
-            //get tax component
-            $tax_component = $this->all_model->getValue('title','payroll_tax_component','id = '.$p_comp->tax_component_id);
-            if (!$tax_component) {
-                $tax_component = "";
-            }
-            //status attribute
-            if ($p_comp->is_annualized == 1) {
-                $is_annualized = "Annualized";
-            }else{
-                $is_annualized = "Not Annualized";
-            }
+        foreach ($list as $tax) {
             $no++;
             $row = array();
             $row[] = $no;
-            $row[] = $p_comp->title;
-            $row[] = $p_comp->code;
-            $row[] = $component_type;
-            $row[] = $is_annualized;
-            $row[] = $tax_component;
+            $row[] = $tax->title;
 
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$p_comp->id."'".')"><i class="fa fa-pencil"></i></a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$p_comp->id."'".')"><i class="fa fa-trash"></i></a>';
+             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
 
             $data[] = $row;
@@ -80,12 +58,8 @@ class Payroll_component extends MX_Controller {
     public function ajax_add()
     {
         $this->_validate();
-        $data = array(
+         $data = array(
                 'title' => $this->input->post('title'),
-                'code' => $this->input->post('code'),
-                'component_type_id' => $this->input->post('component_type_id'),
-                'is_annualized' => $this->input->post('is_annualized'),
-                'tax_component_id' => $this->input->post('tax_component_id'),
                 'created_by' => GetUserID(),
                 'created_on' => date('Y-m-d H:i:s')
             );
@@ -95,20 +69,13 @@ class Payroll_component extends MX_Controller {
 
     public function ajax_update()
     {
-        //$i = $this->input->post('checkbox1');print_r($i);print_r($this->input->post('job_value_id'));print_mz($this->input->post('value'));
         $this->_validate();
-        $data = array(
+         $data = array(
                 'title' => $this->input->post('title'),
-                'code' => $this->input->post('code'),
-                'component_type_id' => $this->input->post('component_type_id'),
-                'is_annualized' => $this->input->post('is_annualized'),
-                'tax_component_id' => $this->input->post('tax_component_id'),
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );
         $this->payroll->update(array('id' => $this->input->post('id')), $data);
-        $job_value_id = $this->input->post('job_value_id');
-
         echo json_encode(array("status" => TRUE));
     }
 
@@ -132,13 +99,6 @@ class Payroll_component extends MX_Controller {
             $data['status'] = FALSE;
         }
  
-        if($this->input->post('code') == '')
-        {
-            $data['inputerror'][] = 'code';
-            $data['error_string'][] = 'Code is required';
-            $data['status'] = FALSE;
-        }
- 
         if($data['status'] === FALSE)
         {
             echo json_encode($data);
@@ -146,14 +106,7 @@ class Payroll_component extends MX_Controller {
         }
     }
 
-    function render_job_value($component_id = 0) {
-        $filter = array('payroll_group_id' => 'where/'.$group_id,'is_deleted' => 'where/0');
-        $output = $this->all_model->GetAll('payroll_group_component',$filter);
-    
-        echo json_encode($output);
-    }
-
-	function _render_page($view, $data=null, $render=false)
+    function _render_page($view, $data=null, $render=false)
     {
         // $this->viewdata = (empty($data)) ? $this->data: $data;
         // $view_html = $this->load->view($view, $this->viewdata, $render);

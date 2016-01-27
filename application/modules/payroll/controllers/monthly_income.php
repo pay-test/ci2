@@ -193,6 +193,7 @@ class Monthly_income extends MX_Controller {
                     $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
                     $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
                     $this->template->add_js('assets/plugins/jquery-autonumeric/autoNumeric.js');
+                    $this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 

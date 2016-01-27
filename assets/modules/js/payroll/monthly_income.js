@@ -3,11 +3,11 @@ var table;
 
 $(document).ready(function() {
     $(".select2").select2();
-    $('.auto').autoNumeric('init');
+    $('.auto').maskMoney();
     //datatables
     $('#btnAdd').on('click', function () {
         $(document).find("select.select2").select2();
-        $(document).find('.auto').autoNumeric('init');
+        $(document).find('.auto').maskMoney();
         $('#btnRemove').show();
     });
 
@@ -153,10 +153,11 @@ function edit_user(id)
     function drawRow(rowData) {
         var row = $("<tr />")
         $("#component_table_body").append(row);
+        $(document).find('.auto').maskMoney();
         var v = parseFloat(rowData.value);
         row.append($("<td>" + rowData.component + "</td>"));
         row.append($("<td>" + rowData.code + "</td>"));
-        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input class='text-right' type='text' name='value[]' value='"+v.formatMoney() +"'></td>"));
+        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input class='text-right auto' type='text' name='value[]' value='"+v.formatMoney() +"'></td>"));
     }
 
 }
