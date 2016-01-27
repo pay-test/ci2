@@ -12,136 +12,99 @@ $(document).ready(function() {
 
         // Load data for the table's content from an Ajax source
         "ajax": {
-            "url": "payroll_master/ajax_list/",
+            "url": "job_value/ajax_list/",
             "type": "POST"
         },
         "sDom": "<'row'<'col-md-5'l><'col-md-7'f>r><'row'<'pull-left m-l-20'pi>>t",
         //Set column definition initialisation properties.
         "columnDefs": [
         { 
-            "targets": [0, 2, -1], //last column
+            "targets": [], //last column
             "orderable": false, //set not orderable
         },
-        { "sClass": "text-center", "aTargets": [-1] }
         ],
-
+        /*"aoColumnDefs": [
+          { "bSortable": false, "aTargets": [ 3,4,5 ] }
+        ] */
     });
 
     $('#table_wrapper .dataTables_length select').addClass("select2-wrapper span12");
     $(".select2-wrapper").select2({minimumResultsForSearch: -1});
+
+    //set input/textarea/select event when change value, remove class error and remove text help block
+    $("input").change(function(){
+        $(this).parent().parent().removeClass('has-error');
+        $(this).next().empty();
+    });
+
+    /*table_component = $('#table-group-component').DataTable({
+            "retrieve": true,
+            "paging": false, 
+            "processing": true, //Feature control the processing indicator.
+            "serverSide": true, //Feature control DataTables' server-side processing mode.
+            "order": [], //Initial no order.
+
+            // Load data for the table's content from an Ajax source
+            "ajax": {
+                "url": "job_value/ajax_component_list/",
+                "type": "POST",
+                "data": function ( d ) {
+                 d.group_id = $('#group_id').val();
+            }
+            },
+
+            //Set column definition initialisation properties.
+            "columnDefs": [
+            { 
+                "targets": [], //last column
+                "orderable": false, //set not orderable
+            },
+            ],
+            "bFilter": false,
+            "bPaginate": false,
+            "info": false,
+    });*/
 });
 
-/*$("#group").change(function() {
-        $("#component_table_body").empty();
-        var Id = $(this).val();
-        getComponent(Id);
-    })
-    .change();*/
 
-function getComponent(Id)
+
+function add_user()
 {
-    $.ajax({
-        type: 'POST',
-        url: 'payroll_master/get_component_table/',
-        data: {id : Id},
-        success: function(data) {
-            $('#component_table_body').html(data);
-        }
-    });
-}
-
-function getComponentVal(Id,data2)
-{
-    $.ajax({
-        type: 'POST',
-        url: 'payroll_master/get_component_table_val/',
-        data: {id : Id, value : data2},
-        success: function(data) {
-            $('#component_table_body').html(data);
-        }
-    });
-}
-
-$("#periode").change(function() {
-        var Id = $(this).val();
-        getStatus(Id);
-    })
-    .change();
-
-function getStatus(Id)
-{
-    $.ajax({
-        type: 'POST',
-        url: 'payroll_master/get_periode_status/',
-        data: {id : Id},
-        success: function(data) {
-            $('#periode-status').text(data);
-        }
-    });
+    save_method = 'add';
+    $('#form')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_form').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Add Payroll Job Value'); // Set Title to Bootstrap modal title
 }
 
 function edit_user(id)
 {
     save_method = 'update';
-    $("#component_table_body").empty();
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
+    var array_comp = [];
+    var array_thp = [];
+
     //Ajax Load data from ajax
-        $.ajax({
-            url : "payroll_master/ajax_edit/" + id,
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                var d = data.data2;
+    $.ajax({
+        url : "job_value/ajax_edit/" + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+            $('[name="id"]').val(data.id);
+            $('[name="title"]').val(data.title);
+            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Edit Payroll Job Value'); // Set title to Bootstrap modal title
 
-                //$("#group").select2("val", data.data1.group_id);
-                $('[name="employee_id"]').val(data.data1.employee_id);
-                $('[name="user_nm"]').val(data.data1.user_nm);
-                $('[name="person_nm"]').val(data.data1.person_nm);
-                $('[name="job_class_nm"]').val(data.data1.job_class_nm);
-                //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
-                $('[name="group_id"]').val(data.data1.group_id);
-                $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('Payroll Master'); // Set title to Bootstrap modal title
-                if(data.data2 != ""){
-                    getComponentVal(data.data1.group_id,data.data2);
-                    //drawTable(data.data2);
-
-                }else{
-                     //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
-                    getComponent(data.data1.group_id);
-                }
-
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error get data from ajax');
-            }
-
-        });
-
-    function drawTable(data) {
-    for (var i = 0; i < data.length; i++) {
-        drawRow(data[i]);
-    }
-    }
-
-    function drawRow(rowData) {
-        /*var row = $("<tr />")
-        $("#component_table_body").append(row);
-        row.append($("<td>" + rowData.component + "</td>"));
-        row.append($("<td>" + rowData.code + "</td>"));
-        row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input type='text' name='value[]' value='"+rowData.value +"'></td>"));*/
-        //$('input[name^="value[]"]').val(rowData.value);
-        //var form = $('#form');
-        $('#val_'+rowData.id).val(rowData.value);
-        //alert(rowData.id+' '+rowData.value)
-        //alert($('input[name^="component_id['+rowData.value+']"]').value);
-
-    }
-
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
 }
 
 function reload_table()
@@ -155,17 +118,15 @@ function save()
     $('#btnSave').attr('disabled',true); //set button disable 
     var url;
 
-    /*
     if(save_method == 'add') {
-        url = "payroll_master/ajax_add";
+        url = "job_value/ajax_add";
     } else {
-        url = "payroll_master/ajax_update";
+        url = "job_value/ajax_update";
     }
-    */
 
     // ajax adding data to database
     $.ajax({
-        url : 'payroll_master/ajax_update',
+        url : url,
         type: "POST",
         data: $('#form').serialize(),
         dataType: "JSON",
@@ -175,6 +136,7 @@ function save()
             if(data.status) //if success close modal and reload ajax table
             {
                 $('#modal_form').modal('hide');
+
                 reload_table();
             }
             else
@@ -206,7 +168,7 @@ function delete_user(id)
     {
         // ajax delete data to database
         $.ajax({
-            url : "payroll_master/ajax_delete/"+id,
+            url : "job_value/ajax_delete/"+id,
             type: "POST",
             dataType: "JSON",
             success: function(data)
@@ -223,7 +185,6 @@ function delete_user(id)
 
     }
 }
-
 
 /*************************************
   * Created : Jan 2016

@@ -62,6 +62,8 @@
                 <form action="#" id="form" class="form-horizontal">
                     <input type="hidden" value="" name="id"/> 
                     <div class="form-body">
+                    <div class="row form-row">
+                      <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-3">Name</label>
                             <div class="col-md-9">
@@ -89,6 +91,8 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
+                      </div>
+                      <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label col-md-3">Attribute</label>
                             <div class="col-md-9">
@@ -112,6 +116,50 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
+                      </div>
+                      <div class="col-md-12 pull-center">
+                        <table class="table table-hover table-condensed" id="table">
+                          <thead>
+                            <tr>
+                              <th style="width:30%">Job Value</th>
+                              <th style="width:30%">Is Formula</th>
+                              <th style="width:30%">Value/Formula</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php if($component_job_value->num_rows() > 0):
+                            foreach($component_job_value->result() as $row):
+                            ?>
+                              <tr>
+                                <td><?php echo $row->job_value?></td>
+                                <td>
+                                  <div class="checkbox check-success">
+                                        <input type="checkbox" id="checkbox_comp<?php echo $i; ?>" value="<?php echo $pcomp['id']; ?>" name="p_component[]" class="inc">
+                                          <label for="checkbox_comp<?php echo $i; ?>"></label>
+                                      </div>
+                                </td>
+                                <td><input class="form-control" type="text" /></td>
+                              </tr>
+                              <?php endforeach;else:
+                              foreach($job_value->result() as $j):
+                              ?>
+                                <tr>
+                                  <td>
+                                    <input class="form-control" type="text" name="job_value_id[]" value="<?php echo $j->id?>" />
+                                    <?php echo $j->title?>
+                                  </td>
+                                  <td>
+                                      <input type="checkbox" name="checkbox1_checkbox[]" id="checkbox1_checkbox" class="checkbox1" />
+                                      <input type="hidden" name="checkbox1[]" value="0" />
+                                  </td>
+                                  <td>
+                                    <input class="form-control" type="text" name="value[]" value="" />
+                                  </td>
+                                </tr>
+                                <?php endforeach;endif;?>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                 </form>
             </div>

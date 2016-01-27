@@ -38,7 +38,16 @@ $(document).ready(function() {
     });
 });
 
-
+$('input[type="checkbox"]').on('change', function(e){
+        if($(this).prop('checked'))
+        {
+            $(this).next().val(1);
+            //$(this).next().disabled = true;
+        } else {
+            $(this).next().val(0);
+            //$(this).next().disabled = true;
+        }
+});
 
 function add_user()
 {

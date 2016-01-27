@@ -87,36 +87,35 @@
               </div>
             </div>
           </div>
+
           <div class="col-md-6">
             <div class="row form-row">
               <label class="control-label col-md-4">Expatriate</label>
               <div class="col-md-8">
-                <select class="select2" style="width:100%" name="currency">
+                <select class="select2 form-control" style="width:100%" name="currency">
                   <option value="idr">Non-Expatriate</option>
                   <option value="usd">Expatriate</option>
                 </select>
               </div>
-            </div>
-
+            </div><br/>
             <div class="row form-row">
               <label class="control-label col-md-4">Currency</label>
               <div class="col-md-8">
-                <select class="select2" style="width:100%" name="currency">
+                <select class="select2 form-control" style="width:100%" name="currency">
                   <option value="idr">IDR(Rp.)</option>
                   <option value="usd">USD($)</option>
                 </select>
               </div>
-            </div>
-
+            </div><br/>
             <div class="row form-row">
               <label class="control-label col-md-4">Tax Status</label>
               <div class="col-md-8">
                 <?php 
-                  $js = 'class="select2" style="width:100%" id="group" readonly';
+                  $js = 'class="select2 form-control" style="width:100%" id="group" readonly';
                   echo form_dropdown('ptkp', $ptkp,'',$js); 
                 ?>
               </div>
-            </div>
+            </div><br/>
           </div>
           <br/>
           <br/>
