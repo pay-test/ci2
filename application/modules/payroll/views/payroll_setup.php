@@ -91,6 +91,30 @@
             </div>
           </div>
         </div>
+      </div> <!-- e.o row fluid -->
+      <div class="row-fluid">
+        <div class="col-md-6">
+          <div class="grid simple ">
+            <div class="grid-title">
+              <h4><span class="semi-bold">Generate Value</span></h4>
+            </div>
+            <div class="grid-body">
+              <form id="form-process" action="payroll_setup/generate_value">
+                <div class="form-body">
+                  <div class="form-group">
+                    <label class="control-label col-md-3">Period</label>
+                    <div class="col-md-9">
+                        <span class="help-block"></span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" id="btnSave" class="btn btn-primary">Generate</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
 </div>
 <!-- END CONTAINER -->
