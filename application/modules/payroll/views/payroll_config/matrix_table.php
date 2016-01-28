@@ -1,12 +1,12 @@
-<table class="table table-hover table-condensed" id="tbl">
+<table class="table table-hover table-bordered" id="tbl">
   <thead>
     <tr>
-      <th style="width:30%">Job Class</th>
-      <th style="width:25%">Job level</th>
-      <th style="width:10%">Job Value</th>
-      <th style="width:10%">Value</th>
-      <th style="width:10%">Value Min</th>
-      <th style="width:10%">Value Max</th>
+      <th style="width:20%">Job Class</th>
+      <th style="width:20%">Job level</th>
+      <th style="width:15%">Job Value</th>
+      <th style="width:15%">Value</th>
+      <th style="width:15%">Value Min</th>
+      <th style="width:15%">Value Max</th>
     </tr>
   </thead>
   <tbody>
@@ -15,9 +15,9 @@
         <td><?php echo $m->job_class?></td>
         <td><?php echo $m->job_level?></td>
         <td><?php echo $m->job_value?></td>
-        <td align="right" id="<?php echo $m->id?>" class="edit_value"><span class="text" id="value<?php echo $m->id?>"><?php echo number_format($m->value, 2)?></span><input type="text" style="display:none" value="<?php echo number_format($m->value, 2)?>" id="text<?php echo $m->id?>" class="editbox money text-right"></td>
-        <td align="right" id="<?php echo $m->id?>" class="edit_value_min"><span class="text_min" id="value_min<?php echo $m->id?>"><?php echo number_format($m->value_min, 2)?></span><input type="text" style="display:none" value="<?php echo number_format($m->value_min, 2)?>" id="text_min<?php echo $m->id?>" class="editbox_min money text-right"></td>
-        <td align="right" id="<?php echo $m->id?>" class="edit_value_max"><span class="text_max" id="value_max<?php echo $m->id?>"><?php echo number_format($m->value_max, 2)?></span><input type="text" style="display:none" value="<?php echo number_format($m->value_max, 2)?>" id="text_max<?php echo $m->id?>" class="editbox_max money text-right"></td>
+        <td align="right" id="<?php echo $m->id?>" class="edit_value"><a href="javascript:void(0);"><span class="text" id="value<?php echo $m->id?>"><?php echo number_format($m->value, 2)?></span></a><input type="text" style="display:none" value="<?php echo number_format($m->value, 2)?>" id="text<?php echo $m->id?>" class="editbox money text-right form-control"></td>
+        <td align="right" id="<?php echo $m->id?>" class="edit_value_min"><a href="javascript:void(0);"><span class="text_min" id="value_min<?php echo $m->id?>"><?php echo number_format($m->value_min, 2)?></span></a><input type="text" style="display:none" value="<?php echo number_format($m->value_min, 2)?>" id="text_min<?php echo $m->id?>" class="editbox_min money text-right form-control"></td>
+        <td align="right" id="<?php echo $m->id?>" class="edit_value_max"><a href="javascript:void(0);"><span class="text_max" id="value_max<?php echo $m->id?>"><?php echo number_format($m->value_max, 2)?></span></a><input type="text" style="display:none" value="<?php echo number_format($m->value_max, 2)?>" id="text_max<?php echo $m->id?>" class="editbox_max money text-right form-control"></td>
       </tr>
     <?php endforeach;?>
   </tbody>
@@ -102,7 +102,7 @@ $(document).ready(function() {
   });
 
     // Edit input box click action
-    $(".editbox").mouseup(function()
+    $(".editbox").add(".editbox_min").add(".editbox_max").mouseup(function()
     {
       return false
     });

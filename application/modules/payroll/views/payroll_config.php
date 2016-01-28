@@ -26,30 +26,30 @@
                 </li>
 
                 <li>
-                    <a href="#myTab2_example3" data-toggle="tab">
+                    <a href="#tab-com" data-toggle="tab">
                         Compensation MIX
                     </a>
                 </li>
 
                 <li>
-                    <a href="#myTab2_example3" data-toggle="tab">
+                    <a href="#tab-jm" data-toggle="tab">
                         JM Parameter
                     </a>
                 </li>
 
                 <li>
-                    <a href="#myTab2_example4" data-toggle="tab">
+                    <a href="#tab-divider" data-toggle="tab">
                         Payroll Divider
                     </a>
                 </li>
 
                 <li>
-                    <a href="#myTab2_example5" data-toggle="tab">
+                    <a href="#tab-rate" data-toggle="tab">
                         Exchange Rate
                     </a>
                 </li>
                 <li>
-                    <a href="#myTab2_example6" data-toggle="tab">
+                    <a href="#tab-cola" data-toggle="tab">
                        COLA
                     </a>
                 </li>
@@ -62,13 +62,12 @@
                             <div class="col-md-12">
                                 <div class="matrix">
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="label-form">Select Session</label>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <select class="select2" id="session_select" style="width:100%">
                                                 <option>-- Select Session --</option>
-
                                                 <?php foreach($session->result() as $s):?>
                                                     <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
                                                 <?php endforeach;?>
@@ -77,10 +76,10 @@
                                     </div>
                                     <br/>
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="label-form">Select Section</label>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <select class="select2" id="section_select" style="width:100%">
                                                 <option>-- Select Section --</option>
                                                 <?php foreach($org->result() as $o):?>
@@ -93,10 +92,6 @@
                                     <div id="table_matrix">
 
                                     </div>
-
-                                    <div class="row row-matrix">
-                                    
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,50 +99,161 @@
                 </div>
 
                 <!-- TAB Compensation -->
-                <div class="tab-pane fade" id="myTab2_example2">
+                <div class="tab-pane fade" id="tab-com">
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="com">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">Select Session</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="select2" id="session_select_com" style="width:100%">
+                                                <option>-- Select Session --</option>
+                                                <?php foreach($session->result() as $s):?>
+                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div id="table_com">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!--Tab JM Parameter-->
-                <div class="tab-pane fade" id="myTab2_example3">
+                <div class="tab-pane fade" id="tab-jm">
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="jm">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">Select Session</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="select2" id="session_select_jm" style="width:100%">
+                                                <option>-- Select Session --</option>
+                                                <?php foreach($session->result() as $s):?>
+                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div id="table_jm">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!--Tab Payroll Divider-->
-                <div class="tab-pane fade in active" id="myTab2_example4">
+                <div class="tab-pane fade in active" id="tab-divider">
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="divider">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">Select Session</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="select2" id="session_select_divider" style="width:100%">
+                                                <option>-- Select Session --</option>
+                                                <?php foreach($session->result() as $s):?>
+                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="label-form">Value</label>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label style="font-weight:700" class="form-label" id="divider-value"></label>
+                                            <input type="hidden" class="form-control" id="divider-id">
+                                            <input type="text" style="display:none" class="form-control" id="divider-value-text">
+                                        </div>
+                                
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- TAB Exchange Rate -->
-                <div class="tab-pane fade" id="myTab2_example5">
+                <div class="tab-pane fade" id="tab-rate">
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="rate">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">Select Session</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="select2" id="session_select_rate" style="width:100%">
+                                                <option>-- Select Session --</option>
+                                                <?php foreach($session->result() as $s):?>
+                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="label-form">Value</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label style="font-weight:700" class="form-label" id="rate-value"></label>
+                                            <input type="hidden" class="form-control" id="rate-id">
+                                            <input type="text" style="display:none" class="form-control money" id="rate-value-text">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!--Tab COLA-->
-                <div class="tab-pane fade" id="myTab2_example6">
+                <div class="tab-pane fade" id="tab-cola">
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="cola">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">Select Session</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="select2" id="session_select_cola" style="width:100%">
+                                                <option>-- Select Session --</option>
+                                                <?php foreach($session->result() as $s):?>
+                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="label-form">Value</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label style="font-weight:700" class="form-label" id="cola-value"></label>
+                                            <input type="hidden" class="form-control" id="cola-id">
+                                            <input type="text" style="display:none" class="form-control money" id="cola-value-text">
+                                        </div>
+                                
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -157,3 +263,4 @@
     </div>
 </div>
 <!-- END CONTAINER -->
+

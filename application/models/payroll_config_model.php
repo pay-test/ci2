@@ -20,4 +20,17 @@ class Payroll_config_model extends CI_Model {
 				 ->where('org_id', $org_id);
 		return $q = $this->db->get();
 	}
+
+	function get_com_table($sess_id)
+	{
+		$this->db->select('m.id as id,
+						   c.job_class_nm as job_class,
+						   var,
+						   fix
+						 ')
+				 ->from('payroll_compensation_mix as m')
+				 ->join('hris_job_class as c', 'c.job_class_id = m.job_class_id')
+				 ->where('session_id', $sess_id);
+		return $q = $this->db->get();
+	}
 }

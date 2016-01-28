@@ -22,35 +22,6 @@ class payroll_config extends MX_Controller {
         $this->_render_page($this->filename, $this->data);
     }
 
-    public function matrix_list()
-    {
-        $list = $this->payroll->get_datatables();//lastq();//print_mz($list);
-        $data = array();
-        $no = $_POST['start'];
-        foreach ($list as $payroll) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = $payroll->name;
-            $row[] = $payroll->username;
-
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$payroll->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$payroll->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
-        
-
-            $data[] = $row;
-        }
-
-        $output = array(
-                        "draw" => $_POST['draw'],
-                        "recordsTotal" => $this->payroll->count_all(),
-                        "recordsFiltered" => $this->payroll->count_filtered(),
-                        "data" => $data,
-                );
-        //output to json format
-        echo json_encode($output);
-    }
-
     function edit($type){
         $id = $this->input->post('id');
         $value = str_replace(',', '', $this->input->post('value'.$type));
@@ -59,44 +30,49 @@ class payroll_config extends MX_Controller {
         lastq();
     }
 
-    public function ajax_edit($id)
-    {
-        $data = $this->payroll->get_by_id($id); // if 0000-00-00 set tu empty for datepicker compatibility
-        echo json_encode($data);
+    function edit_com($type){
+        $id = $this->input->post('id');
+        $value = str_replace(',', '', $this->input->post('value'));
+
+        $this->db->where('id', $id)->update('payroll_compensation_mix', array($type=>$value));
+        lastq();
     }
 
-    public function ajax_add()
-    {
-        //$this->_validate();
-        $data = array(
-                'name' => $this->input->post('name'),
-                'username' => $this->input->post('username'),
-            );
-        $insert = $this->payroll->save($data);
-        echo json_encode(array("status" => TRUE));
+    function edit_jm($type){
+        $id = $this->input->post('id');
+        $value = str_replace(',', '', $this->input->post('value'));
+
+        $this->db->where('id', $id)->update('payroll_jm_parameter', array($type=>$value));
+        lastq();
     }
 
-    public function ajax_update()
-    {
-        //$this->_validate();
-        $data = array(
-                'name' => $this->input->post('name'),
-                'username' => $this->input->post('username'),
-            );
-        $this->payroll->update(array('id' => $this->input->post('id')), $data);
-        echo json_encode(array("status" => TRUE));
+    function edit_divider(){
+        $id = $this->input->post('id');
+        $value = str_replace(',', '', $this->input->post('value'));
+
+        $this->db->where('id', $id)->update('payroll_pembagi', array('value'=>$value));
+        lastq();
     }
 
-    public function ajax_delete($id)
-    {
-        $this->payroll->delete_by_id($id);
-        echo json_encode(array("status" => TRUE));
+    function edit_rate(){
+        $id = $this->input->post('id');
+        $value = str_replace(',', '', $this->input->post('value'));
+
+        $this->db->where('id', $id)->update('payroll_exchange_rate', array('value'=>$value));
+        lastq();
+    }
+
+    function edit_cola(){
+        $id = $this->input->post('id');
+        $value = str_replace(',', '', $this->input->post('value'));
+
+        $this->db->where('id', $id)->update('payroll_cola', array('value'=>$value));
+        lastq();
     }
 
     //FOR JS FUNCTION
     function get_table_matrix($sess_id, $org_id)
     {
-
         $filter = array(
                         'session_id'=>'where/'.$sess_id,
                         'org_id' => 'where/'.$org_id
@@ -105,6 +81,57 @@ class payroll_config extends MX_Controller {
         $data['matrix'] = $this->payroll->get_matrix_table($sess_id, $org_id);
 
         $this->load->view('payroll_config/matrix_table', $data);
+    }
+
+    function get_table_com($sess_id)
+    {
+
+        $filter = array(
+                        'session_id'=>'where/'.$sess_id
+                        );
+        //$data['com'] = getAll('payroll_job_value_com', $filter);
+        $data['com'] = $this->payroll->get_com_table($sess_id);
+
+        $this->load->view('payroll_config/com_table', $data);
+    }
+
+    function get_table_jm($sess_id)
+    {
+
+        $filter = array(
+                        'session_id'=>'where/'.$sess_id
+                        );
+        $data['jm'] = getAll('payroll_jm_parameter', $filter);
+        //$data['com'] = $this->payroll->get_com_table($sess_id);
+
+        $this->load->view('payroll_config/jm_table', $data);
+    }
+
+    function get_divider()
+    {
+        $sess_id = $this->input->post('id');
+        $filter = array('session_id'=>'where/'.$sess_id
+                        );
+        $v = getAll('payroll_pembagi', $filter)->row();
+        echo json_encode(array('value'=>$v->value, 'id'=>$v->id));
+    }
+
+    function get_rate()
+    {
+        $sess_id = $this->input->post('id');
+        $filter = array('session_id'=>'where/'.$sess_id
+                        );
+        $v = getAll('payroll_exchange_rate', $filter)->row();
+        echo json_encode(array('value'=>$v->value, 'id'=>$v->id));
+    }
+
+    function get_cola()
+    {
+        $sess_id = $this->input->post('id');
+        $filter = array('session_id'=>'where/'.$sess_id
+                        );
+        $v = getAll('payroll_cola', $filter)->row();
+        echo json_encode(array('value'=>$v->value, 'id'=>$v->id));
     }
 
     function _render_page($view, $data=null, $render=false)
@@ -123,6 +150,7 @@ class payroll_config extends MX_Controller {
                     $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
                     $this->template->add_css('assets/plugins/data-tables/datatables.min.css');
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 

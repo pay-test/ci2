@@ -53,6 +53,7 @@
                 <span class="arrow"></span>
               </a>
               <ul class="sub-menu">
+                <li><a href="<?php echo base_url('payroll/payroll_config')?>">Config</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_tax_component')?>">Tax Component</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
