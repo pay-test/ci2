@@ -21,7 +21,12 @@ $(document).ready(function() {
 
         // rewrite current value with edit area
         $(this).html(editarea);
-
+        
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        
+        if(keycode == '13'){
+            alert('You pressed a "enter" key in textbox'); 
+        }
         // set focus to newly created input
         $(editarea).focus();
 

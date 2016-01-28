@@ -51,6 +51,14 @@ class payroll_config extends MX_Controller {
         echo json_encode($output);
     }
 
+    function edit($type){
+        $id = $this->input->post('id');
+        $value = str_replace(',', '', $this->input->post('value'.$type));
+
+        $this->db->where('id', $id)->update('payroll_job_value_matrix', array('value'.$type=>$value));
+        lastq();
+    }
+
     public function ajax_edit($id)
     {
         $data = $this->payroll->get_by_id($id); // if 0000-00-00 set tu empty for datepicker compatibility

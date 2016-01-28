@@ -5,7 +5,8 @@ class Payroll_config_model extends CI_Model {
 
 	function get_matrix_table($sess_id, $org_id)
 	{
-		$this->db->select('c.job_class_nm as job_class,
+		$this->db->select('m.id as id,
+						   c.job_class_nm as job_class,
 						   c.job_level as job_level,
 						   j.title as job_value,
 						   value,
