@@ -255,5 +255,132 @@ class Payroll_setup extends MX_Controller {
             return $this->load->view($view, $data, TRUE);
         }
     }
+
+    function generate_value() {
+        //set session
+        $session = 2016;
+        $asid = 14;
+        //generate configuration
+        $actual_allowance = 2000;
+        $employee_jam = 75/100;
+        $std_jam = 79/100;
+        //job match parameter
+        $jm_param = GetAll('payroll_jm_parameter',array('session_id' => $session));
+        $row = $jm_param->row();
+        $jm_min = $row->min/100;
+        $jm_max = $row->max/100;
+        //print_mz($jm_param);
+
+        $employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/644'));
+        foreach ($employee->result_array() as $emp) {
+            $employee_id = $emp['employee_id'];
+            $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
+            //print_mz($employee_jm);
+            if ($employee_jm > 0) {
+                $employee_jm = $employee_jm/100;
+            } else {
+                $employee_jm = 75/100;
+            }
+            
+            $detail = $this->payroll->get_employee_detail($employee_id);
+            $det = $detail->row();
+            //print_mz($row);
+
+            $filter = array(
+                'session_id' => 'where/'.$session,
+                'org_id' => 'where/'.$det->org_id,
+                'job_class_id' => 'where/'.$det->job_class_id
+                );
+            $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);
+            $jvm = $job_value_matrix->row();
+            //print_mz($jvm);
+
+            //generate configuration
+            //compensation mix parameter
+            $cm_param = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session, 'job_class_id' => 'where/'.$det->job_class_id));
+            //lastq();
+            $row = $cm_param->row();
+            $var = $row->var/100;
+            $fix = $row->fix/100;
+            //print_mz($var." ".$fix);
+
+            if ($det->job_level == 'management') {
+                $jvp = $jvm->value; //job value point
+                $gs = $jvp * (67/100); //guarantee salary
+                
+                //count FIX compensation
+                $fix_val = $jvp * $fix;
+                $fix_gs_diff = $fix_val - $gs;
+                //print_mz($fix_gs_diff);
+                if ($employee_jm >= $jm_min AND $employee_jm <= $jm_max) {
+                    $jm_diff = $employee_jm - $jm_min;
+                    //value per 1%
+                    $vp1 = $fix_gs_diff / (($jm_max - $jm_min));
+                    $fix_value = ($jm_diff) * $vp1;
+
+                    $fix_value = $fix_value + $gs; // fix value
+                    //print_mz($fix_value);
+                }elseif ($employee_jm <= $jm_min) {
+                    $fix_value = $gs;
+                }elseif ($employee_jm >= $jm_max) {
+                    $fix_value = $fix_val;
+                }
+
+                //print_mz($fix_value);
+
+                //count VAR compensation
+                $var_value = $jvp * $var;
+                $pip = $var_value - $actual_allowance;
+
+                if ($pip > $var_value) {
+                    $pip = $var_value;
+                }else if($pip < $var_value) {
+                    $pip = $pip;
+                }
+
+                $var_value = round(($employee_jam / $std_jam) * $pip);
+                //print_mz(round($var_value));
+
+                $total_sal = $fix_value + $var_value;
+                //print_mz($salary);
+            }else if($det->job_level == 'nonmanagement') {
+                $min_range = $jvm->value_min;
+                $max_range = $jvm->value_max;
+                $grade = $det->gradeval_top;
+                //print_mz($max_range);
+                if ($grade == 6) {
+                    $min_jm_p = 75/100;
+                }elseif ($grade == 5) {
+                    $min_jm_p = 60/100;
+                }else{
+                    $min_jm_p = 40/100;
+                }
+                //print_mz($min_jm_p);
+                //count FIX compensation
+                $fix = $max_range * $fix;
+                //print_mz($fix);
+                $range_salary = $fix - $min_range;
+                $range = 1 - $min_jm_p;
+                //print_mz($range);
+
+                $val = ($range_salary / $range);
+                //print_mz($val);
+                $fix_value = ($employee_jm - $min_jm_p) * $val;
+                $salary_1 = $fix_value + $min_range;
+                //print_mz($salary_1);
+
+                //count VAR compensation
+                $var = $max_range * $var;
+                $salary_2 = $employee_jam * $var;
+                
+                //SALARY
+                $total_sal = $salary_1 + $salary_2;
+                //print_mz($total_sal);
+            }
+
+            print_mz($total_sal);
+            
+        }
+    }
 }
 ?>
