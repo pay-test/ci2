@@ -45,7 +45,7 @@
 
                 <li>
                     <a href="#tab-rate" data-toggle="tab">
-                        Exchange Rate
+                        Converter
                     </a>
                 </li>
                 <li>
@@ -54,7 +54,7 @@
                     </a>
                 </li>
             </ul>
-            <div class="tab-content">
+            <div class="tab-content" style="height:550px;overflow:auto;">
                 <!--Tab Matrix-->
                 <div class="tab-pane fade in active" id="tab-matrix">
                     <div class="container-fluid container-fullw bg-white">
@@ -75,19 +75,6 @@
                                         </div>
                                     </div>
                                     <br/>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label class="label-form">Select Section</label>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <select class="select2" id="section_select" style="width:100%">
-                                                <option>-- Select Section --</option>
-                                                <?php foreach($org->result() as $o):?>
-                                                    <option value="<?php echo $o->org_id?>"><?php echo $o->org_nm?></option>
-                                                <?php endforeach;?>
-                                            </select>
-                                        </div>
-                                    </div>
                                     <hr/>
                                     <div id="table_matrix">
 
@@ -182,8 +169,6 @@
                                             <input type="hidden" class="form-control" id="divider-id">
                                             <input type="text" style="display:none" class="form-control" id="divider-value-text">
                                         </div>
-                                
-
                                     </div>
                                 </div>
                             </div>

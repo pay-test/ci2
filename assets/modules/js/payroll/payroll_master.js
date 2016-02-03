@@ -9,7 +9,8 @@ $(document).ready(function() {
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
         "order": [], //Initial no order.
-
+        "scrollY":        "300px",
+        "scrollCollapse": true,
         // Load data for the table's content from an Ajax source
         "ajax": {
             "url": "payroll_master/ajax_list/",
@@ -19,7 +20,7 @@ $(document).ready(function() {
         //Set column definition initialisation properties.
         "columnDefs": [
         { 
-            "targets": [0, 2, -1], //last column
+            "targets": [-1], //last column
             "orderable": false, //set not orderable
         },
         { "sClass": "text-center", "aTargets": [-1] }

@@ -11,7 +11,7 @@ class Payroll_master_model extends CI_Model {
 	var $table_join5 = 'payroll_master_component';
 	var $table_join6 = 'payroll_period';
 	var $table_join7 = 'payroll_ptkp';
-	var $column = array('user_nm','person_nm'); //set column field database for order and search
+	var $column = array('hris_employee.employee_id', 'user_nm', 'person_nm', 'job_abbr', 'org_nm'); //set column field database for order and search
 	//var $order = array('employee_id' => 'asc'); // default order 
 
 	public function __construct()
