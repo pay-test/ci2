@@ -260,10 +260,14 @@ class Payroll_setup extends MX_Controller {
         //set session
         $session = 2016;
         $asid = 14;
+        $employee_id = 115;
         //generate configuration
         $actual_allowance = 2000;
         $employee_jam = 75/100;
         $std_jam = 79/100;
+        $exchange_rate = GetValue('value','payroll_exchange_rate',array('session_id' => 'where/'.$session));
+        $divider = GetValue('value','payroll_pembagi',array('session_id' => 'where/'.$session));
+
         //job match parameter
         $jm_param = GetAll('payroll_jm_parameter',array('session_id' => $session));
         $row = $jm_param->row();
@@ -271,16 +275,17 @@ class Payroll_setup extends MX_Controller {
         $jm_max = $row->max/100;
         //print_mz($jm_param);
 
-        $employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/644'));
+        $employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/'.$employee_id));
         foreach ($employee->result_array() as $emp) {
             $employee_id = $emp['employee_id'];
             $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
-            //print_mz($employee_jm);
+            //print_mz($employee_jm*100);
             if ($employee_jm > 0) {
-                $employee_jm = $employee_jm/100;
+                $employee_jm = $employee_jm;
             } else {
                 $employee_jm = 75/100;
             }
+           //print_mz($employee_jm);
             
             $detail = $this->payroll->get_employee_detail($employee_id);
             $det = $detail->row();
@@ -311,15 +316,15 @@ class Payroll_setup extends MX_Controller {
                 //count FIX compensation
                 $fix_val = $jvp * $fix;
                 $fix_gs_diff = $fix_val - $gs;
-                //print_mz($fix_gs_diff);
+                //print_mz($gs);
                 if ($employee_jm >= $jm_min AND $employee_jm <= $jm_max) {
                     $jm_diff = $employee_jm - $jm_min;
                     //value per 1%
-                    $vp1 = $fix_gs_diff / (($jm_max - $jm_min));
+                    $vp1 = $fix_gs_diff / ($jm_max - $jm_min);
                     $fix_value = ($jm_diff) * $vp1;
 
                     $fix_value = $fix_value + $gs; // fix value
-                    //print_mz($fix_value);
+                    //print_mz($jm_min);
                 }elseif ($employee_jm <= $jm_min) {
                     $fix_value = $gs;
                 }elseif ($employee_jm >= $jm_max) {
@@ -341,7 +346,7 @@ class Payroll_setup extends MX_Controller {
                 $var_value = round(($employee_jam / $std_jam) * $pip);
                 //print_mz(round($var_value));
 
-                $total_sal = $fix_value + $var_value;
+                $total_sal = $fix_value; //+ $var_value;
                 //print_mz($salary);
             }else if($det->job_level == 'nonmanagement') {
                 $min_range = $jvm->value_min;
@@ -375,11 +380,31 @@ class Payroll_setup extends MX_Controller {
                 
                 //SALARY
                 $total_sal = $salary_1 + $salary_2;
-                //print_mz($total_sal);
+                //print_mz($salary_1);
             }
 
-            print_mz($total_sal);
-            
+            $total_sal = ($total_sal * $exchange_rate) / $divider;
+            //print_mz($total_sal);
+            $data = array('value' => $total_sal);
+            $master_id = GetValue('id','payroll_master',array('employee_id' => 'where/'.$employee_id));
+            //check if component Salary on master is exist
+            $sal_component = GetAll('payroll_master_component',array('payroll_master_id' => 'where/'.$master_id, 'payroll_component_id' => 'where/60'));
+            $row = $sal_component->row();
+            $master_component_id = $row->id;
+            //print_mz($master_component_id);
+            $component_num_row = $sal_component->num_rows();
+            //lastq();
+            if ($component_num_row > 0) {
+                $this->all_model->Update('payroll_master_component',$data,'id = '.$master_component_id);
+            } else {
+                $data_insert = array(
+                    'payroll_master_id' => $master_id,
+                    'payroll_component_id' => 60,
+                    'value' => $total_sal
+                    );
+                $this->all_model->Insert('payroll_master_component',$data_insert);
+            }
+            $this->index();
         }
     }
 }

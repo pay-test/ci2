@@ -102,8 +102,8 @@
               <form id="form-process" action="payroll_setup/generate_value">
                 <div class="form-body">
                   <div class="form-group">
-                    <label class="control-label col-md-3">Period</label>
                     <div class="col-md-9">
+                        <span>Generate value from formula</span>
                         <span class="help-block"></span>
                     </div>
                   </div>
