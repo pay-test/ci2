@@ -118,7 +118,7 @@
                         </div>
                       </div>
                       <div class="col-md-12 pull-center">
-                        <table class="table table-hover table-condensed" id="table">
+                        <table class="table table-hover table-condensed" id="table" style="display:none;">
                           <thead>
                             <tr>
                               <th style="width:30%">Job Value</th>
