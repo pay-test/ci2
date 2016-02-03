@@ -382,6 +382,7 @@ if (!function_exists('GetAll')){
 			{
 				if($exp[0] == "where") $CI->db->where($key, $exp[1]);
 				else if($exp[0] == "like") $CI->db->like($key, $exp[1]);
+				else if($exp[0] == "or_like") $CI->db->or_like($key, $exp[1]);
 				else if($exp[0] == "like_after") $CI->db->like($key, $exp[1], 'after');
 				else if($exp[0] == "like_before") $CI->db->like($key, $exp[1], 'before');
 				else if($exp[0] == "not_like") $CI->db->not_like($key, $exp[1]);
@@ -406,7 +407,8 @@ if (!function_exists('GetAll')){
 		
 		foreach($filter_where_in as $key=> $value)
 		{
-			$CI->db->where_in($key, $value);
+			if(preg_match("/!=/", $key)) $CI->db->where_not_in(str_replace("!=","",$key), $value);
+			else $CI->db->where_in($key, $value);
 		}
 		
 		$q = $CI->db->get($tbl);

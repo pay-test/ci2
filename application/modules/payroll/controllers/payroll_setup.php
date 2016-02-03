@@ -258,9 +258,9 @@ class Payroll_setup extends MX_Controller {
 
     function generate_value() {
         //set session
-        $session = 2016;
+        $session = date('Y');
         $asid = 14;
-        $employee_id = 115;
+        //$employee_id = 115;
         //generate configuration
         $actual_allowance = 2000;
         $employee_jam = 75/100;
@@ -275,39 +275,51 @@ class Payroll_setup extends MX_Controller {
         $jm_max = $row->max/100;
         //print_mz($jm_param);
 
-        $employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/'.$employee_id));
+        //$employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/'.$employee_id));
+        
+        $employee = $this->db->query("SELECT * FROM (`hris_employee`) WHERE `status_cd` = 'normal' AND `employee_id` != 1 AND `employee_id` != 441");//lastq();
         foreach ($employee->result_array() as $emp) {
             $employee_id = $emp['employee_id'];
             $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
             //print_mz($employee_jm*100);
+            //die($employee_id);
             if ($employee_jm > 0) {
                 $employee_jm = $employee_jm;
             } else {
                 $employee_jm = 75/100;
             }
            //print_mz($employee_jm);
-            
+            $employee_job_id = getValue('job_id', 'hris_employee_job', array('employee_id'=>'where/'.$employee_id));
+            $job_value_id = getValue('job_value_id', 'hris_jobs', array('job_id'=>'where/'.$employee_job_id));
             $detail = $this->payroll->get_employee_detail($employee_id);
             $det = $detail->row();
             //print_mz($row);
 
             $filter = array(
                 'session_id' => 'where/'.$session,
-                //'org_id' => 'where/'.$det->org_id,
+                'job_value_id' => 'where/'.$job_value_id,
                 'job_class_id' => 'where/'.$det->job_class_id
                 );
-            $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);
+            $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);//lastq();
             $jvm = $job_value_matrix->row();
-            //print_mz($jvm);
+            $job_class_id = (!empty($det->job_class_id)) ? $det->job_class_id : 0;
+            $data_master = array(
+                            'employee_id'=>$employee_id,
+                            'payroll_group_id'=>$job_class_id
+                                );
+            $payroll_master_num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id))->num_rows();
+            if($payroll_master_num_rows<1)$this->db->insert('payroll_master', $data_master);
+            //print_mz($job_value_matrix);
 
             //generate configuration
             //compensation mix parameter
-            $cm_param = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session, 'job_class_id' => 'where/'.$det->job_class_id));
+            $cm_param = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session, 'job_class_id' => 'where/'.$job_class_id));
             //lastq();
             $row = $cm_param->row();
             $var = $row->var/100;
             $fix = $row->fix/100;
             //print_mz($var." ".$fix);
+            //print_r($employee_id);
 
             if ($det->job_level == 'management') {
                 $jvp = $jvm->value; //job value point
@@ -389,7 +401,7 @@ class Payroll_setup extends MX_Controller {
             $master_id = GetValue('id','payroll_master',array('employee_id' => 'where/'.$employee_id));
             //check if component Salary on master is exist
             $sal_component = GetAll('payroll_master_component',array('payroll_master_id' => 'where/'.$master_id, 'payroll_component_id' => 'where/60'));
-            $row = $sal_component->row();
+            $row = $sal_component->row();//print_mz($row);
             $master_component_id = $row->id;
             //print_mz($master_component_id);
             $component_num_row = $sal_component->num_rows();
@@ -404,8 +416,11 @@ class Payroll_setup extends MX_Controller {
                     );
                 $this->all_model->Insert('payroll_master_component',$data_insert);
             }
+            echo'<pre>';
+            print_r($this->db->last_query());echo '</pre>';
             $this->index();
         }
+            $this->index();
     }
 }
 ?>
