@@ -288,7 +288,7 @@ class Payroll_setup extends MX_Controller {
 
             $filter = array(
                 'session_id' => 'where/'.$session,
-                'org_id' => 'where/'.$det->org_id,
+                //'org_id' => 'where/'.$det->org_id,
                 'job_class_id' => 'where/'.$det->job_class_id
                 );
             $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);
