@@ -61,8 +61,73 @@ class Payroll_master extends MX_Controller {
     {
         $data = $this->payroll->get_by_id($id);//;print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
+        $this->get_formula($payroll_master_id);
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
+    }
+
+    function get_formula($payroll_master_id){
+        $data2 = $this->payroll->get_master_component($payroll_master_id)->result();//print_mz($data2);
+        foreach ($data2 as $value) {
+            $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/60'));
+            //print_r($value->formula);
+            $t = $value->formula;//print_r("idnya $value->id formulanya $value->formula <br/>");
+            $tx = explode('.', $t);$r='';
+            if($t != null):
+               //echo $value->formula;
+                for($i=0;$i<sizeof($tx);$i++):
+                        if($tx[$i]=='bwgs'){
+                            $tx[$i] = $g;
+                        }
+                        if (strpos($tx[$i], '%') !== false) {
+                             $tx[$i] =substr_replace($tx[$i], '/100', -1);
+                        }else{false;}
+
+                        $r .= $tx[$i];
+                endfor;
+                $f= $this->evalmath($r);
+                   //echo $r.'<br/>';
+                   //echo $g.'<br/>';
+                $tz =@eval("return " . $f . ";" );
+                $this->db->where('id', $value->id)->update('payroll_master_component', array('value'=>$tz));
+                //print_r($this->db->last_query());
+            endif;
+        }
+       return true;
+    }
+
+    function evalmath($equation)
+    {
+        $result = 0;
+        // sanitize imput
+        $equation = preg_replace("/[^a-z0-9+\-.*\/()%]/","",$equation);
+
+        // convert alphabet to $variabel 
+        $equation = preg_replace("/([a-z])+/i", "\$$0", $equation); 
+
+
+        // convert percentages to decimal
+        $equation = preg_replace("/([+-])([0-9]{1})(%)/","*(1\$1.0\$2)",$equation);
+        $equation = preg_replace("/([+-])([0-9]+)(%)/","*(1\$1.\$2)",$equation);
+        $equation = preg_replace("/([0-9]{1})(%)/",".0\$1",$equation);
+        $equation = preg_replace("/([0-9]+)(%)/",".\$1",$equation);
+        /* 
+        if ( $equation != "" )
+        {
+        $result = @eval("return " . $equation . ";" );
+
+        }
+        */
+        /* 
+        if ($result == null)
+        {
+        throw new Exception("Unable to calculate equation");
+        }
+
+        return $result;
+        */
+        return $equation;
+
     }
 
     public function ajax_update()

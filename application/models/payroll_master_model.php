@@ -166,6 +166,7 @@ class Payroll_master_model extends CI_Model {
 		return $this->db->select('payroll_master_component.id as id,
 								  payroll_component.title as component, 
 							      payroll_component.code as code, 
+							      payroll_component.formula as formula, 
 							      payroll_master_component.value as value,
 							      payroll_master_component.payroll_component_id as component_id'
 						  		)
