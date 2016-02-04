@@ -382,7 +382,6 @@ if (!function_exists('GetAll')){
 			{
 				if($exp[0] == "where") $CI->db->where($key, $exp[1]);
 				else if($exp[0] == "like") $CI->db->like($key, $exp[1]);
-				else if($exp[0] == "or_like") $CI->db->or_like($key, $exp[1]);
 				else if($exp[0] == "like_after") $CI->db->like($key, $exp[1], 'after');
 				else if($exp[0] == "like_before") $CI->db->like($key, $exp[1], 'before');
 				else if($exp[0] == "not_like") $CI->db->not_like($key, $exp[1]);
@@ -407,8 +406,7 @@ if (!function_exists('GetAll')){
 		
 		foreach($filter_where_in as $key=> $value)
 		{
-			if(preg_match("/!=/", $key)) $CI->db->where_not_in(str_replace("!=","",$key), $value);
-			else $CI->db->where_in($key, $value);
+			$CI->db->where_in($key, $value);
 		}
 		
 		$q = $CI->db->get($tbl);
@@ -818,7 +816,7 @@ if (!function_exists('GetMonthIndex')){
 if (!function_exists('GetMonth')){	
 	function GetMonth($id)
 	{
-		$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Oct","Nov","Dec");
+		$bln = array("","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 		//$bln = array("","Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Dec");
 		return $bln[intval($id)];
 	}
@@ -957,10 +955,10 @@ if (!function_exists('GetOptPublish')){
 	}
 }
 
-if (!function_exists('GetOptKBK')){	
-	function GetOptKBK()
+if (!function_exists('GetOptShiftReguler')){	
+	function GetOptShiftReguler()
 	{
-		$opt = array("K"=> "K", "L"=> "L");
+		$opt = array("shift"=> "Shift", "reguler"=> "Reguler");
 		
 		return $opt;
 	}
@@ -1081,16 +1079,15 @@ if (!function_exists('GetOptPosition')){
 	}
 }
 
-if (!function_exists('GetOptDepartment')){	
-	function GetOptDepartment()
+if (!function_exists('GetOptDivision')){	
+	function GetOptDivision()
 	{
 		$CI =& get_instance();
-		$q = GetAll("kg_department");
-		$opt[''] = "- Department -";
-		if($CI->uri->segment(1) == "wp") $opt[-1] = "-";
+		$q = GetAll("hris_job_class", array("job_class_nm"=> "order/asc"));
+		$opt[''] = "- Division -";
 		foreach($q->result_array() as $r)
 		{
-			$opt[$r['id']] = $r['title'];
+			$opt[$r['job_class_id']] = $r['job_class_nm'];
 		}
 		
 		return $opt;
@@ -1200,7 +1197,7 @@ if (!function_exists('FormatTanggal')){
 	function FormatTanggal($tgl)
 	{
 		$exp = explode("-", $tgl);
-		$tgl = $exp[2]." ".GetMonthFull(intval($exp[1]))." ".$exp[0];
+		$tgl = substr($exp[2],0,2)." ".GetMonthFull(intval($exp[1]))." ".$exp[0];
 		return $tgl;
 	}
 }
@@ -1210,7 +1207,7 @@ if (!function_exists('FormatTanggalShort')){
 	{
 		$exp = explode("-", $tgl);
 		//$tgl = $exp[2]." ".GetMonth(intval($exp[1]))." ".substr($exp[0],2,2);
-		$tgl = $exp[2]." ".GetMonth(intval($exp[1]))." ".$exp[0];
+		$tgl = substr($exp[2],0,2)." ".GetMonth(intval($exp[1]))." ".$exp[0];
 		return $tgl;
 	}
 }
@@ -1426,21 +1423,10 @@ if (!function_exists('GetOfficeHours')){
 	}
 }
 
-if(!function_exists('GetJumlahLembur')){
-	function GetJumlahLembur($id,$bln,$thn, $field){
-		$CI =& get_instance();
-		$montcur=$thn.'-'.$bln.'-15';
-		if($bln=='01'){
-			$bef='12';
-			$thn=$thn-1;
-		}else{
-			$bef=$bln-1;
-			if(strlen($bef)==1){$bef='0'.$bef;}
-		}
-		$montprev=$thn.'-'.$bef.'-16';
-		$query="SELECT SUM($field) as hasil FROM kg_view_kehadiran WHERE id_employee='$id' AND date_full >= '$montprev'  AND date_full <= '$montcur' AND alpa='0'";
-		$hasil=$CI->db->query($query)->row_array();
-		return $hasil['hasil'];
+if (!function_exists('GetConfig')){
+	function GetConfig($param=NULL, $grup=NULL)
+	{
+		return GetValue($param, "kg_config_temp", array($grup."_active_from <="=> "where/".date("Y-m-d"), "id"=> "order/desc", "limit"=> "0/1"));
 	}
 }
 
@@ -1470,6 +1456,57 @@ if (!function_exists('GetPeriod')){
 		}
 		
 		return $start."~".$end;
+	}
+}
+
+if (!function_exists('GetPeriodFull')){
+	function GetPeriodFull($param)
+	{
+		$exp = explode("~", $param);
+		
+		return FormatTanggalShort($exp[0])." s/d ".FormatTanggalShort($exp[1]);
+	}
+}
+
+if (!function_exists('GetDayName')){
+	function GetDayName($param)
+	{
+		$val = date("D", strtotime($param));
+		
+		return $val;
+	}
+}
+
+if (!function_exists('GetHoliday')){
+	function GetHoliday($tahun=NULL)
+	{
+		if(!$tahun) $tahun=date("Y");
+		$holiday = array();
+		$q = GetAll("kg_holiday", array("YEAR(tanggal)"=> "where/".$tahun));
+		foreach($q->result_array() as $r) {
+			//$holiday[$r['tanggal']] = $r['ket'];
+			$holiday[] = $r['tanggal'];
+			$holiday[$r['tanggal']] = $r['ket'];
+		}
+		
+		return $holiday;
+	}
+}
+
+if (!function_exists('CekLemburAuto')){
+	function CekLemburAuto($id_emp, $param)
+	{
+		$temp=array();
+		$exp = explode("-", $param);
+		for($i=1;$i<=2;$i++) {
+			$new_dt = date("Y-m-j", mktime(0, 0, 0, $exp[1], $exp[2]-$i, $exp[0]));
+			$new_exp = explode("-", $new_dt);
+			$temp[$i] = GetValue("tgl_".$new_exp[2], "kg_jadwal_shift", array("id_employee"=> "where/".$id_emp, "bulan"=> "where/".$new_exp[1], "tahun"=> "where/".$new_exp[0]));
+		}
+		
+		if($temp[1] != 3 || $temp[2] != 3) return 0;
+		else return 1;
+		
 	}
 }
 ?>

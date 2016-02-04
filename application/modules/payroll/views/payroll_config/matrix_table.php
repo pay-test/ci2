@@ -28,7 +28,7 @@
                   <?php $value = getValue('value', 'payroll_job_value_matrix', array('session_id'=>'where/'.$session_id,'job_class_id'=>'where/'.$m->job_class_id, 'job_value_id'=>'where/'.$v->id));
                     $valuex = (!empty($value)) ? $value : '0.00';
                   ?>
-                  <td align="right"><a href="javascript:void(0);" onclick="updateVal('<?=$m->job_class_id?>','<?=$v->id?>')"><span id="td<?=$m->job_class_id?><?=$v->id?>"><?= number_format($valuex, 2)?></span></a><input type="text" style="display:none" value="0.00" id="text<?=$m->job_class_id?><?=$v->id?>" class="editbox money text-right form-control" onchange="changeVal()"></td>
+                  <td align="right" class="td-val"><a href="javascript:void(0);" onclick="updateVal('<?=$m->job_class_id?>','<?=$v->id?>')"><span id="td<?=$m->job_class_id?><?=$v->id?>"><?= number_format($valuex, 2)?></span></a><input type="text" style="display:none" value="0.00" id="text<?=$m->job_class_id?><?=$v->id?>" class="text-val money text-right form-control" onchange="changeVal()"></td>
                 </tr>
                 <?php } ?>
               <?php endforeach;?>
@@ -61,8 +61,8 @@
                     $value_max = getValue('value_max', 'payroll_job_value_matrix', array('session_id'=>'where/'.$session_id,'job_class_id'=>'where/'.$m->job_class_id, 'job_value_id'=>'where/'.$v->id));
                     $value_maxx = (!empty($value_max)) ? $value_max : '0.00';
                   ?>
-                  <td align="right"><a href="javascript:void(0);" onclick="updateValMin('<?=$m->job_class_id?>','<?=$v->id?>')"><span id="td_min<?=$m->job_class_id?><?=$v->id?>"><?= number_format($value_minx, 2)?></span></a><input type="text" style="display:none" value="0.00" id="text_min<?=$m->job_class_id?><?=$v->id?>" class="editbox money text-right form-control" onchange="changeValMin()"></td>
-                  <td align="right"><a href="javascript:void(0);" onclick="updateValMax('<?=$m->job_class_id?>','<?=$v->id?>')"><span id="td_max<?=$m->job_class_id?><?=$v->id?>"><?= number_format($value_maxx, 2)?></span></a><input type="text" style="display:none" value="0.00" id="text_max<?=$m->job_class_id?><?=$v->id?>" class="editbox money text-right form-control" onchange="changeValMax()"></td>
+                  <td class="td-min" align="right"><a href="javascript:void(0);" onclick="updateValMin('<?=$m->job_class_id?>','<?=$v->id?>')"><span id="td_min<?=$m->job_class_id?><?=$v->id?>"><?= number_format($value_minx, 2)?></span></a><input type="text" style="display:none" value="0.00" id="text_min<?=$m->job_class_id?><?=$v->id?>" class="text-val-min money text-right form-control" onchange="changeValMin()"></td>
+                  <td class="td-max" align="right"><a href="javascript:void(0);" onclick="updateValMax('<?=$m->job_class_id?>','<?=$v->id?>')"><span id="td_max<?=$m->job_class_id?><?=$v->id?>"><?= number_format($value_maxx, 2)?></span></a><input type="text" style="display:none" value="0.00" id="text_max<?=$m->job_class_id?><?=$v->id?>" class="text-val-max money text-right form-control" onchange="changeValMax()"></td>
                 </tr>
                 <?php } ?>
               <?php endforeach;?>

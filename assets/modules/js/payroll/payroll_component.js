@@ -81,6 +81,7 @@ function edit_user(id)
             $('[name="component_type_id"]').val(data.component_type_id);
             $('[name="is_annualized"]').val(data.is_annualized);
             $('[name="tax_component_id"]').val(data.tax_component_id);
+            $('[name="formula"]').val(data.formula);
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Component'); // Set title to Bootstrap modal title
 

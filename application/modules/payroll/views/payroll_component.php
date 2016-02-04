@@ -116,6 +116,14 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Formula</label>
+                            <div class="col-md-9">
+                                <input name="formula" placeholder="Formula" class="form-control" type="text">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
                       </div>
                       <div class="col-md-12 pull-center">
                         <table class="table table-hover table-condensed" id="table" style="display:none;">

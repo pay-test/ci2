@@ -192,6 +192,12 @@ $(document).ready(function() {
 
   // Outside click action
   $(document).mouseup(function(){
+    $(".td-val").show();
+    $(".text-val").hide();
+    $(".td-val-min").show();
+    $(".text-val-min").hide();
+    $(".td-val-max").show();
+    $(".text-val-max").hide();
     $("#rate-value-text").hide();
     $("#rate-value").show();
     $("#divider-value-text").hide();

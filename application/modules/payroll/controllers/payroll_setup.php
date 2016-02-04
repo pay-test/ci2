@@ -301,7 +301,8 @@ class Payroll_setup extends MX_Controller {
                 'job_class_id' => 'where/'.$det->job_class_id
                 );
             $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);//lastq();
-            $jvm = $job_value_matrix->row();
+            $job_value_matrix_num = GetAll('payroll_job_value_matrix',$filter)->num_rows();//lastq();
+            $jvm = ($job_value_matrix_num>0)?$job_value_matrix->row():0;
             $job_class_id = (!empty($det->job_class_id)) ? $det->job_class_id : 0;
             $data_master = array(
                             'employee_id'=>$employee_id,
@@ -314,15 +315,16 @@ class Payroll_setup extends MX_Controller {
             //generate configuration
             //compensation mix parameter
             $cm_param = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session, 'job_class_id' => 'where/'.$job_class_id));
+            $cm_param_num = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session, 'job_class_id' => 'where/'.$job_class_id))->num_rows();
             //lastq();
             $row = $cm_param->row();
-            $var = $row->var/100;
-            $fix = $row->fix/100;
+            $var = ($cm_param_num>0)?$row->var/100:0;
+            $fix = ($cm_param_num>0)?$row->fix/100:0;
             //print_mz($var." ".$fix);
             //print_r($employee_id);
-
+            print_r($det->job_level);echo '<br/>';print_r($jvm);
             if ($det->job_level == 'management') {
-                $jvp = $jvm->value; //job value point
+                $jvp = ($job_value_matrix_num!=0)?$jvm->value:0; //job value point
                 $gs = $jvp * (67/100); //guarantee salary
                 
                 //count FIX compensation
@@ -361,8 +363,8 @@ class Payroll_setup extends MX_Controller {
                 $total_sal = $fix_value; //+ $var_value;
                 //print_mz($salary);
             }else if($det->job_level == 'nonmanagement') {
-                $min_range = $jvm->value_min;
-                $max_range = $jvm->value_max;
+                $min_range = ($job_value_matrix_num!=0)?$jvm->value_min:0;
+                $max_range = ($job_value_matrix_num!=0)?$jvm->value_max:0;
                 $grade = $det->gradeval_top;
                 //print_mz($max_range);
                 if ($grade == 6) {
@@ -407,7 +409,8 @@ class Payroll_setup extends MX_Controller {
             $component_num_row = $sal_component->num_rows();
             //lastq();
             if ($component_num_row > 0) {
-                $this->all_model->Update('payroll_master_component',$data,'id = '.$master_component_id);
+
+                $this->db->where('payroll_master_id', $master_id)->where('payroll_component_id', 60)->update('payroll_master_component',$data);
             } else {
                 $data_insert = array(
                     'payroll_master_id' => $master_id,
@@ -418,7 +421,6 @@ class Payroll_setup extends MX_Controller {
             }
             echo'<pre>';
             print_r($this->db->last_query());echo '</pre>';
-            $this->index();
         }
             $this->index();
     }
