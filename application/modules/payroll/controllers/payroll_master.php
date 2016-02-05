@@ -59,8 +59,9 @@ class Payroll_master extends MX_Controller {
 
     public function ajax_edit($id)
     {
-        $data = $this->payroll->get_by_id($id);//;print_mz($data); // if 0000-00-00 set tu empty for datepicker compatibility
+        $data = $this->payroll->get_by_id($id);//;print_mz($data); 
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
+        $this->cek_master_component($payroll_master_id);
         $this->get_formula($payroll_master_id);
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
@@ -70,15 +71,15 @@ class Payroll_master extends MX_Controller {
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result();//print_mz($data2);
         foreach ($data2 as $value) {
             $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/60'));
-            //print_r($value->formula);
             $t = $value->formula;//print_r("idnya $value->id formulanya $value->formula <br/>");
-            $tx = explode('.', $t);$r='';
-            if($t != null):
+            $tx = explode(' ', $t);$r='';
+            if($t != null && $value->component_id!=60):
                //echo $value->formula;
                 for($i=0;$i<sizeof($tx);$i++):
-                        if($tx[$i]=='bwgs'){
+                        if($tx[$i]=='BWGS'){
                             $tx[$i] = $g;
                         }
+
                         if (strpos($tx[$i], '%') !== false) {
                              $tx[$i] =substr_replace($tx[$i], '/100', -1);
                         }else{false;}
@@ -94,6 +95,23 @@ class Payroll_master extends MX_Controller {
             endif;
         }
        return true;
+    }
+
+    function cek_master_component($master_id)
+    {
+        $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id));//lastq();
+        $group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq();
+        $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//lastq();print_mz($cek_group_component->result());
+        foreach ($cek_group_component->result() as $r) {
+            $component_num_rows = GetAllSelect('payroll_master_component', 'payroll_component_id', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/'.$r->payroll_component_id))->num_rows();//print_r("num_rows-".$component_num_rows);
+            if($component_num_rows<1):
+                $data = array('payroll_master_id' => $master_id,
+                              'payroll_component_id'=> $r->payroll_component_id,
+                              'value' => 0
+                    );
+                $this->db->insert('payroll_master_component', $data);
+            endif;
+        }
     }
 
     function evalmath($equation)
@@ -185,7 +203,7 @@ class Payroll_master extends MX_Controller {
                 //print_r($this->db->last_query());
             //lastq();
         endfor;
-        echo json_encode(array("status" => TRUE));
+        echo json_encode(array("status" => $this->db->last_query()));
     }
 
     public function ajax_delete($id)

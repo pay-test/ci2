@@ -404,12 +404,12 @@ class Payroll_setup extends MX_Controller {
             //check if component Salary on master is exist
             $sal_component = GetAll('payroll_master_component',array('payroll_master_id' => 'where/'.$master_id, 'payroll_component_id' => 'where/60'));
             $row = $sal_component->row();//print_mz($row);
-            $master_component_id = $row->id;
             //print_mz($master_component_id);
             $component_num_row = $sal_component->num_rows();
             //lastq();
             if ($component_num_row > 0) {
 
+                $master_component_id = $row->id;
                 $this->db->where('payroll_master_id', $master_id)->where('payroll_component_id', 60)->update('payroll_master_component',$data);
             } else {
                 $data_insert = array(
