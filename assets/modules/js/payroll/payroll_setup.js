@@ -31,12 +31,12 @@ $(document).ready(function() {
         autoclose: true,
     });
 
-    $("#form-process").submit(function(e) {
+    $("#form-process2").submit(function(e) {
     // ajax adding data to database
     $.ajax({
         url : 'payroll_setup/process',
         type: "POST",
-        data: $('#form-process').serialize(),
+        data: $('#form-process2').serialize(),
         dataType: "JSON",
         success: function(data)
         {
@@ -44,7 +44,7 @@ $(document).ready(function() {
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            alert('Error Process');
+            alert(errorThrown+textStatus);
 
         }
     });
@@ -225,6 +225,25 @@ function delete_user(id)
 
     }
 }
+
+$(document).ready(function(){
+    $('#form-process').submit(function(response){
+        $("#loading").show();
+        $("#form-generate").hide();
+        $.post($('#form-process').attr('action'), $('#form-process').serialize(),function(json){
+            if(json.st == 0){
+                $("#loading").hide();
+                $("#form-generate").show();
+                alert("Process Failed");
+            }else{
+                $("#loading").hide();
+                $("#form-generate").show();
+                alert("value has been successfully generated");
+            }
+        }, 'json');
+        return false;
+    });
+});
 
 /*************************************
   * Created : Jan 2016

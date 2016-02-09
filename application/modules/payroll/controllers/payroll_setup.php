@@ -322,7 +322,7 @@ class Payroll_setup extends MX_Controller {
             $fix = ($cm_param_num>0)?$row->fix/100:0;
             //print_mz($var." ".$fix);
             //print_r($employee_id);
-            print_r($det->job_level);echo '<br/>';print_r($jvm);
+            //print_r($det->job_level);echo '<br/>';print_r($jvm);
             if ($det->job_level == 'management') {
                 $jvp = ($job_value_matrix_num!=0)?$jvm->value:0; //job value point
                 $gs = $jvp * (67/100); //guarantee salary
@@ -419,10 +419,10 @@ class Payroll_setup extends MX_Controller {
                     );
                 $this->all_model->Insert('payroll_master_component',$data_insert);
             }
-            echo'<pre>';
-            print_r($this->db->last_query());echo '</pre>';
+            //echo'<pre>';
+            //print_r($this->db->last_query());echo '</pre>';
         }
-            $this->index();
+            echo json_encode(array('st'=>1));
     }
 }
 ?>

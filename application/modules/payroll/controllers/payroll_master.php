@@ -99,9 +99,9 @@ class Payroll_master extends MX_Controller {
 
     function cek_master_component($master_id)
     {
-        $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id));//lastq();
-        $group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq();
-        $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//lastq();print_mz($cek_group_component->result());
+        $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id));//print_mz($group_id);
+        //$group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq()
+        $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//print_mz($cek_group_component->result());
         foreach ($cek_group_component->result() as $r) {
             $component_num_rows = GetAllSelect('payroll_master_component', 'payroll_component_id', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/'.$r->payroll_component_id))->num_rows();//print_r("num_rows-".$component_num_rows);
             if($component_num_rows<1):
