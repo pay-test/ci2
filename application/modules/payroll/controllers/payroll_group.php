@@ -19,8 +19,8 @@ class Payroll_group extends MX_Controller {
         $this->data['title'] = ucfirst($this->title);
         $this->data['page_title'] = $this->page_title;
 
-        $filter = array('is_deleted' => 'where/0', 'is_active'=> 'where/1');
-        $this->data['p_component'] = $list_component =$this->all_model->GetAll('payroll_component',$filter);
+        $filter = array('is_deleted' => 'where/0', 'is_active'=> 'where/1', 'component_type_id'=>'order/asc', 'code'=>'order/asc');
+        $this->data['p_component'] = $list_component =getAll('payroll_component',$filter)->result_array();
 
         $filter = array('status_cd' => 'where/normal');
         $this->data['job_class'] = $this->all_model->GetAll('hris_job_class',$filter,'job_class_level');

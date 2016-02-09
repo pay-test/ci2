@@ -26,7 +26,7 @@
               <h4><span class="semi-bold">Process Payroll</span></h4>
             </div>
             <div class="grid-body">
-              <form id="form-process" action="#">
+              <form id="form-process2" action="#">
                 <div class="form-body">
                   <div class="form-group">
                     <label class="control-label col-md-3">Period</label>
@@ -96,10 +96,12 @@
         <div class="col-md-6">
           <div class="grid simple ">
             <div class="grid-title">
-              <h4><span class="semi-bold">Generate Value</span></h4>
+              <h4><span class="semi-bold">Generate Salary Value</span></h4>
             </div>
             <div class="grid-body">
-              <form id="form-process" action="payroll_setup/generate_value">
+              <?php echo form_open(base_url('payroll/payroll_setup/generate_value'), array('id'=>'form-process'))?>
+              <div id="loading" style="display:none"><img src="<?php echo base_url('assets/assets/img/loading.gif')?>"></div>
+              <div id="form-generate"> 
                 <div class="form-body">
                   <div class="form-group">
                     <div class="col-md-9">
@@ -112,6 +114,7 @@
                   </div>
                 </div>
               </form>
+              </div>
             </div>
           </div>
         </div>

@@ -322,7 +322,7 @@ class Payroll_setup extends MX_Controller {
             $fix = ($cm_param_num>0)?$row->fix/100:0;
             //print_mz($var." ".$fix);
             //print_r($employee_id);
-            print_r($det->job_level);echo '<br/>';print_r($jvm);
+            //print_r($det->job_level);echo '<br/>';print_r($jvm);
             if ($det->job_level == 'management') {
                 $jvp = ($job_value_matrix_num!=0)?$jvm->value:0; //job value point
                 $gs = $jvp * (67/100); //guarantee salary
@@ -404,12 +404,12 @@ class Payroll_setup extends MX_Controller {
             //check if component Salary on master is exist
             $sal_component = GetAll('payroll_master_component',array('payroll_master_id' => 'where/'.$master_id, 'payroll_component_id' => 'where/60'));
             $row = $sal_component->row();//print_mz($row);
-            $master_component_id = $row->id;
             //print_mz($master_component_id);
             $component_num_row = $sal_component->num_rows();
             //lastq();
             if ($component_num_row > 0) {
 
+                $master_component_id = $row->id;
                 $this->db->where('payroll_master_id', $master_id)->where('payroll_component_id', 60)->update('payroll_master_component',$data);
             } else {
                 $data_insert = array(
@@ -419,10 +419,10 @@ class Payroll_setup extends MX_Controller {
                     );
                 $this->all_model->Insert('payroll_master_component',$data_insert);
             }
-            echo'<pre>';
-            print_r($this->db->last_query());echo '</pre>';
+            //echo'<pre>';
+            //print_r($this->db->last_query());echo '</pre>';
         }
-            $this->index();
+            echo json_encode(array('st'=>1));
     }
 }
 ?>

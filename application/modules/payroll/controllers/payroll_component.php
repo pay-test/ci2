@@ -104,7 +104,7 @@ class Payroll_component extends MX_Controller {
                 'component_type_id' => $this->input->post('component_type_id'),
                 'is_annualized' => $this->input->post('is_annualized'),
                 'tax_component_id' => $this->input->post('tax_component_id'),
-                'formula' => $this->input->post('formula'),
+                'formula' => strtoupper($this->input->post('formula')),
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );
