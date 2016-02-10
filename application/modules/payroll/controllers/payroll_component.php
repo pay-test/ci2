@@ -87,6 +87,9 @@ class Payroll_component extends MX_Controller {
                 'is_annualized' => $this->input->post('is_annualized'),
                 'tax_component_id' => $this->input->post('tax_component_id'),
                 'formula' => $this->input->post('formula'),
+                'is_condition' => $this->input->post('is_condition'),
+                'min' => str_replace(',', '', $this->input->post('min')),
+                'max' => str_replace(',', '', $this->input->post('max')),
                 'created_by' => GetUserID(),
                 'created_on' => date('Y-m-d H:i:s')
             );
@@ -105,6 +108,9 @@ class Payroll_component extends MX_Controller {
                 'is_annualized' => $this->input->post('is_annualized'),
                 'tax_component_id' => $this->input->post('tax_component_id'),
                 'formula' => strtoupper($this->input->post('formula')),
+                'is_condition' => $this->input->post('is_condition'),
+                'min' => str_replace(',', '', $this->input->post('min')),
+                'max' => str_replace(',', '', $this->input->post('max')),
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );
@@ -176,6 +182,7 @@ class Payroll_component extends MX_Controller {
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
                     $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
+                    $this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
                 }
 

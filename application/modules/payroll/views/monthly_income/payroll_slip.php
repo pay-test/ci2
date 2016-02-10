@@ -63,7 +63,7 @@
 		<td align="right">
 		<?php $tincome = 0;foreach($income as $in):?>
       <?php if($in->value != 0): ?>
-			<p><?php echo $in->value;$tincome+=$in->value;?></p><br/>
+			<p><?php echo number_format($in->value, 2);$tincome+=$in->value;?></p><br/>
       <?php endif;?>
 		<?php endforeach;?>
 		</td>
@@ -78,7 +78,7 @@
 		<td align="right">
 			<?php $tdeduction=0;foreach($deduction as $de):?>
       <?php if($de->value != 0): ?>
-			<p><?php echo $de->value;$tdeduction+=$de->value;?></p><br/>
+			<p><?php echo number_format($de->value, 2);$tdeduction+=$de->value;?></p><br/>
       <?php endif;?>
 		<?php endforeach;?>
 		</td>
@@ -110,14 +110,14 @@
     <tbody>
     <tr >
       <td width="30%" height="30">Income Total</td>
-      <td width="15%" align="right"><?php echo $tincome?></td>
+      <td width="15%" align="right"><?php echo number_format($tincome, 2)?></td>
       <td width="10%">&nbsp;</td>
       <td width="30%">Deduction Total</td>
-      <td width="15%" align="right"><?php echo $tdeduction?></td>
+      <td width="15%" align="right"><?php echo number_format($tdeduction, 2)?></td>
     </tr>
     <tr >
 	    <td width="30%">Take Home Pay</td>
-      <td width="15%" align="right" style="border:1"><?php echo $tincome-$tdeduction?></td>
+      <td width="15%" align="right" style="border:1"><?php echo number_format($tincome-$tdeduction, 2)?></td>
       <td width="10%">&nbsp;</td>
       <td width="30%"></td>
       <td width="15%" align="right"></td>

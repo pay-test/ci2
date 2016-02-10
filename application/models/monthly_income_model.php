@@ -96,7 +96,7 @@ class Monthly_income_model extends CI_Model {
 		return $this->db->count_all_results();
 	}
 
-	public function get_by_id($id)
+	public function get_by_id($id, $period_id)
 	{
 		$this->db->select(
 			$this->table.'.employee_id as employee_id,
@@ -116,6 +116,7 @@ class Monthly_income_model extends CI_Model {
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);
+		$this->db->where($this->table_join4.'.payroll_period_id', $period_id);
 		$query = $this->db->get();
 
 		return $query->row();

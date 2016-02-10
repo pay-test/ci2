@@ -18,7 +18,6 @@ class Monthly_income extends MX_Controller {
     {
         $this->data['title'] = ucfirst($this->title);
         $this->data['page_title'] = $this->page_title;
-
         permission();
 
         $year_now = date('Y');

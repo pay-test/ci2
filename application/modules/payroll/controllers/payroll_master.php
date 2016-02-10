@@ -70,13 +70,14 @@ class Payroll_master extends MX_Controller {
     function get_formula($payroll_master_id){
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result();//print_mz($data2);
         foreach ($data2 as $value) {
-            $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/60'));
             $t = $value->formula;//print_r("idnya $value->id formulanya $value->formula <br/>");
             $tx = explode(' ', $t);$r='';
             if($t != null && $value->component_id!=60):
                //echo $value->formula;
                 for($i=0;$i<sizeof($tx);$i++):
-                        if($tx[$i]=='BWGS'){
+                        if(preg_match("/[a-z]/i", $tx[$i])){
+                            $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
+                            $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$g));
                             $tx[$i] = $g;
                         }
 
@@ -90,6 +91,19 @@ class Payroll_master extends MX_Controller {
                    //echo $r.'<br/>';
                    //echo $g.'<br/>';
                 $tz =@eval("return " . $f . ";" );
+                $is_condition = getValue('is_condition', 'payroll_component', array('id'=>'where/'.$value->component_id));
+                if($is_condition == 1){
+                    $min = getValue('min', 'payroll_component', array('id'=>'where/'.$value->component_id));
+                    $max = getValue('max', 'payroll_component', array('id'=>'where/'.$value->component_id));
+
+                    if($tz > $max):
+                        $tz = $max;
+                    elseif($tz < $min):
+                        $tz = $min;
+                    else:
+                        $tz= $tz;
+                    endif;
+                }
                 $this->db->where('id', $value->id)->update('payroll_master_component', array('value'=>$tz));
                 //print_r($this->db->last_query());
             endif;

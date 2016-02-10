@@ -8,8 +8,8 @@
   <tbody>
     <?php foreach($jm->result() as $m):?>
       <tr id="<?php echo $m->id?>" class="edit_tr">
-        <td align="center" id="<?php echo $m->id?>" class="edit_min"><a href="javascript:void(0);"><span class="textz_min" id="min<?php echo $m->id?>"><?php echo $m->min?></span></a><input type="text" style="display:none" value="<?php echo $m->min?>" id="textz_min<?php echo $m->id?>" class="editbox_min text-center"></td>
-        <td align="center" id="<?php echo $m->id?>" class="edit_max"><a href="javascript:void(0);"><span class="textz_max" id="max<?php echo $m->id?>"><?php echo $m->max?></span></a><input type="text" style="display:none" value="<?php echo $m->max?>" id="textz_max<?php echo $m->id?>" class="editbox_max text-center"></td>
+        <td align="center" id="<?php echo $m->id?>" class="edit_min"><a href="javascript:void(0);"><span class="textz_min" id="min<?php echo $m->id?>"><u><?php echo $m->min?></u></span></a><input type="text" style="display:none" value="<?php echo $m->min?>" id="textz_min<?php echo $m->id?>" class="editbox_min text-center"></td>
+        <td align="center" id="<?php echo $m->id?>" class="edit_max"><a href="javascript:void(0);"><span class="textz_max" id="max<?php echo $m->id?>"><u><?php echo $m->max?></u></span></a><input type="text" style="display:none" value="<?php echo $m->max?>" id="textz_max<?php echo $m->id?>" class="editbox_max text-center"></td>
       </tr>
     <?php endforeach;?>
   </tbody>
@@ -37,7 +37,7 @@ $(document).ready(function() {
           data: dataString,
           cache: false,
           success: function(html){
-            $("#max"+ID).html(first);
+            $("#max"+ID).html('<u>'+first+'</u>');
           }
         });
   });
@@ -61,7 +61,7 @@ $(document).ready(function() {
           data: dataString,
           cache: false,
           success: function(html){
-            $("#min"+ID).html(first);
+            $("#min"+ID).html('<u>'+first+'</u>');
           }
         });
   });

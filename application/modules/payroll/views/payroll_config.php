@@ -68,8 +68,10 @@
                                         <div class="col-md-4">
                                             <select class="select2" id="session_select" style="width:100%">
                                                 <option>-- Select Session --</option>
-                                                <?php foreach($session->result() as $s):?>
-                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php foreach($session->result() as $s):
+                                                $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
@@ -98,8 +100,10 @@
                                         <div class="col-md-4">
                                             <select class="select2" id="session_select_com" style="width:100%">
                                                 <option>-- Select Session --</option>
-                                                <?php foreach($session->result() as $s):?>
-                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php foreach($session->result() as $s):
+                                                    $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
@@ -127,8 +131,10 @@
                                         <div class="col-md-4">
                                             <select class="select2" id="session_select_jm" style="width:100%">
                                                 <option>-- Select Session --</option>
-                                                <?php foreach($session->result() as $s):?>
-                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php foreach($session->result() as $s):
+                                                    $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
@@ -156,8 +162,10 @@
                                         <div class="col-md-3">
                                             <select class="select2" id="session_select_divider" style="width:100%">
                                                 <option>-- Select Session --</option>
-                                                <?php foreach($session->result() as $s):?>
-                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php foreach($session->result() as $s):
+                                                    $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
@@ -189,8 +197,10 @@
                                         <div class="col-md-3">
                                             <select class="select2" id="session_select_rate" style="width:100%">
                                                 <option>-- Select Session --</option>
-                                                <?php foreach($session->result() as $s):?>
-                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php foreach($session->result() as $s):
+                                                    $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
@@ -222,8 +232,10 @@
                                         <div class="col-md-3">
                                             <select class="select2" id="session_select_cola" style="width:100%">
                                                 <option>-- Select Session --</option>
-                                                <?php foreach($session->result() as $s):?>
-                                                    <option value="<?php echo $s->id?>"><?php echo $s->description?></option>
+                                                <?php foreach($session->result() as $s):
+                                                    $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>

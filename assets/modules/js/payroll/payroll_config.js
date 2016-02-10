@@ -34,7 +34,7 @@ $(document).ready(function() {
                 data: {id : id},
                 dataType: "JSON",
                 success: function(data) {
-                    $('#divider-value').text(data.value);
+                    $('#divider-value').html('<a href="javascript:void(0)"><u>'+data.value+'</u></a>');
                     $('#divider-id').val(data.id);
                     $('#divider-value-text').val(data.value);
                 }
@@ -53,7 +53,7 @@ $(document).ready(function() {
                 dataType: "JSON",
                 success: function(data) {
                     var value = addCommas(data.value);
-                    $('#rate-value').text(value);
+                    $('#rate-value').html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
                     $('#rate-id').val(data.id);
                     $('#rate-value-text').val(data.value);
                 }
@@ -72,7 +72,7 @@ $(document).ready(function() {
                 dataType: "JSON",
                 success: function(data) {
                     var value = addCommas(data.value);
-                    $('#cola-value').text(value);
+                    $('#cola-value').html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
                     $('#cola-id').val(data.id);
                     $('#cola-value-text').val(data.value);
                 }
@@ -108,7 +108,7 @@ $(document).ready(function() {
               data: dataString,
               cache: false,
               success: function(html){
-                $("#rate-value").html(value);
+                $("#rate-value").html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
               }
             });
               $("#rate-value-text").hide();
@@ -144,7 +144,7 @@ $(document).ready(function() {
               data: dataString,
               cache: false,
               success: function(html){
-                $("#cola-value").html(value);
+                $("#cola-value").html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
               }
             });
               $("#cola-value-text").hide();
@@ -180,7 +180,7 @@ $(document).ready(function() {
               data: dataString,
               cache: false,
               success: function(html){
-                $("#divider-value").html(value);
+                $("#divider-value").html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
               }
             });
               $("#divider-value-text").hide();

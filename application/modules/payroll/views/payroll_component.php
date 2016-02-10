@@ -91,6 +91,15 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
+                        <div class="form-group">
+                          <label class="control-label col-md-6 text-left">Have Condition</label>
+                          <div class="col-md-6">
+                            <div id="status">
+                                <input value="1" name="is_condition" id="open" type="radio"> Yes
+                                <input checked="checked" value="0" name="is_condition" id="close" type="radio"> No
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
@@ -123,6 +132,23 @@
                                 <input name="formula" placeholder="Formula" class="form-control" type="text">
                                 <span class="help-block"></span>
                             </div>
+                        </div>
+
+                        <div id="con" style="display: none">
+                          <div class="form-group">
+                            <label class="control-label col-md-3">Min Value</label>
+                            <div class="col-md-9">
+                                <input name="min" placeholder="Min" class="form-control text-right money" type="text">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Max Value</label>
+                            <div class="col-md-9">
+                                <input name="max" placeholder="Max" class="form-control text-right money" type="text">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
                         </div>
                       </div>
                       <div class="col-md-12 pull-center">
@@ -172,8 +198,48 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="panel-group" id="accordion" data-toggle="collapse">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        Formulas Legend&nbsp;&nbsp;&nbsp; 
+                        </a>
+                        </h4>
+                      </div>
+                      <div id="collapseOne" class="panel-collapse collapse">
+                      <div class="panel-body">
+                        <table class="table table-bordered">
+                          <thead>
+                            <th width="30%">Code</th>
+                            <th width="70%">Description</th>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td>BWGS</td>
+                            <td align="left">Base Salary</td>
+                          </tr>
+                          <tr>
+                            <td>HOUS</td>
+                            <td align="left">Housing Allowance</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="col-md-6">
+                  <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+
+              </div>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
