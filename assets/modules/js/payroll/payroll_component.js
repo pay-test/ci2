@@ -3,6 +3,7 @@ var table;
 
 $(document).ready(function() {
     $(".select2").select2();
+    $('.money').maskMoney();
     //datatables
     table = $('#table').DataTable({ 
 
@@ -50,6 +51,15 @@ $('input[type="checkbox"]').on('change', function(e){
         }
 });
 
+$('input:radio[name=is_condition]').change(function() {
+      var val = $('input:radio[name=is_condition]:checked').val();
+      if(val==0){
+        $('#con').hide("slow");
+      }else{
+        $('#con').show("slow");
+      }
+    });
+
 function add_user()
 {
     save_method = 'add';
@@ -82,6 +92,16 @@ function edit_user(id)
             $('[name="is_annualized"]').val(data.is_annualized);
             $('[name="tax_component_id"]').val(data.tax_component_id);
             $('[name="formula"]').val(data.formula);
+            //$('[name="is_condition"]').val(data.is_condition);
+            if(data.is_condition == 1){
+                $('input[name=is_condition]').filter('[value=1]').prop('checked', true);
+                $('#con').show("slow");
+            }else{
+                $('input[name=is_condition]').filter('[value=0]').prop('checked', true);
+                $('#con').hide("slow");
+            }
+            $('[name="min"]').val(addCommas(data.min));
+            $('[name="max"]').val(addCommas(data.max));
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Component'); // Set title to Bootstrap modal title
 
@@ -321,3 +341,18 @@ $.extend( $.fn.dataTableExt.oPagination, {
 /*************************************
                   End
 *************************************/  
+
+
+
+function addCommas(nStr)
+    {
+      nStr += '';
+      x = nStr.split('.');
+      x1 = x[0];
+      x2 = x.length > 1 ? '.' + x[1] : '';
+      var rgx = /(\d+)(\d{3})/;
+      while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+      }
+      return x1 + x2;
+    }

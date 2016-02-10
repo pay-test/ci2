@@ -27,6 +27,8 @@
             </div>
             <div class="grid-body">
               <form id="form-process2" action="#">
+                <div id="loading2" style="display:none"><img src="<?php echo base_url('assets/assets/img/loading.gif')?>"></div>
+                <div id="form-monthly-process">
                 <div class="form-body">
                   <div class="form-group">
                     <label class="control-label col-md-3">Period</label>
@@ -34,38 +36,10 @@
                         <select class="form-control select2 period" name="period">
                           <option value="0">Select session..</option>
                           <?php if ($period->num_rows() > 0) {
-                            foreach ($period->result_array() as $p) { ?>
-                            <option value="<?php echo $p['id']; ?>"><?php echo $p['title']; ?></option>
-                            <?php }
-                          } ?>
-                        </select>
-                        <span class="help-block"></span>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" id="btnSave" class="btn btn-primary">Process</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="grid simple ">
-            <div class="grid-title">
-              <h4><span class="semi-bold">Setup Periode</span></h4>
-            </div>
-            <div class="grid-body">
-               <form id="form-period" action="#">
-                <div class="form-body">
-                  <div class="form-group">
-                    <label class="control-label col-md-3">Period</label>
-                    <div class="col-md-9">
-                        <select class="form-control select2 period2" name="periode2">
-                          <option value="0">Select session..</option>
-                          <?php if ($period->num_rows() > 0) {
-                            foreach ($period->result_array() as $p) { ?>
-                            <option value="<?php echo $p['id']; ?>"><?php echo $p['title']; ?></option>
+                            foreach ($period->result_array() as $p) { 
+                              $selected = ($p['year'] == date('Y') && $p['month'] == date('m')) ? "selected='selected'" : '';
+                              ?>
+                            <option value="<?php echo $p['id']; ?>" <?php echo $selected?>><?php echo $p['title']; ?></option>
                             <?php }
                           } ?>
                         </select>
@@ -75,24 +49,31 @@
                   <div class="form-group">
                     <label class="control-label col-md-3">Status</label>
                     <div class="col-md-9">
+                      <div id="status">
                         <div class="radio radio-success">
                           <input value="0" name="status" id="open" type="radio">
                           <label for="open">Open</label>
                           <input checked="checked" value="1" name="status" id="close" type="radio">
                           <label for="close">Close</label>
                         </div>
+                      </div>
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" id="btnSave2" class="btn btn-primary">Apply</button>
+                    <button type="submit" id="btnSave" class="btn btn-primary">Process</button>
+                  </div>
+                </div>
+                <hr/>
+                  <div class="row">
+                    <span class="text-extra-small">
+                      payroll process is used to generate a monthly salary and pph for all employees based on the chosen period
+                    </span>
                   </div>
                 </div>
               </form>
             </div>
           </div>
         </div>
-      </div> <!-- e.o row fluid -->
-      <div class="row-fluid">
         <div class="col-md-6">
           <div class="grid simple ">
             <div class="grid-title">
@@ -105,12 +86,19 @@
                 <div class="form-body">
                   <div class="form-group">
                     <div class="col-md-9">
-                        <span>Generate value from formula</span>
+                        <span>Generate base salary from formula</span>
                         <span class="help-block"></span>
                     </div>
                   </div>
                   <div class="form-group">
                     <button type="submit" id="btnSave" class="btn btn-primary">Generate</button>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="form-group">
+                      <span class="text-extra-small" >Generate salary value used to calculate the base salary's of each employee, this feature is used when there is a new employee who has not calculated the basic salary of the previous period and when there is a change in the job value matrix configuration
+                      </span>
+                    </div>
                   </div>
                 </div>
               </form>
@@ -118,6 +106,9 @@
             </div>
           </div>
         </div>
+      </div> <!-- e.o row fluid -->
+      <div class="row-fluid">
+        
       </div>
 </div>
 <!-- END CONTAINER -->

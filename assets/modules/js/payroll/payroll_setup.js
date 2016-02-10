@@ -2,8 +2,7 @@ var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
-    $(".period").select2();
-    $(".period2").select2()
+    $(".period").select2()
     .on("change", function (e){
         $.ajax({
             url: 'payroll_setup/ajax_period/'+e.target.value,
@@ -33,6 +32,8 @@ $(document).ready(function() {
 
     $("#form-process2").submit(function(e) {
     // ajax adding data to database
+    $("#loading2").show();
+    $("#form-monthly-process").hide();
     $.ajax({
         url : 'payroll_setup/process',
         type: "POST",
@@ -41,6 +42,8 @@ $(document).ready(function() {
         success: function(data)
         {
             alert('Process Finished');
+            $("#loading2").hide();
+            $("#form-monthly-process").show();
         },
         error: function (jqXHR, textStatus, errorThrown)
         {

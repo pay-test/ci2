@@ -34,8 +34,10 @@
                         <select class="form-control select2" name="periode" id="periode">
                           <option value="0">Select session..</option>
                           <?php if ($period->num_rows() > 0) {
-                            foreach ($period->result_array() as $p) { ?>
-                            <option value="<?php echo $p['id']; ?>"><?php echo $p['title']; ?></option>
+                            foreach ($period->result_array() as $p) { 
+                              $selected = ($p['year'] == date('Y') && $p['month'] == date('m')) ? "selected='selected'" : '';
+                            ?>
+                            <option value="<?php echo $p['id']; ?>" <?php echo $selected?>><?php echo $p['title']; ?></option>
                             <?php }
                           } ?>
                         </select>
