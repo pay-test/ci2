@@ -35,21 +35,20 @@ class Payroll_setup extends MX_Controller {
 
     public function process() {
         $i = 0;
-        $employee_id = "";
+        $employee_id = "113";
         $period_id = $this->input->post('period_id');
         $status = $this->input->post('status');
         $data = array('status' => $status);
-        $where = array('id' => $period_id);
-        $update = $this->payroll->update($where,$data);
-        $this->update_monthly($period_id);
+        $this->db->where('id', $period_id)->update('payroll_period', $data);//lastq();
+        //$this->update_monthly($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
-        
+        //print_mz($query);
        foreach ($query as $value) {
            //print_mz($value->employee_id);
-            $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$value->employee_id, 'payroll_period_id'=>'where/'.$period_id));//print_mz($monthly_income_id);
+            $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$value->employee_id, 'payroll_period_id'=>'where/'.$period_id));//lastq();print_mz($monthly_income_id);
             $q = $this->payroll->get_monthly_income($monthly_income_id)->result();//print_mz($q);
-           /* echo '<pre>';
-            print_r($this->db->last_query());
+            /*echo '<pre>';
+            print_r($q);
             echo '</pre>';
             echo '<pre>';
             print_r($q);
@@ -57,11 +56,11 @@ class Payroll_setup extends MX_Controller {
             //$q = getAll('payroll_monthly_income_component', array('payroll_monthly_income_id'=>'where/'.$monthly_income_id))->result();
            //lastq();
 
+            $income = 0;
+            $deduction = 0;
             foreach ($q as $valuex) {
                 //print_r('*'.$valuex->tax_component_id);
                 
-            $income = 0;
-            $deduction = 0;
                 if ($valuex->component_type_id == 1) {
                     //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
                     $income = $income + $valuex->value;
@@ -74,16 +73,24 @@ class Payroll_setup extends MX_Controller {
                     //print_r($income."<br>");
                 }
             }
-            $ptkp = getValue('value',' payroll_ptkp', array('title'=>'where/'.'TK/0'));
+            /*
+            echo '<pre>';
+            print_r('income = '.$income.'<br>');
+            echo '</pre>';
+            echo '<pre>';
+            print_r('ded = '.$deduction.'<br>');
+            echo '</pre>';
+            */
+            $ptkp = getValue('value',' payroll_ptkp', array('id'=>'where/1'));//echo $ptkp.'-';
             //$income_bruto = $income - $deduction;
-            $biaya_jabatan= $income * (5/100);
-            $income_netto = $income - $deduction - $biaya_jabatan;
-            $income_netto_year = round($income_netto * 12);//echo $income_netto_year;
+            $biaya_jabatan= $income * (5/100);//echo $biaya_jabatan.'-';
+            $income_netto = $income - $deduction - $biaya_jabatan;//echo $income_netto.'-';
+            $income_netto_year = round($income_netto * 12);//echo $income_netto_year.'-';
             $income_netto_year_pembulatan = substr_replace($income_netto_year, '000', -3);
-            //print_mz($income_netto_year_pembulatan);
-            $pkp = $income_netto_year_pembulatan - $ptkp;
-            $pph_tahun = $pkp * (5/100);
-            $pph_bulan = round($pph_tahun / 12);
+            //print_r($income_netto_year_pembulatan.'-');
+            $pkp = $income_netto_year_pembulatan - $ptkp;//print_r('pkp = '.$pkp.'-');
+            $pph_tahun = $pkp * (5/100);//echo $pph_tahun.'-';
+            $pph_bulan = round($pph_tahun / 12);//print_mz($pph_bulan);
             $pph_component_id = 55;
             $pph_num_rows = GetAllSelect('payroll_monthly_income_component','payroll_component_id', array('payroll_monthly_income_id' => 'where/'.$monthly_income_id, 'payroll_component_id'=>'where/'.$pph_component_id))->num_rows();
             $data = array('payroll_monthly_income_id' => $monthly_income_id,
@@ -91,7 +98,7 @@ class Payroll_setup extends MX_Controller {
                           'value' => $pph_bulan,
              );
             if($pph_num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $pph_component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);} 
-         /*   
+         /*
        echo '<pre>';
             print_r($this->db->last_query());
             echo '</pre>';

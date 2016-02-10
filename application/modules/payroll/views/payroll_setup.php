@@ -33,7 +33,7 @@
                   <div class="form-group">
                     <label class="control-label col-md-3">Period</label>
                     <div class="col-md-9">
-                        <select class="form-control select2 period" name="period">
+                        <select class="form-control select2 period" name="period_id">
                           <option value="0">Select session..</option>
                           <?php if ($period->num_rows() > 0) {
                             foreach ($period->result_array() as $p) { 
