@@ -23,6 +23,7 @@ class Payroll_master extends MX_Controller {
 
          $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
+        $this->data['session'] = getAll('hris_global_sess', array('id'=>'order/desc'));
         $this->data['ptkp'] = options_row('payroll', 'get_ptkp','id','title', '-- Choose Tax Status --');
 		$this->_render_page($this->filename, $this->data);
 	}

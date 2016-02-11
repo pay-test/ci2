@@ -81,8 +81,8 @@ class payroll_config extends MX_Controller {
     function get_table_matrix($sess_id)
     {
         $data['session_id'] = $sess_id;
-        $data['pos'] = getAll('hris_job_class', array('job_level'=>"where/management", 'job_class_nm'=>'order/asc'));
-        $data['pos_non'] = getAll('hris_job_class', array('job_level'=>"where/nonmanagement", 'job_class_nm'=>'order/asc'));
+        $data['pos'] = getAll('hris_job_class', array('job_level'=>"where/management", 'gradeval_top'=>'order/desc'));
+        $data['pos_non'] = getAll('hris_job_class', array('job_level'=>"where/nonmanagement", 'gradeval_top'=>'order/desc'));
         $data['val'] = getAll('payroll_job_value', array('is_deleted'=>"where/0"));
         $this->load->view('payroll_config/matrix_table', $data);
     }
