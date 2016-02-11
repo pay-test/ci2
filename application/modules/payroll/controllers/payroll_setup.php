@@ -357,7 +357,7 @@ class Payroll_setup extends MX_Controller {
                 $employee_jm = 75/100;
             }
 
-            $employee_jm = 80/100;
+           $employee_jm = 75/100;
 
             //employee job match
            //print_mz($employee_jm);
