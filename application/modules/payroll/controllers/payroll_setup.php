@@ -327,7 +327,7 @@ class Payroll_setup extends MX_Controller {
         //set session
         $session = date('Y');
         $asid = 14;
-        //$employee_id = 115;
+        //$employee_id = 644;
         //generate configuration
         $actual_allowance = 2000;
         $employee_jam = 75/100;
@@ -345,6 +345,7 @@ class Payroll_setup extends MX_Controller {
         //$employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/'.$employee_id));
         
         $employee = $this->db->query("SELECT * FROM (`hris_employee`) WHERE `status_cd` = 'normal' AND `employee_id` != 1 AND `employee_id` != 441");//lastq();
+        //$employee = $this->db->query("SELECT * FROM (`hris_employee`) WHERE `status_cd` = 'normal' AND `employee_id` = '$employee_id'");//lastq();
         foreach ($employee->result_array() as $emp) {
             $employee_id = $emp['employee_id'];
             $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
@@ -355,6 +356,10 @@ class Payroll_setup extends MX_Controller {
             } else {
                 $employee_jm = 75/100;
             }
+
+            $employee_jm = 80/100;
+
+            //employee job match
            //print_mz($employee_jm);
             $employee_job_id = getValue('job_id', 'hris_employee_job', array('employee_id'=>'where/'.$employee_id));
             $job_value_id = getValue('job_value_id', 'hris_jobs', array('job_id'=>'where/'.$employee_job_id));
@@ -392,10 +397,13 @@ class Payroll_setup extends MX_Controller {
             //print_r($det->job_level);echo '<br/>';print_r($jvm);
             if ($det->job_level == 'management') {
                 $jvp = ($job_value_matrix_num!=0)?$jvm->value:0; //job value point
-                $gs = $jvp * (67/100); //guarantee salary
+                //print_r('jvp = '.$jvp);
                 
                 //count FIX compensation
                 $fix_val = $jvp * $fix;
+                //print_r(' fix value = '.$fix_val);
+                $gs = $fix_val * (67/100); //guarantee salary
+
                 $fix_gs_diff = $fix_val - $gs;
                 //print_mz($gs);
                 if ($employee_jm >= $jm_min AND $employee_jm <= $jm_max) {

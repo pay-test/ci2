@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Payroll_component_model extends CI_Model {
 
 	var $table = 'payroll_component';
-	var $column = array('title','code','component_type_id','tax_component_id'); //set column field database for order and search
+	var $column = array('id','title','code','component_type_id','tax_component_id'); //set column field database for order and search
 	var $order = array('component_type_id' => 'asc', 'code'=>'asc'); // default order 
 
 	public function __construct()
