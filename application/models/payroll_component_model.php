@@ -33,9 +33,9 @@ class Payroll_component_model extends CI_Model {
 
 	//e.o. custom model
 
-	private function _get_datatables_query()
+	private function _get_datatables_query($session_id)
 	{
-		$this->db->where('is_active', 1);
+		$this->db->where('is_active', 1);$this->db->where('session_id', $session_id);
 		$this->db->from($this->table);
 
 		$i = 0;
@@ -65,25 +65,27 @@ class Payroll_component_model extends CI_Model {
 		}
 	}
 
-	function get_datatables()
+	function get_datatables($session_id)
 	{
-		$this->_get_datatables_query();
+		$this->_get_datatables_query($session_id);
 		if($_POST['length'] != -1)
 		$this->db->limit($_POST['length'], $_POST['start']);
+	
 		$query = $this->db->get();
 		return $query->result();
 	}
 
-	function count_filtered()
+	function count_filtered($session_id)
 	{
-		$this->_get_datatables_query();
+		$this->_get_datatables_query($session_id);
 		$query = $this->db->get();
 		return $query->num_rows();
 	}
 
-	public function count_all()
+	public function count_all($session_id)
 	{
 		$this->db->where('is_active', 1);
+		$this->db->where('session_id', $session_id);
 		$this->db->from($this->table);
 		return $this->db->count_all_results();
 	}

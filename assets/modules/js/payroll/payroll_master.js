@@ -83,6 +83,7 @@ function getStatus(Id)
 
 function edit_user(id)
 {
+    var session_id = $('#session_select option:selected').val()
     save_method = 'update';
     $("#component_table_body").empty();
     $('#form')[0].reset(); // reset form on modals
@@ -90,7 +91,7 @@ function edit_user(id)
     $('.help-block').empty(); // clear error string
     //Ajax Load data from ajax
         $.ajax({
-            url : "payroll_master/ajax_edit/" + id,
+            url : "payroll_master/ajax_edit/" + id + "/" + session_id,
             type: "GET",
             dataType: "JSON",
             success: function(data)

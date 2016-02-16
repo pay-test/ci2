@@ -58,26 +58,42 @@ class Payroll_master extends MX_Controller {
         echo json_encode($output);
     }
 
-    public function ajax_edit($id)
+    public function ajax_edit($id, $session_id)
     {
-        $data = $this->payroll->get_by_id($id);//;print_mz($data); 
-        $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
-        $this->cek_master_component($payroll_master_id);
-        $this->get_formula($payroll_master_id);
-        $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();
+        $data = $this->payroll->get_by_id($id, $session_id);//print_mz($data); 
+        $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id));//print_mz($payroll_master_id);
+        $this->cek_master_component($payroll_master_id, $session_id);
+        $this->get_formula($payroll_master_id, $session_id);
+        $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();//print_mz($data2);
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
     }
 
-    function get_formula($payroll_master_id){
-        $data2 = $this->payroll->get_master_component($payroll_master_id)->result();//print_mz($data2);
+    function get_formula($payroll_master_id, $session_id){
+        $data2 = $this->payroll->get_master_component($payroll_master_id)->result();//lastq();
+        //print_mz($data2);
+        $emp_id = getValue('employee_id', 'payroll_master', array('id'=>'where/'.$payroll_master_id));
+        $session_before = $session_id - 1;
+        $master_id_before = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$emp_id, 'session_id'=>'where/'.$session_before));//lastq();
+        $sal_session_before = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$master_id_before, 'payroll_component_id'=>'where/60'));
+        $sal_session_now = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/60'));
+        $cola = getValue('value', 'payroll_cola', array('session_id'=>'where/'.$session_id));
+        if($sal_session_now - $sal_session_before > $cola){
+            $new_sal = $sal_session_now;
+        }else{
+            $new_sal = $sal_session_before + $cola;
+        }
+        $this->db->where('payroll_master_id', $payroll_master_id)->where('payroll_component_id', 60)->update('payroll_master_component', array('value'=>$new_sal));//lastq();
+        //print_r($sal_session_before);
+        //print_r($sal_session_now);
+        //print_mz($new_sal);
         foreach ($data2 as $value) {
-            $t = $value->formula;//print_r("idnya $value->id formulanya $value->formula <br/>");
+            $t = $value->formula;//print_r("idnya $value->component formulanya $value->formula <br/>");
             $tx = explode(' ', $t);$r='';
             if($t != null && $value->component_id!=60):
                //echo $value->formula;
                 for($i=0;$i<sizeof($tx);$i++):
                         if(preg_match("/[a-z]/i", $tx[$i])){
-                            $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
+                            $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i], 'session_id'=>'where/'.$session_id));
                             $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$g));
                             $tx[$i] = $g;
                         }
@@ -91,11 +107,11 @@ class Payroll_master extends MX_Controller {
                 $f= $this->evalmath($r);
                    //echo $r.'<br/>';
                    //echo $g.'<br/>';
-                $tz =@eval("return " . $f . ";" );
-                $is_condition = getValue('is_condition', 'payroll_component', array('id'=>'where/'.$value->component_id));
+                $tz =@eval("return " . $f . ";" );//print_r($tz);
+                $is_condition = getValue('is_condition', 'payroll_component', array('id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id));
                 if($is_condition == 1){
-                    $min = getValue('min', 'payroll_component', array('id'=>'where/'.$value->component_id));
-                    $max = getValue('max', 'payroll_component', array('id'=>'where/'.$value->component_id));
+                    $min = getValue('min', 'payroll_component', array('id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id));
+                    $max = getValue('max', 'payroll_component', array('id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id));
 
                     if($tz > $max):
                         $tz = $max;
@@ -106,16 +122,16 @@ class Payroll_master extends MX_Controller {
                     endif;
                 }
                 $this->db->where('id', $value->id)->update('payroll_master_component', array('value'=>$tz));
-                //print_r($this->db->last_query());
+                //echo '<pre>';print_r($this->db->last_query());echo "</pre><br/>";
             endif;
         }
        return true;
     }
 
-    function cek_master_component($master_id)
+    function cek_master_component($master_id, $session_id)
     {
-        $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id));//print_mz($group_id);
-        //$group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq()
+        $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id, 'session_id'=>'where/'.$session_id));//print_mz($group_id);
+        $group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq()
         $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//print_mz($cek_group_component->result());
         foreach ($cek_group_component->result() as $r) {
             $component_num_rows = GetAllSelect('payroll_master_component', 'payroll_component_id', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/'.$r->payroll_component_id))->num_rows();//print_r("num_rows-".$component_num_rows);

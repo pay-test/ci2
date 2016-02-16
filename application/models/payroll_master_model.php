@@ -101,7 +101,7 @@ class Payroll_master_model extends CI_Model {
 		return $this->db->count_all_results();
 	}
 
-	public function get_by_id($id)
+	public function get_by_id($id, $session_id)
 	{
 		$this->db->select(
 			$this->table.'.employee_id as employee_id,
@@ -124,6 +124,7 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);
+		$this->db->where($this->table_join4.'.session_id', $session_id);
 		$query = $this->db->get();
 
 		return $query->row();
@@ -189,5 +190,21 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where($this->table_join7.'.is_deleted',0);
 		$this->db->order_by($this->table_join7.'.id','asc');
 		return $this->db->get($this->table_join7);
+	}
+
+	public function get_employee_detail($employee_id = 0) {
+		$this->db->select('a.employee_id,f.person_nm,c.job_id,c.job_nm,d.job_class_id,d.job_class_cd,d.gradeval_top,d.job_level,e.org_id,e.org_cd,e.org_nm');
+		$this->db->from('hris_employee AS a');
+		$this->db->join('hris_employee_job AS b', 'b.employee_id = a.employee_id', 'left');
+		$this->db->join('hris_jobs AS c', 'c.job_id = b.job_id', 'left');
+		$this->db->join('hris_job_class AS d', 'd.job_class_id = c.job_class_id', 'left');
+		$this->db->join('hris_orgs AS e', 'e.org_id = c.org_id', 'left');
+		$this->db->join('hris_persons AS f', 'f.person_id = a.person_id', 'left');
+		$this->db->where('a.status_cd', 'normal');
+		$this->db->where('a.employee_id', $employee_id);
+		$query = $this->db->get();
+
+		return $query;
+
 	}
 }

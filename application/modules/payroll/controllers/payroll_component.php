@@ -17,7 +17,7 @@ class Payroll_component extends MX_Controller {
 	{
         $this->data['title'] = ucfirst($this->title);
 		$this->data['page_title'] = $this->page_title;
-
+        $this->data['session'] = getAll('hris_global_sess', array('id'=>'order/desc'));
         $this->data['component_type'] = $this->payroll->get_component_type();
         $this->data['tax_component'] = $this->payroll->get_tax_component();
         $this->data['component_job_value'] = getAll('payroll_component_job_value');
@@ -26,9 +26,9 @@ class Payroll_component extends MX_Controller {
 		$this->_render_page($this->filename, $this->data);
 	}
 
-    public function ajax_list()
+    public function ajax_list($session_id)
     {
-        $list = $this->payroll->get_datatables();//lastq();//print_mz($list);
+        $list = $this->payroll->get_datatables($session_id);//lastq();//print_mz($list);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $p_comp) {
@@ -63,8 +63,8 @@ class Payroll_component extends MX_Controller {
 
         $output = array(
                         "draw" => $_POST['draw'],
-                        "recordsTotal" => $this->payroll->count_all(),
-                        "recordsFiltered" => $this->payroll->count_filtered(),
+                        "recordsTotal" => $this->payroll->count_all($session_id),
+                        "recordsFiltered" => $this->payroll->count_filtered($session_id),
                         "data" => $data,
                 );
         //output to json format
@@ -90,6 +90,7 @@ class Payroll_component extends MX_Controller {
                 'is_condition' => $this->input->post('is_condition'),
                 'min' => str_replace(',', '', $this->input->post('min')),
                 'max' => str_replace(',', '', $this->input->post('max')),
+                'session_id' => $this->input->post('session'),
                 'created_by' => GetUserID(),
                 'created_on' => date('Y-m-d H:i:s')
             );
@@ -111,6 +112,7 @@ class Payroll_component extends MX_Controller {
                 'is_condition' => $this->input->post('is_condition'),
                 'min' => str_replace(',', '', $this->input->post('min')),
                 'max' => str_replace(',', '', $this->input->post('max')),
+                'session_id' => $this->input->post('session'),
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );

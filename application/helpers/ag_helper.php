@@ -61,3 +61,12 @@ if ( ! function_exists('get_query_view'))
 			return $data;
 		}
 	}
+
+	if (!function_exists('print_ag')){	
+	function print_ag($data)
+	{
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
+	}
+}

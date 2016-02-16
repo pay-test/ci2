@@ -8,10 +8,9 @@
 </style>
 </head>
 <body>
-  <div style="float: left; width: 50%;">PT Mitsubishi Chemical Indonesia</div><div style="float: right; width: 50%; text-align:right;">Payroll Slip</div>
-  <hr style="width:100%">
-  <div style="float: right; width: 50%; text-align:right; font-size:12px">Period <?php echo $period ?></div>
-<br/><p></p>
+  <div style="float: left; width: 75%;"><img height="120" width="168" src="<?php base_url()?>assets/assets/img/FA-Logo-MCCI.png" style="z-index:-200;margin-top: -50px" /></div><div style="float: right; width: 25%; text-align:right;">Payroll Slip<br/><span style="font-size:10px">Period <?php echo $period ?></span></div>
+  <div style="float: right; width: 50%; text-align:right; font-size:1px"></div>
+  <hr style="width:100%;margin-top: -15px;">
 <table width="75%" border="0.0">
   <tbody>
   	<?php 
@@ -38,6 +37,11 @@
       <td>Section</td>
       <td>:</td>
       <td><?php echo $row->org_nm ?></td>
+    </tr>
+    <tr>
+      <td>Currency</td>
+      <td>:</td>
+      <td><?php echo 'IDR(Rp.)' ?></td>
     </tr>
     <?php } ?>
   </tbody>
