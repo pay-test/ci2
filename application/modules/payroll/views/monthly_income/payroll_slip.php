@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <style type="text/css">
 <!--
+.salute{
+  font-size: 8px;
+}
 -->
 </style>
 </head>
@@ -128,6 +131,37 @@
     </tr>
     </tbody>
   </table>
+  <br/><br/>
+  <?php 
+  $salute='';
+    if(date('m-d') == date('m-d', strtotime($dob))){
+      $salute .= 'Happy birthday to you<br/>';
+    }
+    foreach($family_dob->result() as $f):
+      if(date('m-d') == date('m-d', strtotime($f->date_of_birth))){
+        if($f->relation_type == 'spouse' && $f->gender_cd == 'f'){
+          $type = 'Wife';
+        }elseif($f->relation_type == 'spouse' && $f->gender_cd == 'm'){
+          $type = 'Husband';
+        }elseif($f->relation_type == 'child' && $f->gender_cd == 'm'){
+          $type = 'Son';
+        }elseif($f->relation_type == 'spouse' && $f->gender_cd == 'f'){
+          $type = 'Daughter';
+        }
+          $salute .= 'Happy birthday to your '.$type.', '.$f->person_nm.'<br/>';
+      }
+      if((strtotime($f->date_of_birth) > strtotime('1 month ago'))){
+          $type = ($f->gender_cd == 'm')?'Son':'Daughter';
+          $salute .= 'Congratulations for the birth of your '.$type.', '.$f->person_nm.'<br/>';
+        }
+        if((strtotime($f->created_on) > strtotime('1 month ago'))){
+          $salute .= 'Congratulations for Your wedding with '.$f->person_nm.'<br/>';
+        }
+
+    endforeach;
+
+  ?>
+  <p style="font-size: 11px;font-style: italic;margin-left: 2px;"><?php echo $salute ?></p>
 <!--
 <div style="float: left; width: 50%; margin-top: 50px; text-align:center; font-size:12px">
 Approved,

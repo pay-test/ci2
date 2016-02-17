@@ -194,9 +194,9 @@ $(document).ready(function() {
   $(document).mouseup(function(){
     $(".td-val").show();
     $(".text-val").hide();
-    $(".td-val-min").show();
+    $(".td-min").show();
     $(".text-val-min").hide();
-    $(".td-val-max").show();
+    $(".td-max").show();
     $(".text-val-max").hide();
     $("#rate-value-text").hide();
     $("#rate-value").show();
@@ -272,7 +272,7 @@ function addCommas(nStr)
           cache: false,
           success: function(html){
             $("#text_min"+ID).hide();
-            $("#td_min"+ID).html(first);
+            $("#td_min"+ID).html(addCommas(first));
             $("#td_min"+ID).show();
           }
         });

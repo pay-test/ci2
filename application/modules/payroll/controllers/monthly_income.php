@@ -160,6 +160,10 @@ class Monthly_income extends MX_Controller {
         $this->data['income'] = getJoin($table, $table_join, $condition,'left',$select, array('payroll_monthly_income_id'=>'where/'.$monthly_income_id, 'component_type_id'=>'where/1'))->result();
         $this->data['deduction'] = getJoin($table, $table_join, $condition,'left',$select, array('payroll_monthly_income_id'=>'where/'.$monthly_income_id, 'component_type_id'=>'where/2'))->result();
         //print_mz($this->data['component']);
+
+        //UcapanSelamat
+        $this->data['dob']=getValue('birth_dttm', 'hris_persons', array('person_id'=>'where/'.$id)); 
+        $this->data['family_dob']=getAll('hris_employee_family', array('employee_id'=>'where/'.$id)); 
         $this->load->library('mpdf60/mpdf');
         $html = $this->load->view('payroll/monthly_income/payroll_slip', $this->data, true);
         $stylesheet = file_get_contents('assets/modules/css/payroll/mpdfstyletables.css');
