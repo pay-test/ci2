@@ -35,7 +35,7 @@
                     <select class="select2" id="session_select" style="width:100%">
                         <option>-- Select Session --</option>
                         <?php foreach($session->result() as $s):
-                        $selected = ($s->id == date('Y')) ? "selected='selected'" : '';
+                        $selected = ($s->id == sessNow()) ? "selected='selected'" : '';
                         ?>
                             <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
                         <?php endforeach;?>

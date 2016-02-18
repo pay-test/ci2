@@ -60,7 +60,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" id="btnSave" class="btn btn-primary">Process</button>
+                    <button type="submit" id="btnSave" class="btn btn-primary m-l-10">Process</button>
                   </div>
                 </div>
                 <hr/>

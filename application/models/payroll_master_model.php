@@ -101,8 +101,12 @@ class Payroll_master_model extends CI_Model {
 		return $this->db->count_all_results();
 	}
 
-	public function get_by_id($id, $session_id)
-	{
+	public function get_by_id($id)
+	{	
+		//var $table = 'hris_employee';
+		//var $table_join1 = 'hris_users';
+		//var $table_join2 = 'hris_persons';
+		//var $table_join3 = 'payroll_group';
 		$this->db->select(
 			$this->table.'.employee_id as employee_id,
 			'.$this->table_join1.'.user_nm as user_nm,
@@ -124,7 +128,6 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);
-		$this->db->where($this->table_join4.'.session_id', $session_id);
 		$query = $this->db->get();
 
 		return $query->row();
@@ -167,14 +170,33 @@ class Payroll_master_model extends CI_Model {
 		return $this->db->select('payroll_master_component.id as id,
 								  payroll_component.title as component, 
 							      payroll_component.code as code, 
-							      payroll_component.formula as formula, 
+							      payroll_component_value.formula as formula, 
 							      payroll_master_component.value as value,
 							      payroll_master_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_master_component')
-				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id')
+				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id', 'left')
+				 ->join('payroll_component_value', 'payroll_component_value.payroll_component_id = payroll_component.id', 'left')
 				 ->where('payroll_master_component.payroll_master_id', $payroll_master_id)
 				 ->where('payroll_master_component.is_deleted', 0)
+				 ->get();
+	}
+
+	public function get_master_component_s($payroll_master_id, $session_id)
+	{
+		return $this->db->select('payroll_master_component.id as id,
+								  payroll_component.title as component, 
+							      payroll_component.code as code, 
+							      payroll_component_value.formula as formula, 
+							      payroll_master_component.value as value,
+							      payroll_master_component.payroll_component_id as component_id'
+						  		)
+				 ->from('payroll_master_component')
+				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id', 'left')
+				 ->join('payroll_component_value', 'payroll_component_value.payroll_component_id = payroll_component.id', 'left')
+				 ->where('payroll_master_component.payroll_master_id', $payroll_master_id)
+				 ->where('payroll_master_component.is_deleted', 0)
+				 ->where('payroll_component_value.session_id', $session_id)
 				 ->get();
 	}
 

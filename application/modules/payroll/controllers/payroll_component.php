@@ -26,9 +26,9 @@ class Payroll_component extends MX_Controller {
 		$this->_render_page($this->filename, $this->data);
 	}
 
-    public function ajax_list($session_id)
+    public function ajax_list()
     {
-        $list = $this->payroll->get_datatables($session_id);//lastq();//print_mz($list);
+        $list = $this->payroll->get_datatables();//lastq();//print_mz($list);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $p_comp) {
@@ -63,18 +63,19 @@ class Payroll_component extends MX_Controller {
 
         $output = array(
                         "draw" => $_POST['draw'],
-                        "recordsTotal" => $this->payroll->count_all($session_id),
-                        "recordsFiltered" => $this->payroll->count_filtered($session_id),
+                        "recordsTotal" => $this->payroll->count_all(),
+                        "recordsFiltered" => $this->payroll->count_filtered(),
                         "data" => $data,
                 );
         //output to json format
         echo json_encode($output);
     }
 
-    public function ajax_edit($id)
+    public function ajax_edit($id, $session)
     {
-        $data = $this->payroll->get_by_id($id); // if 0000-00-00 set tu empty for datepicker compatibility
-        echo json_encode($data);
+        $data = $this->payroll->get_by_id($id);
+        $data2 = $this->payroll->get_component_value($id, $session);
+        echo json_encode(array('data'=>$data, 'data2'=>$data2));
     }
 
     public function ajax_add()
@@ -102,23 +103,32 @@ class Payroll_component extends MX_Controller {
     {
         //$i = $this->input->post('checkbox1');print_r($i);print_r($this->input->post('job_value_id'));print_mz($this->input->post('value'));
         $this->_validate();
+        $session_id = $this->input->post('session');
+        $id = $this->input->post('id');
         $data = array(
                 'title' => $this->input->post('title'),
                 'code' => $this->input->post('code'),
                 'component_type_id' => $this->input->post('component_type_id'),
                 'is_annualized' => $this->input->post('is_annualized'),
                 'tax_component_id' => $this->input->post('tax_component_id'),
+                'edited_by' => GetUserID(),
+                'edited_on' => date('Y-m-d H:i:s')
+            );
+        $this->payroll->update(array('id' => $this->input->post('id')), $data);
+        $num_rows = getAll('payroll_component_value', array('payroll_component_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id))->num_rows();
+        $data2 = array(
+            'payroll_component_id'=>$id,
                 'formula' => strtoupper($this->input->post('formula')),
                 'is_condition' => $this->input->post('is_condition'),
                 'min' => str_replace(',', '', $this->input->post('min')),
                 'max' => str_replace(',', '', $this->input->post('max')),
                 'session_id' => $this->input->post('session'),
-                'edited_by' => GetUserID(),
-                'edited_on' => date('Y-m-d H:i:s')
-            );
-        $this->payroll->update(array('id' => $this->input->post('id')), $data);
-        $job_value_id = $this->input->post('job_value_id');
-
+                );
+        if($num_rows>0){
+            $this->db->where('payroll_component_id', $id)->where('session_id', $session_id)->update('payroll_component_value', $data2);
+        }else{
+            $this->db->insert('payroll_component_value', $data2);
+        }
         echo json_encode(array("status" => TRUE));
     }
 

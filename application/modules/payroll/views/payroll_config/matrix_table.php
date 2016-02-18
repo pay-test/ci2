@@ -74,3 +74,74 @@
   </div>
 </div>
 <script type="text/javascript" src="<?php echo assets_url('assets/plugins/jquery-maskmoney/jquery.maskMoney.js')?>"></script>
+<script type="text/javascript">
+  var sess = $('#sess').val();
+  window.updateVal = function(a,b){
+      var ID = a+b;
+      $("#td"+ID).hide();
+      $("#text"+ID).show();
+      $("#text"+ID).focus();
+      $(".money").maskMoney({allowZero:true});
+        window.changeVal = function(){
+        var first=$("#text"+ID).val();
+        var dataString = 'value='+first;
+        $.ajax({
+          type: "POST",
+          url: "payroll_config/edit_matrix/"+sess+"/"+a+"/"+b,
+          data: dataString,
+          cache: false,
+          success: function(html){
+            $("#text"+ID).hide();
+            $("#td"+ID).html(first);
+            $("#td"+ID).show();
+          }
+        });
+    }
+  }
+
+  window.updateValMin = function(a,b){
+      var ID = a+b;
+      $("#td_min"+ID).hide();
+      $("#text_min"+ID).show();
+      $("#text_min"+ID).focus();
+      $(".money").maskMoney({allowZero:true});
+        window.changeValMin = function(){
+        var first=$("#text_min"+ID).val();
+        var dataString = 'value='+first;
+        $.ajax({
+          type: "POST",
+          url: "payroll_config/edit_matrix/"+"/"+sess+"/"+a+"/"+b+"/_min",
+          data: dataString,
+          cache: false,
+          success: function(html){
+            $("#text_min"+ID).hide();
+            $("#td_min"+ID).html(addCommas(first));
+            $("#td_min"+ID).show();
+          }
+        });
+    }
+  }
+
+  window.updateValMax = function(a,b){
+      var ID = a+b;
+      $("#td_max"+ID).hide();
+      $("#text_max"+ID).show();
+      $("#text_max"+ID).focus();
+      $(".money").maskMoney({allowZero:true});
+        window.changeValMax = function(){
+        var first=$("#text_max"+ID).val();
+        var dataString = 'value='+first;
+        $.ajax({
+          type: "POST",
+          url: "payroll_config/edit_matrix/"+sess+"/"+a+"/"+b+"/_max",
+          data: dataString,
+          cache: false,
+          success: function(html){
+            $("#text_max"+ID).hide();
+            $("#td_max"+ID).html(first);
+            $("#td_max"+ID).show();
+          }
+        });
+    }
+  }
+</script>

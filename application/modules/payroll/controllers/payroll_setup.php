@@ -35,12 +35,12 @@ class Payroll_setup extends MX_Controller {
 
     public function process() {
         $i = 0;
-        $employee_id = "113";
+        //$employee_id = "113";
         $period_id = $this->input->post('period_id');
         $status = $this->input->post('status');
         $data = array('status' => $status);
         $this->db->where('id', $period_id)->update('payroll_period', $data);//lastq();
-        //$this->update_monthly($period_id);
+        $this->update_monthly($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
        foreach ($query as $value) {
@@ -328,7 +328,7 @@ class Payroll_setup extends MX_Controller {
         $y = date('Y');
         $start_ses = $y."-04-01 00:00:00";
         $session = (date('Y-m-d H:i:s') < $start_ses) ? $y-1 : $y;//print_mz($session); 
-        $session = 2016;
+        //$session = 2016;
         $asid = 14;
         //$employee_id = 644;
         //generate configuration
@@ -351,7 +351,7 @@ class Payroll_setup extends MX_Controller {
         //$employee = $this->db->query("SELECT * FROM (`hris_employee`) WHERE `status_cd` = 'normal' AND `employee_id` = '$employee_id'");//lastq();
         foreach ($employee->result_array() as $emp) {
             $employee_id = $emp['employee_id'];
-            $employee_id = 644;
+            //$employee_id = 644;
             $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
             //print_mz($employee_jm*100);
             //die($employee_id);
@@ -381,11 +381,11 @@ class Payroll_setup extends MX_Controller {
             $jvm = ($job_value_matrix_num>0)?$job_value_matrix->row():0;
             $job_class_id = (!empty($det->job_class_id)) ? $det->job_class_id : 0;
             $data_master = array(
-                'session_id'=>$session,
+                            'session_id'=>$session,
                             'employee_id'=>$employee_id,
                             'payroll_group_id'=>$job_class_id
                                 );
-            $payroll_master_num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id))->num_rows();
+            $payroll_master_num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id, 'session_id'=>'where/'.$session))->num_rows();
             if($payroll_master_num_rows<1)$this->db->insert('payroll_master', $data_master);
             //print_mz($job_value_matrix);
 
@@ -428,7 +428,7 @@ class Payroll_setup extends MX_Controller {
                 //print_mz($fix_value);
 
                 //count VAR compensation
-                $master_id = getValue('id','payroll_master', array('employee_id'=>'where/'.$employee_id, 'session_id'=>'where/'.$session));
+               /* $master_id = getValue('id','payroll_master', array('employee_id'=>'where/'.$employee_id, 'session_id'=>'where/'.$session));
                 $meal = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/73'));
                 $housing = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/66'));
                 $transport = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/112'));
@@ -455,7 +455,7 @@ class Payroll_setup extends MX_Controller {
                 }
                 $var_value = round(($employee_jam / $std_jam) * $pip);
                 //print_mz(round($var_value));
-
+    */
                 $total_sal = $fix_value; //+ $var_value;
                 //print_mz($salary);
             }else if($det->job_level == 'nonmanagement') {

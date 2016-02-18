@@ -60,11 +60,12 @@ class Payroll_master extends MX_Controller {
 
     public function ajax_edit($id, $session_id)
     {
-        $data = $this->payroll->get_by_id($id, $session_id);//print_mz($data); 
+        $data = $this->payroll->get_by_id($id);//print_mz($data); 
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id));//print_mz($payroll_master_id);
         $this->cek_master_component($payroll_master_id, $session_id);
         $this->get_formula($payroll_master_id, $session_id);
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();//print_mz($data2);
+        //$data2 = $this->payroll->get_master_component_s($payroll_master_id, $session_id)->result_array();//print_mz($data2);
         echo json_encode(array('data1'=>$data, 'data2'=>$data2));
     }
 
@@ -93,7 +94,7 @@ class Payroll_master extends MX_Controller {
                //echo $value->formula;
                 for($i=0;$i<sizeof($tx);$i++):
                         if(preg_match("/[a-z]/i", $tx[$i])){
-                            $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i], 'session_id'=>'where/'.$session_id));
+                            $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
                             $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$g));
                             $tx[$i] = $g;
                         }
@@ -108,10 +109,10 @@ class Payroll_master extends MX_Controller {
                    //echo $r.'<br/>';
                    //echo $g.'<br/>';
                 $tz =@eval("return " . $f . ";" );//print_r($tz);
-                $is_condition = getValue('is_condition', 'payroll_component', array('id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id));
+                $is_condition = getValue('is_condition', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
                 if($is_condition == 1){
-                    $min = getValue('min', 'payroll_component', array('id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id));
-                    $max = getValue('max', 'payroll_component', array('id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id));
+                    $min = getValue('min', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                    $max = getValue('max', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
 
                     if($tz > $max):
                         $tz = $max;

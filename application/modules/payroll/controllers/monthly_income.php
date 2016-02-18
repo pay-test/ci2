@@ -63,8 +63,10 @@ class Monthly_income extends MX_Controller {
         $master_num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$id))->num_rows();
         $monthly_income_num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id))->num_rows();//print_mz($monthly_income_num_rows);
         if($monthly_income_num_rows>0){$data = $this->payroll->get_by_id($id, $period_id);}else{$data = $this->payroll->get_master($id);}//print_r($this->db->last_query());
+        $month = getValue('month', 'payroll_period', array('id'=>'where/'.$period_id));
+        $sess_id = ($month<4) ?  date('Y')-1 : date('Y');//print_mz($sess_id);
         $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$id, 'payroll_period_id'=>'where/'.$period_id));
-        $master_payroll_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id));
+        $master_payroll_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id, 'session_id'=>'where/'.$sess_id));//print_mz($master_payroll_id);
         if($monthly_income_num_rows>0){$data2 = $this->payroll->get_monthly_component($monthly_income_id)->result_array();}else{$data2 = $this->payroll->get_master_payroll_component($master_payroll_id)->result_array();}//print_r($this->db->last_query());
         echo json_encode(array('data1'=>$data, 'data2'=>$data2, 'master_num_rows'=>$master_num_rows));
     }
