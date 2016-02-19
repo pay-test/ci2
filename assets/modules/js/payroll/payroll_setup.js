@@ -241,7 +241,26 @@ $(document).ready(function(){
             }else{
                 $("#loading").hide();
                 $("#form-generate").show();
-                alert("value has been successfully generated");
+                alert("Value has been successfully generated");
+            }
+        }, 'json');
+        return false;
+    });
+});
+
+$(document).ready(function(){
+    $('#form-new-session').submit(function(response){
+        $("#loading-session").show();
+        $("#form-generate-session").hide();
+        $.post($('#form-new-session').attr('action'), $('#form-new-session').serialize(),function(json){
+            if(json.st == 0){
+                $("#loading-session").hide();
+                $("#form-generate-session").show();
+                alert("Process Failed");
+            }else{
+                $("#loading-session").hide();
+                $("#form-generate-session").show();
+                alert("New session data has been successfully generated");
             }
         }, 'json');
         return false;

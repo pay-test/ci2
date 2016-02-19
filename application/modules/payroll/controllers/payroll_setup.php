@@ -33,6 +33,51 @@ class Payroll_setup extends MX_Controller {
         echo json_encode(array("status" => $status));
     }
 
+    public function generate_new_session()
+    {
+        $sess_now = sessNow();
+        $sess_now = 2016;
+        //TABLE COMPONENT_VALUE;
+        $comp = getAll('payroll_component_value', array('session_id'=>'where/'.date('year')-1));
+        foreach($comp->result() as $c):
+            $component = array(
+                    'session_id' => $sess_now,
+                    'payroll_component_id' => $c->payroll_component_id,
+                    'formula' =>$c->formula,
+                    'is_condition' => $c->is_condition,
+                    'min'=>$c->min,
+                    'max'=> $c->max,
+
+                );
+
+        $c_num_rows = getAll('payroll_component_value', array('session_id'=>'where/'.$sess_now, 'payroll_component_id'=>'where/'.$c->payroll_component_id))->num_rows();
+        if($c_num_rows>0)$this->db->where('session_id', $sess_now)->where('payroll_component_id', $c->payroll_component_id)->update('payroll_component_value', $component);
+        else $this->db->insert('payroll_component_value', $component);
+        endforeach;
+        $master = getAll('payroll_master', array('session_id'=>'where/'.date('year')-1));
+        foreach ($master->result() as $m) {
+            $masterz = array('employee_id' => $m->employee_id,
+                            'session_id' => $m->session_id);
+        
+         $m_num_rows = getAll('payroll_master', array('session_id'=>'where/'.$sess_now, 'employee_id'=>'where/'.$m->employee_id))->num_rows();
+        if($m_num_rows>0){
+            $this->db->where('session_id', $sess_now)->where('employee_id', $m->employee_id)->update('payroll_master', $masterz);
+            $m_id = getValue('id', 'payroll_master', array('session_id'=>'where/'.$sess_now, 'employee_id'=>'where/'.$m->employee_id));
+        }
+        else{ $this->db->insert('payroll_master', $masterz);$m_id=$this->db->insert_id();}
+        $m_comp = getAll('payroll_master_component', array('payroll_master_id'=>'where/'.$m->id));
+        foreach($m_comp->result() as $m_c):
+        $m_compz = array('payroll_master_id' => $m_id,
+                         'payroll_component_id' =>$m_c->payroll_component_id,
+                         'value'=>$m_c->value,
+         );
+        $m_comp_num_rows = getAll('payroll_master_component', array('payroll_master_id'=>'where/'.$m_id))->num_rows();
+        if($m_comp_num_rows>0){$this->db->where('payroll_master_id', $m_id)->update('payroll_master_component', $m_compz);}
+        else{ $this->db->insert('payroll_master_component', $m_compz);}
+        endforeach;
+    }
+        echo json_encode(array("result" => TRUE));
+    }
     public function process() {
         $i = 0;
         //$employee_id = "113";
