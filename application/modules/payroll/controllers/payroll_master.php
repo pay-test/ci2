@@ -64,9 +64,10 @@ class Payroll_master extends MX_Controller {
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id));//print_mz($payroll_master_id);
         $this->cek_master_component($payroll_master_id, $session_id);
         $this->get_formula($payroll_master_id, $session_id);
+        $ptkp = getValue('payroll_ptkp_id', 'payroll_master', array('id'=>'where/'.$payroll_master_id));
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();//print_mz($data2);
         //$data2 = $this->payroll->get_master_component_s($payroll_master_id, $session_id)->result_array();//print_mz($data2);
-        echo json_encode(array('data1'=>$data, 'data2'=>$data2));
+        echo json_encode(array('data1'=>$data, 'data2'=>$data2, 'ptkp'=>$ptkp));
     }
 
     function get_formula($payroll_master_id, $session_id){
@@ -95,14 +96,42 @@ class Payroll_master extends MX_Controller {
                 for($i=0;$i<sizeof($tx);$i++):
                         if(preg_match("/[a-z]/i", $tx[$i])){
                             $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
-                            $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$g));
+                            $detail = $this->payroll->get_employee_detail($emp_id);
+                            $det = $detail->row();
+                            $employee_job_id = getValue('job_id', 'hris_employee_job', array('employee_id'=>'where/'.$emp_id));
+                            $job_value_id = getValue('job_value_id', 'hris_jobs', array('job_id'=>'where/'.$employee_job_id));
+                            $filter = array(
+                                'session_id' => 'where/'.$session_id,
+                                'job_value_id' => 'where/'.$job_value_id,
+                                'job_class_id' => 'where/'.$det->job_class_id
+                                );
+                            $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);//lastq();
+                            $job_value_matrix_num = GetAll('payroll_job_value_matrix',$filter)->num_rows();//lastq();
+
+                            if($tx[$i] == 'JVM'){
+                                $g = $jvm = ($job_value_matrix_num>0)?$job_value_matrix->row()->value:0;
+                                //print_r('jvm='.$g.'-');
+                            }elseif($tx[$i] == 'VAR'){
+                                $cm_param = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session_id, 'job_class_id' => 'where/'.$det->job_class_id));
+                                $cm_param_num = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session_id, 'job_class_id' => 'where/'.$det->job_class_id))->num_rows();
+                                //lastq();
+                                $row = $cm_param->row();
+                                $g = $var = ($cm_param_num>0)?$row->var/100:0/100;
+
+                                //print_mz('var='.$var.'-');
+                            }elseif($tx[$i] == 'CONV'){
+                                $g = getValue('value', 'payroll_exchange_rate', array('session_id'=>'where/'.$session_id));
+                            }else{
+                                $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$g));
+                                //print_r($g.'-');
+                            }
+                            //print_r($value->component.'='.$g.'<br/>');
                             $tx[$i] = $g;
                         }
 
                         if (strpos($tx[$i], '%') !== false) {
                              $tx[$i] =substr_replace($tx[$i], '/100', -1);
                         }else{false;}
-
                         $r .= $tx[$i];
                 endfor;
                 $f= $this->evalmath($r);
@@ -182,7 +211,7 @@ class Payroll_master extends MX_Controller {
 
     public function ajax_update()
     {
-        //print_mz($this->input->post('value'));
+        //print_mz($this->input->post('payroll_ptkp_id'));
         //$this->_validate();
         $employee_id = $this->input->post('employee_id');
         $group_id = $this->input->post('group_id');
@@ -198,7 +227,8 @@ class Payroll_master extends MX_Controller {
             
         $data = array(
                 'employee_id' => $employee_id,
-                'payroll_group_id' => $group_id
+                'payroll_group_id' => $group_id,
+                'payroll_ptkp_id' => $this->input->post('payroll_ptkp_id'),
             );
 
         if($num_rows>0) {

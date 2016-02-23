@@ -126,8 +126,8 @@
               <label class="control-label col-md-4">Tax Status</label>
               <div class="col-md-8">
                 <?php 
-                  $js = 'class="select2 form-control" style="width:100%" id="group" readonly';
-                  echo form_dropdown('ptkp', $ptkp,'',$js); 
+                  $js = 'class="select2 form-control" style="width:100%" id="payroll_ptkp_id"';
+                  echo form_dropdown('payroll_ptkp_id', $ptkp,'',$js); 
                 ?>
               </div>
             </div><br/>
