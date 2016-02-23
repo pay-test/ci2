@@ -5,6 +5,7 @@ $(document).ready(function() {
         var id = $(this).val();
         if(id != 0){
            $('#table_matrix').load('payroll_config/get_table_matrix/'+id);
+           $("#sess").val(id);
         }
     })
     .change();
@@ -194,9 +195,9 @@ $(document).ready(function() {
   $(document).mouseup(function(){
     $(".td-val").show();
     $(".text-val").hide();
-    $(".td-val-min").show();
+    $(".td-min").show();
     $(".text-val-min").hide();
-    $(".td-val-max").show();
+    $(".td-max").show();
     $(".text-val-max").hide();
     $("#rate-value-text").hide();
     $("#rate-value").show();
@@ -232,72 +233,3 @@ function addCommas(nStr)
       return x1 + x2;
     }
   //TAB MATRIX
-
-  window.updateVal = function(a,b){
-      var ID = a+b;
-      $("#td"+ID).hide();
-      $("#text"+ID).show();
-      $("#text"+ID).focus();
-      $(".money").maskMoney({allowZero:true});
-        window.changeVal = function(){
-        var first=$("#text"+ID).val();
-        var dataString = 'value='+first;
-        $.ajax({
-          type: "POST",
-          url: "payroll_config/edit_matrix/"+a+"/"+b,
-          data: dataString,
-          cache: false,
-          success: function(html){
-            $("#text"+ID).hide();
-            $("#td"+ID).html(first);
-            $("#td"+ID).show();
-          }
-        });
-    }
-  }
-
-  window.updateValMin = function(a,b){
-      var ID = a+b;
-      $("#td_min"+ID).hide();
-      $("#text_min"+ID).show();
-      $("#text_min"+ID).focus();
-      $(".money").maskMoney({allowZero:true});
-        window.changeValMin = function(){
-        var first=$("#text_min"+ID).val();
-        var dataString = 'value='+first;
-        $.ajax({
-          type: "POST",
-          url: "payroll_config/edit_matrix/"+a+"/"+b+"/_min",
-          data: dataString,
-          cache: false,
-          success: function(html){
-            $("#text_min"+ID).hide();
-            $("#td_min"+ID).html(first);
-            $("#td_min"+ID).show();
-          }
-        });
-    }
-  }
-
-  window.updateValMax = function(a,b){
-      var ID = a+b;
-      $("#td_max"+ID).hide();
-      $("#text_max"+ID).show();
-      $("#text_max"+ID).focus();
-      $(".money").maskMoney({allowZero:true});
-        window.changeValMax = function(){
-        var first=$("#text_max"+ID).val();
-        var dataString = 'value='+first;
-        $.ajax({
-          type: "POST",
-          url: "payroll_config/edit_matrix/"+a+"/"+b+"/_max",
-          data: dataString,
-          cache: false,
-          success: function(html){
-            $("#text_max"+ID).hide();
-            $("#td_max"+ID).html(first);
-            $("#td_max"+ID).show();
-          }
-        });
-    }
-  }

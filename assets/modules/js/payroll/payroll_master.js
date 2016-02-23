@@ -83,6 +83,7 @@ function getStatus(Id)
 
 function edit_user(id)
 {
+    var session_id = $('#session_select option:selected').val()
     save_method = 'update';
     $("#component_table_body").empty();
     $('#form')[0].reset(); // reset form on modals
@@ -90,7 +91,7 @@ function edit_user(id)
     $('.help-block').empty(); // clear error string
     //Ajax Load data from ajax
         $.ajax({
-            url : "payroll_master/ajax_edit/" + id,
+            url : "payroll_master/ajax_edit/" + id + "/" + session_id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
@@ -102,6 +103,7 @@ function edit_user(id)
                 $('[name="user_nm"]').val(data.data1.user_nm);
                 $('[name="person_nm"]').val(data.data1.person_nm);
                 $('[name="job_class_nm"]').val(data.data1.job_class_nm);
+                $('[name="payroll_ptkp_id"]').select2().select2('val',data.ptkp);
                 //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
                 $('[name="group_id"]').val(data.data1.group_id);
                 $('#modal_form').modal('show'); // show bootstrap modal when complete loaded

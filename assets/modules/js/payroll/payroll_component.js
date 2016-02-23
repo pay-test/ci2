@@ -4,9 +4,16 @@ var table;
 $(document).ready(function() {
     $(".select2").select2();
     $('.money').maskMoney();
+
+    var session_id = $('#session_select option:selected').val();
+    /*$("#session_select").change(function(){
+        var id = $(this).val();
+        if(session_id!=id)location.reload();
+    })
+    .change();*/
     //datatables
     table = $('#table').DataTable({ 
-
+    
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
         "order": [], //Initial no order.
@@ -68,6 +75,7 @@ function add_user()
     $('.help-block').empty(); // clear error string
     $('#modal_form').modal('show'); // show bootstrap modal
     $('.modal-title').text('Add Payroll Component'); // Set Title to Bootstrap modal title
+    $('[name="session"]').val(session_id);
 }
 
 function edit_user(id)
@@ -76,32 +84,33 @@ function edit_user(id)
     $('#form')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-
+    var session_id = $('#session_select option:selected').val();
     //Ajax Load data from ajax
     $.ajax({
-        url : "payroll_component/ajax_edit/" + id,
+        url : "payroll_component/ajax_edit/" + id+"/"+session_id,
         type: "GET",
         dataType: "JSON",
         success: function(data)
         {
 
-            $('[name="id"]').val(data.id);
-            $('[name="title"]').val(data.title);
-            $('[name="code"]').val(data.code);
-            $('[name="component_type_id"]').val(data.component_type_id);
-            $('[name="is_annualized"]').val(data.is_annualized);
-            $('[name="tax_component_id"]').val(data.tax_component_id);
-            $('[name="formula"]').val(data.formula);
+            $('[name="id"]').val(data.data.id);
+            $('[name="title"]').val(data.data.title);
+            $('[name="code"]').val(data.data.code);
+            $('[name="component_type_id"]').val(data.data.component_type_id);
+            $('[name="is_annualized"]').val(data.data.is_annualized);
+            $('[name="tax_component_id"]').val(data.data.tax_component_id);
+            $('[name="formula"]').val(data.data2.formula);
+            $('[name="session"]').val(session_id);
             //$('[name="is_condition"]').val(data.is_condition);
-            if(data.is_condition == 1){
+            if(data.data2.is_condition == 1){
                 $('input[name=is_condition]').filter('[value=1]').prop('checked', true);
                 $('#con').show("slow");
             }else{
                 $('input[name=is_condition]').filter('[value=0]').prop('checked', true);
                 $('#con').hide("slow");
             }
-            $('[name="min"]').val(addCommas(data.min));
-            $('[name="max"]').val(addCommas(data.max));
+            $('[name="min"]').val(addCommas(data.data2.min));
+            $('[name="max"]').val(addCommas(data.data2.max));
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Component'); // Set title to Bootstrap modal title
 

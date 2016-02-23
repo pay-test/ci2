@@ -5,7 +5,7 @@ class Payroll_component_model extends CI_Model {
 
 	var $table = 'payroll_component';
 	var $column = array('id','title','code','component_type_id','tax_component_id'); //set column field database for order and search
-	var $order = array('component_type_id' => 'asc', 'code'=>'asc'); // default order 
+	var $order = array('component_type_id' => 'asc', 'code'=>'desc'); // default order 
 
 	public function __construct()
 	{
@@ -61,7 +61,8 @@ class Payroll_component_model extends CI_Model {
 		else if(isset($this->order))
 		{
 			$order = $this->order;
-			$this->db->order_by(key($order), $order[key($order)]);
+			$this->db->order_by('component_type_id', 'asc');
+			$this->db->order_by('code','asc');
 		}
 	}
 
@@ -70,6 +71,7 @@ class Payroll_component_model extends CI_Model {
 		$this->_get_datatables_query();
 		if($_POST['length'] != -1)
 		$this->db->limit($_POST['length'], $_POST['start']);
+	
 		$query = $this->db->get();
 		return $query->result();
 	}
@@ -84,6 +86,7 @@ class Payroll_component_model extends CI_Model {
 	public function count_all()
 	{
 		$this->db->where('is_active', 1);
+		
 		$this->db->from($this->table);
 		return $this->db->count_all_results();
 	}
@@ -92,6 +95,16 @@ class Payroll_component_model extends CI_Model {
 	{
 		$this->db->from($this->table);
 		$this->db->where('id',$id);
+		$query = $this->db->get();
+
+		return $query->row();
+	}
+
+	public function get_component_value($id, $session_id)
+	{
+		$this->db->from('payroll_component_value');
+		$this->db->where('payroll_component_id',$id);
+		$this->db->where('session_id',$session_id);
 		$query = $this->db->get();
 
 		return $query->row();

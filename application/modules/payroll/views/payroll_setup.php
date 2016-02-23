@@ -60,7 +60,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" id="btnSave" class="btn btn-primary">Process</button>
+                    <button type="submit" id="btnSave" class="btn btn-primary m-l-10">Process</button>
                   </div>
                 </div>
                 <hr/>
@@ -93,10 +93,11 @@
                   <div class="form-group">
                     <button type="submit" id="btnSave" class="btn btn-primary">Generate</button>
                   </div>
+                  <div style="padding-bottom: 10px"></div>
                   <hr/>
                   <div class="row">
                     <div class="form-group">
-                      <span class="text-extra-small" >Generate salary value used to calculate the base salary's of each employee, this feature is used when there is a new employee who has not calculated the basic salary of the previous period and when there is a change in the job value matrix configuration
+                      <span class="text-extra-small" >Generate salary value is used to calculate the base salary's of each employee, this feature is used when there is a new employee who has not calculated the basic salary of the previous period and when there is a change in the job value matrix configuration
                       </span>
                     </div>
                   </div>
@@ -108,7 +109,41 @@
         </div>
       </div> <!-- e.o row fluid -->
       <div class="row-fluid">
-        
+          <div class="col-md-6"></div>
+        <div class="col-md-6">
+          <div class="grid simple ">
+            <div class="grid-title">
+              <h4><span class="semi-bold">Generate New Session</span></h4>
+            </div>
+            <div class="grid-body">
+              <?php echo form_open(base_url('payroll/payroll_setup/generate_new_Session'), array('id'=>'form-new-session'))?>
+              <div id="loading-session" style="display:none"><img src="<?php echo base_url('assets/assets/img/loading.gif')?>"></div>
+              <div id="form-generate-session"> 
+                <div class="form-body">
+                  <div class="form-group">
+                    <div class="col-md-9">
+                        <span>Generate new session from session <?php echo date('Y')-1?> to session <?php echo date('Y')?></span>
+                        <span class="help-block"></span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" id="" class="btn btn-primary">Generate</button>
+                  </div>
+                  <div style="padding-bottom: 10px"></div>
+                  <hr/>
+                  <div class="row">
+                    <div class="form-group">
+                      <span class="text-extra-small" >
+                        Generate new session is used to copy the entire master data which used for calculating the salary in the previous session, to be re-used in the new session.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 </div>
 <!-- END CONTAINER -->

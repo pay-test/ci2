@@ -22,18 +22,18 @@ class payroll_config extends MX_Controller {
         $this->_render_page($this->filename, $this->data);
     }
 
-    function edit_matrix($class, $val, $type=null){
+    function edit_matrix($sess, $class, $val, $type=null){
         $id = $this->input->post('id');
         $value = str_replace(',', '', $this->input->post('value'));
         $data = array(
-                'session_id' => '2016',
+                'session_id' => $sess,
                 'job_class_id'=> $class,
                 'job_value_id' => $val,
                 'value'.$type=>$value
             );
 
-        $num_rows = getAll('payroll_job_value_matrix', array('job_class_id'=>'where/'.$class, 'job_value_id'=>'where/'.$val))->num_rows();
-        if($num_rows>0){$this->db->where('job_class_id', $class)->where('job_value_id', $val)->update('payroll_job_value_matrix', array('value'.$type=>$value));}else{$this->db->insert('payroll_job_value_matrix', $data);}
+        $num_rows = getAll('payroll_job_value_matrix', array('session_id'=>'where/'.$sess, 'job_class_id'=>'where/'.$class, 'job_value_id'=>'where/'.$val))->num_rows();
+        if($num_rows>0){$this->db->where('session_id',$sess)->where('job_class_id', $class)->where('job_value_id', $val)->update('payroll_job_value_matrix', array('value'.$type=>$value));}else{$this->db->insert('payroll_job_value_matrix', $data);}
         lastq();
     }
 
@@ -81,8 +81,8 @@ class payroll_config extends MX_Controller {
     function get_table_matrix($sess_id)
     {
         $data['session_id'] = $sess_id;
-        $data['pos'] = getAll('hris_job_class', array('job_level'=>"where/management", 'job_class_nm'=>'order/asc'));
-        $data['pos_non'] = getAll('hris_job_class', array('job_level'=>"where/nonmanagement", 'job_class_nm'=>'order/asc'));
+        $data['pos'] = getAll('hris_job_class', array('job_level'=>"where/management", 'gradeval_top'=>'order/desc', 'job_class_cd'=>'order/asc'));
+        $data['pos_non'] = getAll('hris_job_class', array('job_level'=>"where/nonmanagement", 'gradeval_top'=>'order/desc'));
         $data['val'] = getAll('payroll_job_value', array('is_deleted'=>"where/0"));
         $this->load->view('payroll_config/matrix_table', $data);
     }

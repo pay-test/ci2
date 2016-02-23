@@ -27,6 +27,21 @@
             </div>
 
             <div class="grid-body ">
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="label-form">Select Session</label>
+                </div>
+                <div class="col-md-4">
+                    <select class="select2" id="session_select" style="width:100%">
+                        <option>-- Select Session --</option>
+                        <?php foreach($session->result() as $s):
+                        $selected = ($s->id == sessNow()) ? "selected='selected'" : '';
+                        ?>
+                            <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
+                        <?php endforeach;?>
+                    </select>
+                </div>
+            </div>
             <button type="button" class="btn btn-primary" onclick="add_user()"><i class="fa fa-plus"></i> add</button><br/><br/>
               <table class="table table-hover table-condensed" id="table">
                 <thead>
@@ -102,6 +117,13 @@
                         </div>
                       </div>
                       <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Session</label>
+                            <div class="col-md-9">
+                                <input name="session" placeholder="session" class="form-control" type="text" readonly="readonly">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="control-label col-md-3">Attribute</label>
                             <div class="col-md-9">

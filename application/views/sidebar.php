@@ -46,6 +46,19 @@
               </ul>
               -->
             </li>
+            <li <?php echo $active3 ?>>
+              <a href="javascript:;">
+                <i class="fa fa-usd"></i>
+                <span class="title">Setup</span>
+                <span class="arrow"></span>
+              </a>
+              <ul class="sub-menu">
+                <li><a href="<?php echo base_url('payroll/payroll_config')?>">Config</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Generate</a></li>
+              </ul>
+            </li>
              <li <?php echo $active3 ?>>
               <a href="javascript:;">
                 <i class="fa fa-usd"></i>
@@ -53,14 +66,19 @@
                 <span class="arrow"></span>
               </a>
               <ul class="sub-menu">
-                <li><a href="<?php echo base_url('payroll/payroll_config')?>">Config</a></li>
-                <li><a href="<?php echo base_url('payroll/payroll_tax_component')?>">Tax Component</a></li>
-                <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
-                <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
-                <li><a href="<?php echo base_url('payroll/job_value')?>">Job Value</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_master')?>">Master</a></li>
                 <li><a href="<?php echo base_url('payroll/monthly_income')?>">Monthly Income</a></li>
-                <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Setup</a></li>
+              </ul>
+            </li>
+            <li <?php echo $active3 ?>>
+              <a href="javascript:;">
+                <i class="fa fa-usd"></i>
+                <span class="title">Reference</span>
+                <span class="arrow"></span>
+              </a>
+              <ul class="sub-menu">
+                <li><a href="<?php echo base_url('payroll/tax_component')?>">Tax Component</a></li>
+                <li><a href="<?php echo base_url('payroll/job_value')?>">Job Value</a></li>
               </ul>
             </li>
             <li <?php echo $active2?>>

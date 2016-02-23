@@ -28,6 +28,21 @@
 
             <div class="grid-body ">
               <div class="row">
+                  <div class="col-md-2">
+                      <label class="label-form">Select Session</label>
+                  </div>
+                  <div class="col-md-4">
+                      <select class="select2" id="session_select" style="width:100%">
+                          <option>-- Select Session --</option>
+                          <?php foreach($session->result() as $s):
+                          $selected = ($s->id == sessNow()) ? "selected='selected'" : '';
+                          ?>
+                              <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
+                          <?php endforeach;?>
+                      </select>
+                  </div>
+              </div>
+              <div class="row">
                 <div class="col-md-12">
                   <table class="table table-hover table-condensed" id="table">
                     <thead>
@@ -111,8 +126,8 @@
               <label class="control-label col-md-4">Tax Status</label>
               <div class="col-md-8">
                 <?php 
-                  $js = 'class="select2 form-control" style="width:100%" id="group" readonly';
-                  echo form_dropdown('ptkp', $ptkp,'',$js); 
+                  $js = 'class="select2 form-control" style="width:100%" id="payroll_ptkp_id"';
+                  echo form_dropdown('payroll_ptkp_id', $ptkp,'',$js); 
                 ?>
               </div>
             </div><br/>

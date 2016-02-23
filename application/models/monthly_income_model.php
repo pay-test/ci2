@@ -123,6 +123,15 @@ class Monthly_income_model extends CI_Model {
 	}
 
 	function get_master($id){
+		/*var $table = 'hris_employee';
+		var $table_join1 = 'hris_users';
+		var $table_join2 = 'hris_persons';
+		var $table_join3 = 'payroll_group';
+		var $table_join4 = 'payroll_monthly_income';
+		var $table_join5 = 'payroll_monthly_income_component';
+		var $table_join6 = 'payroll_period';
+		var $table_join7 = 'payroll_master';
+		*/
 		$this->db->select(
 			$this->table.'.employee_id as employee_id,
 			'.$this->table_join1.'.user_nm as user_nm,
@@ -135,7 +144,7 @@ class Monthly_income_model extends CI_Model {
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join7, $this->table_join7.'.employee_id = '.$this->table.'.employee_id', 'left');
-		$this->db->join($this->table_join3, $this->table_join7.'.payroll_group_id = '.$this->table_join3.'.id', 'left');
+		$this->db->join($this->table_join3, $this->table_join7.'.payroll_group_id = '.$this->table_join3.'.job_class_id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where('payroll_master.employee_id', $id);

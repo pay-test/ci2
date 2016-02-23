@@ -1,4 +1,15 @@
 <?php  if (!defined('BASEPATH')) exit('No direct script access allowed');
+if (!function_exists('sessNow')){
+	function sessNow()
+	{
+		$CI =& get_instance();
+		$y = date('Y');
+		$start_ses = $y."-04-01 00:00:00";
+        $session = (date('Y-m-d H:i:s') < $start_ses) ? $y-1 : $y;//print_mz($session); 
+		
+		return $session;
+	}
+}
 if (!function_exists('permission')){
 	function permission()
 	{
@@ -61,3 +72,12 @@ if ( ! function_exists('get_query_view'))
 			return $data;
 		}
 	}
+
+	if (!function_exists('print_ag')){	
+	function print_ag($data)
+	{
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
+	}
+}
