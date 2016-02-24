@@ -1,7 +1,7 @@
 
   <?php $i = 1;foreach($component as $c): $val = 0;?>
 
-  <?php foreach ($component_value as $cv) {
+  <?php foreach ($component_value as $cv) {//print_mz($component_value);
   	if ($cv['component_id'] == $c->component_id) {
   		$master_comp_id = $cv['id'];
   		$val = $cv['value'];

@@ -74,9 +74,11 @@
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h3 class="modal-title">Form</h3>
+          <h5 id="session-show" style="margin-left:-10px"></h5>
         </div>
         <form action="#" id="form" class="form">
         <input type="hidden" name="employee_id" value="">
+        <input type="hidden" name="session_id" value="">
         <div class="modal-body">
           <div class="col-md-6">
             <div class="row form-row">

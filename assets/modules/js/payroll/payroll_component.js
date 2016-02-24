@@ -99,7 +99,7 @@ function edit_user(id)
             $('[name="component_type_id"]').val(data.data.component_type_id);
             $('[name="is_annualized"]').val(data.data.is_annualized);
             $('[name="tax_component_id"]').val(data.data.tax_component_id);
-            $('[name="formula"]').val(data.data2.formula);
+            $('[name="formula"]').text(data.data2.formula);
             $('[name="session"]').val(session_id);
             //$('[name="is_condition"]').val(data.is_condition);
             if(data.data2.is_condition == 1){

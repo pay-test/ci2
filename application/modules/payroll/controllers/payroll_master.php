@@ -88,13 +88,18 @@ class Payroll_master extends MX_Controller {
         //print_r($sal_session_before);
         //print_r($sal_session_now);
         //print_mz($new_sal);
+        $m = 0;
         foreach ($data2 as $value) {
             $t = $value->formula;//print_r("idnya $value->component formulanya $value->formula <br/>");
-            $tx = explode(' ', $t);$r='';
+            //$t = 'IF ( BWGS * HOUS ) > 2 * 5000000 ; 2 * 5000000 * 4 / 100';
+            //$t = getValue('formula', 'payroll_component_value', array('id'=>'where/28'));//print_mz($t);
+            $tx = explode(' ', $t);$r='';//print_mz($tx);
             if($t != null && $value->component_id!=60):
                //echo $value->formula;
-                for($i=0;$i<sizeof($tx);$i++):
+                if(!in_array('IF', $tx)){
+                    for($i=0;$i<sizeof($tx);$i++)://print_mz($tx);
                         if(preg_match("/[a-z]/i", $tx[$i])){
+                            
                             $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
                             $detail = $this->payroll->get_employee_detail($emp_id);
                             $det = $detail->row();
@@ -133,11 +138,114 @@ class Payroll_master extends MX_Controller {
                              $tx[$i] =substr_replace($tx[$i], '/100', -1);
                         }else{false;}
                         $r .= $tx[$i];
-                endfor;
+                     endfor;
+                }else{ 
+                        $com = explode(PHP_EOL, $t);
+                        //print_mz($com);   
+                        for($j=0;$j<sizeof($com);$j++){  
+                            $ntx = '';
+                            $bwgs = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/60'));
+                            $hous = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/66'));//print_mz($xj[$i]);
+                            $bwgshous = $bwgs+$hous;//print_mz($bwgshous);
+                            $xj = explode(' ', $com[$j]);//print_ag($xj);
+                            $n = '';
+                            for($i=7;$i<sizeof($xj);$i++){
+                                if(preg_match("/[a-z]/i", $xj[$i])){
+                                        //echo $j.'-'.$xj[$i].'<br/>';
+                                    switch ($xj[$i]) {
+                                        case 'TK0':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'TK0'));
+                                            break;
+                                        case 'K0':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K0'));
+                                            break;
+                                        case 'K1':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K1'));//print_mz($xj[$i]);
+                                            break;
+                                        case 'K2':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K2'));
+                                            break;
+                                        case 'K3':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K3'));
+                                            break;
+                                        case 'UMK':
+                                            //$xj[$i]=getValue('value', 'UMK', array('session'=>'where/'.$session_id));
+                                            $xj[$i]=3000000;
+                                            break;
+                                        
+                                        default:
+
+                                            //print_ag($xj[$i]);
+                                            $code = getValue('id', 'payroll_component', array('code'=>'where/'.$xj[$i]));
+                                            $xj[$i] = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$code));//print_ag($xj[$i]);
+                                            break;
+                                    }
+
+                                    //print_ag('awa'.$j.'-'.$xj[$i]);
+                                }
+                                //print_mz('ds');
+
+                                if (strpos($tx[$i], '%') !== false) {
+                                     $xj[$i] =substr_replace($xj[$i], '/100', -1);
+                                }
+
+                                $ntx .= $xj[$i];
+                            }
+                                //print_ag($j.'-'.$ntx);
+
+                            if($xj[6] == '>') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous > $f)$r = $l;
+                            }elseif($xj[6] == '<') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous < $f)$r=$l;
+                            }elseif($xj[6] == '<=') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous <= $f)$r=$l;
+                            }elseif($xj[6] == '>=') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous >= $f)$r=$l;
+                            }
+                            //print_ag($bwgshous.$xj[6].$f.'='.$r);
+                        }
+                            //print_ag($bwgshous.$xj[6].$f.$r);
+                            //print_ag($bwgshous.$xj[6].$f.$r);
+                            //print_mz($com);
+                            //print_mz($ntx);
+
+                //print_ag($f);
+                }
+                
                 $f= $this->evalmath($r);
-                   //echo $r.'<br/>';
-                   //echo $g.'<br/>';
-                $tz =@eval("return " . $f . ";" );//print_r($tz);
+                $tz =@eval("return " . $f . ";" );//print_ag($tz);
                 $is_condition = getValue('is_condition', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
                 if($is_condition == 1){
                     $min = getValue('min', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
@@ -158,6 +266,9 @@ class Payroll_master extends MX_Controller {
        return true;
     }
 
+    function endtask($r){
+        return $r;
+    }
     function cek_master_component($master_id, $session_id)
     {
         $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id, 'session_id'=>'where/'.$session_id));//print_mz($group_id);
@@ -213,26 +324,29 @@ class Payroll_master extends MX_Controller {
     {
         //print_mz($this->input->post('payroll_ptkp_id'));
         //$this->_validate();
+        $session_id= $this->input->post('session_id');
         $employee_id = $this->input->post('employee_id');
         $group_id = $this->input->post('group_id');
+        $group_id = getValue('job_class_id', 'payroll_group', array('id'=>'where/'.$group_id));
+        $filter_master = array('employee_id'=>'where/'.$employee_id, 'session_id'=>'where/'.$session_id);
 
-        $num_rows = getAll('payroll_master', array('employee_id'=>'where/'.$employee_id))->num_rows();
+        $num_rows = getAll('payroll_master', $filter_master)->num_rows();
         //lastq();
-        $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
-        $old_group = getValue('payroll_group_id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
-
+        $payroll_master_id = getValue('id', 'payroll_master', $filter_master);
+        $old_group = getValue('payroll_group_id', 'payroll_master', $filter_master);
         if($old_group != $group_id) {
             $this->db->where('payroll_master_id', $payroll_master_id)->update('payroll_master_component', array('is_deleted' => 1));
         }
             
         $data = array(
+                'session_id' => $session_id,
                 'employee_id' => $employee_id,
                 'payroll_group_id' => $group_id,
                 'payroll_ptkp_id' => $this->input->post('payroll_ptkp_id'),
             );
 
         if($num_rows>0) {
-            $this->db->where('employee_id', $employee_id)->update('payroll_master', $data);   
+            $this->db->where('employee_id', $employee_id)->where('session_id', $this->input->post('session_id'))->update('payroll_master', $data);   
         }else{
             $this->db->insert('payroll_master', $data);
         }
