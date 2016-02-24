@@ -102,6 +102,8 @@ function edit_user(id)
                 $('[name="employee_id"]').val(data.data1.employee_id);
                 $('[name="user_nm"]').val(data.data1.user_nm);
                 $('[name="person_nm"]').val(data.data1.person_nm);
+                $('[name="session_id"]').val(session_id);
+                $('#session-show').text('Session '+session_id);
                 $('[name="job_class_nm"]').val(data.data1.job_class_nm);
                 $('[name="payroll_ptkp_id"]').select2().select2('val',data.ptkp);
                 //$('[name="group_id"]').select2().select2('val',data.data1.group_id);

@@ -67,7 +67,7 @@
 
 <!-- Bootstrap modal -->
 <div class="modal fade" id="modal_form" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -76,24 +76,24 @@
             <div class="modal-body form">
                 <form action="#" id="form" class="form-horizontal">
                     <input type="hidden" value="" name="id"/> 
-                    <div class="form-body">
+                    <div class="col-md-12">
                     <div class="row form-row">
-                      <div class="col-md-6">
-                        <div class="form-group">
+                      <div class="col-md-5">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Name</label>
                             <div class="col-md-9">
                                 <input name="title" placeholder="Name" class="form-control" type="text">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Code</label>
                             <div class="col-md-9">
                                 <input name="code" placeholder="Code" class="form-control" type="text">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Type</label>
                             <div class="col-md-9">
                                 <select name="component_type_id" class="form-control select2">
@@ -106,7 +106,7 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-12">
                           <label class="control-label col-md-6 text-left">Have Condition</label>
                           <div class="col-md-6">
                             <div id="status">
@@ -116,15 +116,15 @@
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
+                      <div class="col-md-7">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Session</label>
                             <div class="col-md-9">
                                 <input name="session" placeholder="session" class="form-control" type="text" readonly="readonly">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Attribute</label>
                             <div class="col-md-9">
                                 <select name="is_annualized" class="form-control select2">
@@ -134,7 +134,7 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Tax</label>
                             <div class="col-md-9">
                                 <select name="tax_component_id" class="form-control select2">
@@ -148,23 +148,23 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Formula</label>
                             <div class="col-md-9">
-                                <input name="formula" placeholder="Formula" class="form-control" type="text">
+                                <textarea name="formula" placeholder="Formula" class="form-control"></textarea> 
                                 <span class="help-block"></span>
                             </div>
                         </div>
 
                         <div id="con" style="display: none">
-                          <div class="form-group">
+                          <div class="col-md-12">
                             <label class="control-label col-md-3">Min Value</label>
                             <div class="col-md-9">
                                 <input name="min" placeholder="Min" class="form-control text-right money" type="text">
                                 <span class="help-block"></span>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-12">
                             <label class="control-label col-md-3">Max Value</label>
                             <div class="col-md-9">
                                 <input name="max" placeholder="Max" class="form-control text-right money" type="text">
