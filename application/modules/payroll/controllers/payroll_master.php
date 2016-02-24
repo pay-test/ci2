@@ -266,9 +266,6 @@ class Payroll_master extends MX_Controller {
        return true;
     }
 
-    function endtask($r){
-        return $r;
-    }
     function cek_master_component($master_id, $session_id)
     {
         $group_id = getValue('payroll_group_id', 'payroll_master', array('id'=>'where/'.$master_id, 'session_id'=>'where/'.$session_id));//print_mz($group_id);

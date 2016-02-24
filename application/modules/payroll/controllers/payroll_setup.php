@@ -563,6 +563,28 @@ class Payroll_setup extends MX_Controller {
                     );
                 $this->all_model->Insert('payroll_master_component',$data_insert);
             }
+
+            $hous_component = GetAll('payroll_master_component',array('payroll_master_id' => 'where/'.$master_id, 'payroll_component_id' => 'where/66'));
+            $hous_num_row = $hous_component->num_rows();
+            //$formula = getValue('formula', 'payroll_component_value', array('payroll_component_id'=>'where/66', 'session_id'=>'where'.$session_id));
+            $formula = $total_sal * (10/100);
+            if($formula>800000){
+                $formula = 800000;
+            }elseif($formula<400000){
+                $formula = 400000;
+            }else{
+                $formula = $total_sal*(10/100);
+            }
+            if ($hous_num_row > 0) {
+                $this->db->where('payroll_master_id', $master_id)->where('payroll_component_id', 66)->update('payroll_master_component',array('value'=>$formula));
+            } else {
+                $data_insert = array(
+                    'payroll_master_id' => $master_id,
+                    'payroll_component_id' => 66,
+                    'value' => $formula
+                    );
+                $this->all_model->Insert('payroll_master_component',$data_insert);
+            }
             //echo'<pre>';print_r($this->db->last_query());echo '</pre>';
         }
             echo json_encode(array('st'=>1));
