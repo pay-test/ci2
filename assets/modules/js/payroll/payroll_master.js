@@ -111,10 +111,12 @@ function edit_user(id)
                 $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Payroll Master'); // Set title to Bootstrap modal title
                 if(data.data2 != ""){
+                    //alert('dsa');
                     getComponentVal(data.data1.group_id,data.data2);
                     //drawTable(data.data2);
 
                 }else{
+                    //alert('dsa');
                      //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
                     getComponent(data.data1.group_id);
                 }
