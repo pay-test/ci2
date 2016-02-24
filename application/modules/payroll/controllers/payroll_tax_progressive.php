@@ -1,15 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Payroll_tax_component extends MX_Controller {
+class Payroll_tax_progressive extends MX_Controller {
     
     var $title = "payroll";
-    var $page_title = "Tax Component";
-    var $filename = "payroll_tax_component";
+    var $page_title = "Tax Progressive";
+    var $filename = "payroll_tax_progressive";
     public $data;
     function __construct()
     {
         parent::__construct();
-        $this->load->model('payroll_tax_component_model','payroll');
+        $this->load->model('payroll_tax_progressive_model','payroll');
     }
     
     function index()
@@ -30,10 +30,11 @@ class Payroll_tax_component extends MX_Controller {
             $no++;
             $row = array();
             $row[] = $no;
-            $row[] = $tax->title;
-            $row[] = $tax->column;
+            $row[] = $tax->value_min;
+            $row[] = $tax->value_max;
+            $row[] = $tax->percentage;
 
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
 
@@ -60,8 +61,9 @@ class Payroll_tax_component extends MX_Controller {
     {
         $this->_validate();
          $data = array(
-                'title' => $this->input->post('title'),
-                'column' => $this->input->post('column'),
+                'value_min' => $this->input->post('value_min'),
+                'value_max' => $this->input->post('value_max'),
+                'percentage' => $this->input->post('percentage'),
                 'created_by' => GetUserID(),
                 'created_on' => date('Y-m-d H:i:s')
             );
@@ -73,8 +75,9 @@ class Payroll_tax_component extends MX_Controller {
     {
         $this->_validate();
          $data = array(
-                'title' => $this->input->post('title'),
-                'column' => $this->input->post('column'),
+                'value_min' => $this->input->post('value_min'),
+                'value_max' => $this->input->post('value_max'),
+                'percentage' => $this->input->post('percentage'),
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );
@@ -95,17 +98,17 @@ class Payroll_tax_component extends MX_Controller {
         $data['inputerror'] = array();
         $data['status'] = TRUE;
  
-        if($this->input->post('title') == '')
+        if($this->input->post('value_min') == '')
         {
-            $data['inputerror'][] = 'title';
-            $data['error_string'][] = 'Name is required';
+            $data['inputerror'][] = 'value_min';
+            $data['error_string'][] = 'Min Values is required';
             $data['status'] = FALSE;
         }
  
-        if($this->input->post('column') == '')
+        if($this->input->post('value_max') == '')
         {
-            $data['inputerror'][] = 'code';
-            $data['error_string'][] = 'Code is required';
+            $data['inputerror'][] = 'value_max';
+            $data['error_string'][] = 'Max value is required';
             $data['status'] = FALSE;
         }
  

@@ -1,15 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Payroll_tax_component extends MX_Controller {
+class Payroll_tax_method extends MX_Controller {
     
     var $title = "payroll";
-    var $page_title = "Tax Component";
-    var $filename = "payroll_tax_component";
+    var $page_title = "Tax Method";
+    var $filename = "payroll_tax_method";
     public $data;
     function __construct()
     {
         parent::__construct();
-        $this->load->model('payroll_tax_component_model','payroll');
+        $this->load->model('payroll_tax_method_model','payroll');
     }
     
     function index()
@@ -31,9 +31,8 @@ class Payroll_tax_component extends MX_Controller {
             $row = array();
             $row[] = $no;
             $row[] = $tax->title;
-            $row[] = $tax->column;
 
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
 
@@ -61,7 +60,6 @@ class Payroll_tax_component extends MX_Controller {
         $this->_validate();
          $data = array(
                 'title' => $this->input->post('title'),
-                'column' => $this->input->post('column'),
                 'created_by' => GetUserID(),
                 'created_on' => date('Y-m-d H:i:s')
             );
@@ -74,7 +72,6 @@ class Payroll_tax_component extends MX_Controller {
         $this->_validate();
          $data = array(
                 'title' => $this->input->post('title'),
-                'column' => $this->input->post('column'),
                 'edited_by' => GetUserID(),
                 'edited_on' => date('Y-m-d H:i:s')
             );
@@ -98,14 +95,7 @@ class Payroll_tax_component extends MX_Controller {
         if($this->input->post('title') == '')
         {
             $data['inputerror'][] = 'title';
-            $data['error_string'][] = 'Name is required';
-            $data['status'] = FALSE;
-        }
- 
-        if($this->input->post('column') == '')
-        {
-            $data['inputerror'][] = 'code';
-            $data['error_string'][] = 'Code is required';
+            $data['error_string'][] = 'Min Values is required';
             $data['status'] = FALSE;
         }
  
