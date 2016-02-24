@@ -53,7 +53,8 @@
                 <span class="arrow"></span>
               </a>
               <ul class="sub-menu">
-                <li><a href="<?php echo base_url('payroll/payroll_config')?>">Config</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_config')?>">Config Payroll</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_config_tax')?>">Config Tax</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_component')?>">Component</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_group')?>">Group</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_setup')?>">Generate</a></li>
@@ -77,7 +78,10 @@
                 <span class="arrow"></span>
               </a>
               <ul class="sub-menu">
-                <li><a href="<?php echo base_url('payroll/tax_component')?>">Tax Component</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_tax_component')?>">Tax Component</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_ptkp')?>">Tax PTKP</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_tax_progressive')?>">Tax Progressive</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_tax_method')?>">Tax Method</a></li>
                 <li><a href="<?php echo base_url('payroll/job_value')?>">Job Value</a></li>
               </ul>
             </li>

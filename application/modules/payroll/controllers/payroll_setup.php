@@ -132,6 +132,9 @@ class Payroll_setup extends MX_Controller {
             $income_netto = $income - $deduction - $biaya_jabatan;//echo $income_netto.'-';
             $income_netto_year = round($income_netto * 12);//echo $income_netto_year.'-';
             $income_netto_year_pembulatan = substr_replace($income_netto_year, '000', -3);
+            if ($value->employee_id == 644) {
+                //print_mz($income_netto_year);
+            }
             //print_r($income_netto_year_pembulatan.'-');
             $pkp = $income_netto_year_pembulatan - $ptkp;//print_r('pkp = '.$pkp.'-');
             $pph_tahun = $pkp * (5/100);//echo $pph_tahun.'-';

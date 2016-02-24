@@ -151,7 +151,7 @@
                 </div>
 
                 <!--Tab Payroll Divider-->
-                <div class="tab-pane fade in active" id="tab-divider">
+                <div class="tab-pane fade" id="tab-divider">
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">

@@ -1,10 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class payroll_tax_component_model extends CI_Model {
+class payroll_tax_method_model extends CI_Model {
 
-	var $table = 'payroll_tax_component';
-	var $column = array('title','column'); //set column field database for order and search
+	var $table = 'payroll_tax_method';
+	var $column = array('title'); //set column field database for order and search
 	var $order = array('id' => 'asc'); // default order 
 
 	public function __construct()
@@ -94,7 +94,7 @@ class payroll_tax_component_model extends CI_Model {
 		$this->db->delete($this->table);
 	}
 
-	public function save_component($data)
+	public function save_method($data)
 	{
 		$this->db->insert($this->table, $data);
 		return $this->db->insert_id();
