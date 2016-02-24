@@ -105,7 +105,7 @@ $(document).ready(function() {
           
             $.ajax({
               type: "POST",
-              url: "payroll_config/edit_rate/",
+              url: "payroll_config/edit_tax_rate/",
               data: dataString,
               cache: false,
               success: function(html){
