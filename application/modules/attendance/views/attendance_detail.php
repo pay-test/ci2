@@ -1,127 +1,178 @@
-<div class="grid simple transparent">
-	<div class="grid-title">
-		<h4>List <span class="semi-bold">Attendance</span></h4></a>
-		<div class="actions">
-			<a href="javascript:void(0);" onclick="backAtt('<?php echo $start_date;?>', '<?php echo $end_date;?>')"><i class='fa fa-chevron-circle-left'></i> Back</a>
-		</div>
-	</div>
-</div>
 
-<div class="col-md-6">
-    <div class="row">
-        <div class="tiles white col-md-12  no-padding">         
-            <div class="tiles-body">
-                <div class="row">
-                	<?php
-                	foreach($emp->result_array() as $e) {
-                		?>
-                    <div class="col-md-3">
-                        <div class="">
-                            <img width="100" height="100" src="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" data-src="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" data-src-retina="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" alt="">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <span class="semi-bold">Name</span>
-                    </div>
-                    <div class="col-md-4">
-                        <span class="semi-bold">: <?php echo $e['person_nm'];?></span>
-                    </div>
-                    <br/><br/>
-                    <div class="col-md-4">
-                        <span class="semi-bold">Job Title</span>
-                    </div>
-                    <div class="col-md-4">
-                        <span class="semi-bold">:</span>
-                    </div>
-                    <br/><br/>
-                    <div class="col-md-4">
-                        <span class="semi-bold">Division/Section</span>
-                    </div>
-                    <div class="col-md-4">
-                        <span class="semi-bold">:</span>
-                    </div>
-                    <?php
-                  }
-                  ?>
+<div class="row column-seperation">
+  <div class="col-md-12">
+  	<div class="col-md-12">
+		    <div class="row">
+		        <div class="tiles white col-md-12 no-padding info_header">         
+	            <div class="tiles-body">
+	            	<?php
+	            	foreach($emp->result_array() as $r) {
+              	?>
+	            	<div class="col-md-2 pull-left">
+                  <div class="col-md-12">
+                  	<?php
+                  	if(file_exists('assets/assets/img/profiles/PICTURE_'.$r['person_id'].'.JPG')) {?>
+                  	<img height="135" src="<?php echo assets_url('assets/img/profiles/PICTURE_'.$r['person_id'].'.JPG')?>" alt="<?php echo $r['person_nm'];?>" title="<?php echo $r['person_nm'];?>">
+                  	<?php } else { ?>
+                  	<img height="135" src="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" alt="<?php echo $r['person_nm'];?>" title="<?php echo $r['person_nm'];?>">
+                  	<?php }?>
+                  </div>
                 </div>
-            </div>
-        </div>
+                    
+                <div class="col-md-5">
+                  <div class="col-md-3">
+                      <span class="semi-bold">Name</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['person_nm'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Division</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo GetDivision($r['org_id']);?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Section</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['org_nm'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Job Title</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['job_nm'];?></span>
+                  </div>
+                </div>
+                
+                <div class="col-md-5">
+                  <div class="col-md-3">
+                      <span class="semi-bold">NIK</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['ext_id'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Group</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo CekGroup($r['group_shift']);?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Grade</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['grade_job_class']." (".$r['job_class_nm'].")";?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Period</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo GetPeriodFull($period);?></span>
+                  </div>
+                </div>
+                <?php
+                }
+                ?>
+	            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<!--<div class="grid simple transparent">
+			<div class="grid-title">
+				<h4>Attendance <span class="semi-bold">Detail</span></h4>
+				<div class="actions">
+					<a href="javascript:void(0);" onclick="backAtt('<?php echo $period;?>')"><i class='fa fa-chevron-circle-left'></i> Back</a>
+				</div>
+			</div>
+		</div>-->
+
+    <div id="detail_att" class="grid-body ">
+    	<table class="table table-hover table-condensed" id="table">
+        <thead>
+          <tr>
+            <th style="width:5%">No</th>
+            <th style="width:15%">Date</th>
+            <th>Attend</th>
+            <th>OFF</th>
+            <th>Cuti</th>
+            <th>Izin</th>
+            <th>Sick</th>
+            <th>Absence</th>
+            <th>In</th>
+            <th>Out</th>
+            <th>Schedule</th>
+            <th style="width:5%">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      
+      <div class="clearfix_button pull-right">
+				<button type="submit" class="btn btn-cancel-att" rel="<?php echo urldecode($period);?>">&nbsp;Back</button>
+			</div>
     </div>
+    
+     
+  </div>
 </div>
 
-<table class="table table-striped table-hover">
-    <tr>
-    	<?php if(permissionaction()){?>
-    	<input type="hidden" id="temp_id" value="">
-    	<th>
-    		<input type="checkbox" onclick="checkedAll('<?php echo $filename;?>', true)" id="primary_check" value="" name="">
-    	</th>
-    	<?php }?>
-    	<?php
-		
-    	foreach($grid as $r)
-    	{
-    		echo "<th>".$r."</th>";
-    	}
-    	?>
-    	<?php if(permissionaction()){?>
-    	<th class='action'>Action</th>
-    	<?php }?>
-    </tr>
-    <?php
-    foreach($query_list->result_array() as $r)
-    {
-    	if($shift) $r['id'] = $r['id_k'];
-    	echo "<tr id='listz-".$r['id']."'>";
-    	if(permissionaction()) echo "<td class='box_delete'><input type='checkbox' class='delete' id='del".$r['id']."' value='".$r['id']."'></td>";
-    	
-		
-		foreach($list as $s)
-    	{
-    		if($s == "tgl")
-    		{
-    			$r[$s] = GetTanggal($r['tanggal'])." ".GetMonthFull(intval($r['bulan']))." ".$r['tahun'];
-    		}
-    		else if($s == "id_employee")
-    		{
-    			$r[$s.'_temp'] = $r[$s];
-    			//$r[$s] = GetValue("person_nm","hris_persons", array("person_id"=> "where/".$r[$s]));
-    		}
-    		else if($s == "shift")
-    		{
-    			$r[$s] = GetValue("tgl_".intval($r['tanggal']),"kg_jadwal_shift", array("id_employee"=> "where/".$r['id_employee'], "bulan"=> "where/".$r['bulan'], "tahun"=> "where/".$r['tahun']));
-    			//lastq();
-    		}
-    		else if($s == "name" || $s == "keterangan" || $s == "scan_masuk" || $s == "scan_pulang") $r[$s] = $r[$s];
-    		else if(($s == 'jh' || $s == 'hr') && $flag_tgl)
-    		{
-				//print_mz($r);
-				if($r['hr'] == 1) { 
-				$r['jh'] = "<i class='fa fa-check'></i>"; 
-				}
-    			else if($s == "jh" && $r['jh'] == 1){ 
-				
-				$r['jh'] = "<i class='fa fa-check'></i>";}
-    			else $r[$s]="";
-    		}
-    		else if($r[$s] == 1 && $flag_tgl) $r[$s] = "<i class='fa fa-check'></i>";
-    		else if($flag_tgl) $r[$s]="";
-    		echo "<td>".$r[$s]."</td>";
-    	}
-    	if(!$r['id']) $r['id']=0;
-    	
-    	if(permissionaction()){
-    	echo "<td class='action'>";
-	    if($flag_tgl){ 
-	    	if(permissionactionz()){ 
-		    	if($tgl_today==date("Y-m-d")) echo "-";
-		    	//else echo "<a href='".site_url($filename.'/edit/0/'.$r['tahun'].'-'.$r['bulan'].'-'.GetTanggal($r['tanggal']).'/'.$r['id_employee'].'/'.$r['id'].'/u')."'>Edit</a>";
-          else echo '<a class="btn btn-sm btn-primary" href="javascript:void(0);" title="detail" onclick="editAtt('."'".$r['id']."'".')"><i class="fa fa-pencil"></i></a>';
-	    	}
-	    } else echo "<a href='".site_url($filename.'/main/'.$r['a_id'].'/'.$tgl)."'>Detail</a>";
-	    echo "</td>";
-	  	}
-	    echo "</tr>";
-    }
-    ?>
-</table>
+<!--<script src="<?php echo assets_url('assets/plugins/data-tables/jquery.dataTables.min.js')?>"></script>-->
+<link href="<?php echo assets_url('assets/plugins/data-tables/datatables.min.css')?>" rel="stylesheet" type="text/css" />
+<script>
+var table;
+$(document).ready(function() {
+  //datatables
+  table = $('#table').DataTable({
+  		//"lengthMenu": [[5, 30, -1], [5, 30, "All"]],
+      "scrollY": "290px",
+      "order" : [],
+      "searching": false,
+      "processing": true, //Feature control the processing indicator.
+      "serverSide": true, //Feature control DataTables' server-side processing mode.
+      "scrollX" : true, "paging": false,
+      
+
+      // Load data for the table's content from an Ajax source
+      "ajax": {
+          "url": "attendance/ajax_list_detail_att/<?php echo $period.'/'.$id_emp;?>",
+          "type": "POST"
+      },
+			"createdRow": function ( row, data, index ) {
+        if (data[10].match('OFF')) {
+        	$('td', row).addClass('bg_libur');
+        }
+      },
+      //Set column definition initialisation properties.
+      "columnDefs": [
+      {
+          "targets": [0], //index column
+          "orderable": false, //set not orderable
+      },
+      {
+          "targets": [10], //last column
+          "orderable": false, //set not orderable
+      },
+      {
+          "targets": [11], //last column
+          "orderable": false, //set not orderable
+      },
+      ],
+      /*"initComplete": function () {
+        $("tr td:contains('Sun,')").each(function(){
+			      $(this).parent().find('td').addClass("bg_libur");
+				});
+      }*/
+  });
+});
+</script>
+<script src="<?php echo assets_url('modules/js/attendance.js')?>"></script>

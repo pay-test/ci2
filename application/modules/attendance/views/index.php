@@ -26,9 +26,9 @@
               <li class="active">
                 <a href="#" onclick="loadAttendance()" role="tab" data-toggle="tab"><?php echo ucwords(lang('attendance'))?></a>
               </li>
-              <li>
+              <!--<li>
                 <a href="#" onclick="loadOvertime()" role="tab" data-toggle="tab"><?php echo  ucwords(lang('overtime'))?></a>
-              </li>
+              </li>-->
               <li>
                 <a href="#" onclick="loadShift()" role="tab" data-toggle="tab"><?php echo ucwords(lang('shift_schedule'))?></a>
               </li>

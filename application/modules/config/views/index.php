@@ -14,7 +14,7 @@
       <li>
         <p>YOU ARE HERE</p>
       </li>
-      <li><a href="<?php echo base_url('employee')?>" class="active"><?php echo ucwords(lang('config'))?></a> </li>
+      <li><a href="<?php echo base_url('config')?>" class="active"><?php echo ucwords(lang('config'))?></a> </li>
     </ul>
     <!--<div class="page-title"> <i class="icon-custom-left" onclick="javascript:window.location='<?php echo site_url("dashboard");?>'"></i>
       <h3><span class="semi-bold"><?php echo ucwords(lang('employee'))?></span></h3>

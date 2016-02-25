@@ -30,22 +30,56 @@
                 <span class="selected"></span>
               </a>
             </li>
-            <li <?php echo $active2?>>
-              <a href="<?php echo base_url('attendance')?>">
+            <?php
+            if($person_id == 1) {?>
+            <!--<li <?php echo $active1;?>>
+              <a href="<?php echo base_url('employee')?>">
+                <i class="fa fa-user"></i>
+                <span class="title">Employee</span>
+              </a>
+            </li>-->
+            <li <?php echo $active2;?>>
+              <a href="#">
                 <i class="fa fa-sign-in"></i>
                 <span class="title">Attendance</span>
                 <!--<span class="arrow"></span>-->
               </a>
-              <!--
               <ul class="sub-menu">
-                <li class="start active"><a href="<?php echo base_url('absensi/attendance')?>">Attendance</a></li>
-                <li><a href="<?php echo base_url('absensi/overtime')?>">Overtime</a></li>
-                <li><a href="<?php echo base_url('absensi/overtime_analysis')?>">Overtime Analysis</a></li>
-                <li><a href="<?php echo base_url('absensi/shift_schedule')?>">Shift Schedule</a></li>
-                <li><a href="<?php echo base_url('absensi/employee_finger')?>">Employee Finger</a></li>
+                <li <?php echo $active2_1;?>><a href="<?php echo base_url('attendance')?>">List of Attendance</a></li>
+                <!--<li <?php echo $active2_2;?>><a href="<?php echo base_url('attendance_form/overtime')?>">Form Overtime</a></li>-->
               </ul>
-              -->
             </li>
+            <li <?php echo $active4;?>>
+              <a href="#">
+                <i class="fa fa-puzzle-piece"></i>
+                <span class="title">Report</span>
+              </a>
+              <ul class="sub-menu">
+                <li <?php echo $active4_1;?>><a href="<?php echo base_url('report/overtime')?>">Overtime</a></li>
+              </ul>
+            </li>
+            <li <?php echo $active3;?>>
+              <a href="#">
+                <i class="fa fa-puzzle-piece"></i>
+                <span class="title">Config</span>
+              </a>
+              <ul class="sub-menu">
+                <li <?php echo $active3_1;?>><a href="<?php echo base_url('config')?>">Parameter</a></li>
+                <li <?php echo $active3_2;?>><a href="<?php echo base_url('config/holiday')?>">Holiday</a></li>
+              </ul>
+            </li>
+            <?php } else {?>
+            <li <?php echo $active2;?>>
+              <a href="#">
+                <i class="fa fa-sign-in"></i>
+                <span class="title">Attendance</span>
+                <!--<span class="arrow"></span>-->
+              </a>
+              <ul class="sub-menu">
+                <li <?php echo $active2_2;?>><a href="<?php echo base_url('attendance_form/overtime')?>">Overtime</a></li>
+              </ul>
+            </li>
+            <?php }?>
             <li <?php echo $active3 ?>>
               <a href="javascript:;">
                 <i class="fa fa-usd"></i>

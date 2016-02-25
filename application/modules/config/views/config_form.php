@@ -1,6 +1,6 @@
 <div class="grid simple transparent">
 	<div class="grid-title">
-		<h4>Edit of<span class="semi-bold"> Config</span></h4></a>
+		<h4>Edit of<span class="semi-bold"> <?php echo ucwords(lang('config'))?></a></span></h4></a>
 	</div>
 </div>
 
@@ -18,7 +18,7 @@
 							<label class="form-label">Active From</label>
 							<?php
 								$nm_f = "att_active_from";
-								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span5 tgl'");
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span2 tgl'");
 							?>
 						</div>
 						
@@ -26,7 +26,7 @@
 							<label class="form-label">Start Period</label>
 							<?php
 								$nm_f = "att_start_period";
-								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span5'")." 1 to 31";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1'")." 1 to 31";
 							?>
 						</div>
 						
@@ -34,7 +34,7 @@
 							<label class="form-label">End Period</label>
 							<?php
 								$nm_f = "att_end_period";
-								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span5'")." 1 to 31";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1'")." 1 to 31";
 							?>
 						</div>
           </div>
@@ -45,7 +45,146 @@
   
   <div class="col-md-6">
   	<div class="grid simple">
+  		<div class="grid-title no-border">
+        <h4><span class="semi-bold">Working Schedule</span></h4>
+      </div>
+      <div class="grid-body no-border" style="margin-bottom:0px;">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+          	<div class="form-group">
+							<label class="form-label">Active From</label>
+							<?php
+								$nm_f = "shift_active_from";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span2 tgl'");
+							?>
+						</div>
+						
+						<div class="form-group">
+							<label class="form-label">Shift</label>
+							<?php
+								$nm_f = "shift_1";
+								echo "1 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "shift_2";
+								echo "2 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "shift_3";
+								echo "3 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")."&nbsp;&nbsp;&nbsp;";
+							?>
+						</div>
+						
+						<div class="form-group">
+							<label class="form-label">Reguler</label>
+							<?php
+								$nm_f = "reguler_start";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")." to ";
+								$nm_f = "reguler_end";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'");
+							?>
+						</div>
+          </div>
+        </div>
+      </div>
   	</div>
+  </div>
+  
+  <div class="col-md-12">
+  	<div class="grid simple">
+  		<div class="grid-title no-border">
+        <h4><span class="semi-bold">Overtime</span></h4>
+      </div>
+      <div class="grid-body no-border">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+          	<div class="form-group">
+							<!--<label class="form-label">Active From</label>
+							<?php
+								$nm_f = "ovt_active_from";
+								//echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span2 tgl'");
+							?>-->
+							<label class="form-label">Automatic OT</label>
+							<?php
+								$nm_f = "lembur_auto";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span2'");
+							?>
+							<label class="form-label-medium" style="margin-left:15%;">&nbsp;&nbsp;Rest Time (RT) (Workday)</label>
+							<?php
+								$nm_f = "rest_time";
+								echo " Rp ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+							?>
+						</div>
+						<div class="form-group">
+							<label class="form-label">Limit Days</label>
+							<?php
+								$nm_f = "limit_day_ovt";
+								echo "- ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")." days";
+							?>
+							<label class="form-label-medium" style="margin-left:15%;">&nbsp;Rest Time (RT) (Holiday/OFF)</label>
+							<?php
+								$nm_f = "rest_time_libur";
+								echo " Rp ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+							?>
+						</div>
+						<div class="form-group">
+							<label class="form-label">Total Hours</label>
+							<?php
+								$nm_f = "total_hour_ovt";
+								echo "&nbsp;&nbsp;".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")." hours";
+							?>
+							<label class="form-label-medium" style="margin-left:15%;">RT Active</label>
+							<?php
+								$nm_f = "rest_time_hour";
+								echo "&nbsp;&nbsp;&nbsp;&nbsp;".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1'")." hours";
+							?>
+						</div>
+						
+						<div class="form-group">
+							<label class="form-label-long">Overtime by Hours (Workday)</label>
+						</div>
+						<div class="form-group">
+          		<?php
+          		for($i=1;$i<=8;$i++) {
+          			echo "<label class='form-label2'>$i</label>";
+          			$nm_f = "jam_".$i;
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+							}
+							?>
+						</div>
+						<div class="form-group">
+          		<?php
+          		for($i=9;$i<=16;$i++) {
+          			echo "<label class='form-label2'>$i</label>";
+          			$nm_f = "jam_".$i;
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+							}
+							?>
+						</div>
+						
+						<div class="form-group">
+							<label class="form-label-long">Overtime by Hours (Holiday/OFF)</label>
+						</div>
+						<div class="form-group">
+          		<?php
+          		for($i=1;$i<=8;$i++) {
+          			echo "<label class='form-label2'>$i</label>";
+          			$nm_f = "jam_libur_".$i;
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+							}
+							?>
+						</div>
+						<div class="form-group">
+          		<?php
+          		for($i=9;$i<=16;$i++) {
+          			echo "<label class='form-label2'>$i</label>";
+          			$nm_f = "jam_libur_".$i;
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+							}
+							?>
+						</div>
+						
+						
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="clearfix_button pull-right">

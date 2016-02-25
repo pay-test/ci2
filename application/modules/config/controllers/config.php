@@ -12,7 +12,7 @@ class config extends CI_Controller {
 	var $filename = "config";
 	var $tabel = "config";
 	var $id_primary = "id";
-	var $title = "Data Config";
+	var $title = "Config Parameter";
 	
 	function __construct()
 	{
@@ -37,7 +37,7 @@ class config extends CI_Controller {
       {
           $this->load->library('template');
 
-              if(in_array($view, array('index', 'config_edit')))
+              if(in_array($view, array('index', 'config_edit', 'index_holiday')))
               {
                   $this->template->set_layout('default');
 
@@ -98,5 +98,96 @@ class config extends CI_Controller {
 		$this->db->insert("kg_".$this->tabel."_temp", $data);
 		//print_mz($data);
 	}
+	
+	
+	/* Holiday */
+	function holiday()
+	{
+		$data['title'] = "Config Holiday";
+    permission();
+		$this->_render_page('index_holiday', $data);
+	}
+	
+	function holiday_list()
+  {
+  	permission();
+    $data['path_file'] = $this->filename;
+
+		$data['s_year'] = $this->input->post("s_year") ? $this->input->post("s_year") : date("Y");
+
+  	$this->load->view('holiday', $data);
+  }
+  
+  function holiday_edit($id=0)
+  {
+  	permission();
+  	if($id) {
+	    $q = GetAll("kg_config_holiday", array("id"=> "where/".$id));
+			$r = $q->result_array();
+			$data['val'] = $r[0];
+		} else $data['val']=array();
+		$this->load->view('holiday_form', $data);
+  }
+  
+  function holiday_update()
+	{
+		$webmaster_id = permission();
+		$id = $this->input->post('id');
+		$GetColumns = GetColumns("kg_config_holiday");
+		foreach($GetColumns as $r)
+		{
+			$data[$r['Field']] = $this->input->post($r['Field']);
+		}
+		//print_mz($data);
+		if($id > 0)
+		{
+			$this->db->where("id", $id);
+			$this->db->update("kg_config_holiday", $data);
+			
+			//Admin Log
+			//$logs = $this->db->last_query();
+			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
+			
+			//$this->session->set_flashdata("message", lang('edit')." ".$this->title." ".lang('msg_sukses'));
+		}
+		else
+		{
+			//print_mz($data);
+			$this->db->insert("kg_config_holiday", $data);
+			//$id = $this->db->insert_id();
+			//Admin Log
+			//$logs = $this->db->last_query();
+			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
+			
+			//$this->session->set_flashdata("message", lang('add')." ".$this->title." ".lang('msg_sukses'));
+		}
+		
+		$this->holiday();
+	}
+    
+	function ajax_list_holiday($year=NULL)
+  {
+  	permission();
+  	$this->load->model('config_holiday_model','holiday');
+  	$param = array("tahun"=> $year);
+	  $list = $this->holiday->get_datatables($param);
+	  $data = array();
+	  $no = $_POST['start'];
+	  foreach ($list->result() as $r) {
+	    $no++;
+	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="editHoliday('."'".$r->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
+	    $data[] = array($no, GetDayName($r->tanggal).", ".FormatTanggalShort($r->tanggal), $r->ket, $edit);
+	  }
+	
+	  $output = array(
+	                  "draw" => $_POST['draw'],
+	                  "recordsTotal" => $this->holiday->count_all($param),
+	                  "recordsFiltered" => $this->holiday->count_all($param),
+	                  "data" => $data
+	                 );
+	  //output to json format
+	  echo json_encode($output);
+  }
+  
 }
 ?>

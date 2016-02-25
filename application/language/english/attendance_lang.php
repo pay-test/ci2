@@ -3,4 +3,4 @@
 	$lang['attendance'] = "attendance";
 	$lang['list_attendance'] = "List attendance";
 	$lang['overtime'] = "overtime";
-	$lang['shift_schedule'] = "shift schedule";
+	$lang['shift_schedule'] = "working schedule";
