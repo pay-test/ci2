@@ -1522,10 +1522,10 @@ if (!function_exists('GetOTRasio')){
 	{
 		$exp = explode("-", $date);
 		$att_start_period = GetConfigDirect('att_start_period');
-		if($exp[2] < $att_start_period) $awal = date("Y-m", mktime(0, 0, 0, $exp[1]-1, $exp[2], $exp[0])).$att_start_period;
+		if($exp[2] < $att_start_period) $awal = date("Y-m", mktime(0, 0, 0, $exp[1]-1, $exp[2], $exp[0]))."-".$att_start_period;
 		else $awal = $exp[0]."-".$exp[1]."-".$att_start_period;
 
-		$acc=0;
+		$acc=0;$upah=0;
     $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "date_full >="=> "where/".$awal, "date_full <="=> "where/".$date));
     if($qq->num_rows() > 0) {
 	    foreach($qq->result_array() as $ss) {

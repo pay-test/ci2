@@ -19,6 +19,11 @@ class dashboard extends MX_Controller {
     $bawahan = CekBawahan($webmaster_id);
     //supaya User Login di Bar pertama
     $bawahan[] = "-1";
+    
+    if(count($bawahan) == 1 && $webmaster_id != 1) $data['flagz'] = 1;
+    else $data['flagz'] = 0;
+    //die($data['flagz']."D");
+    
     sort($bawahan);
     foreach($bawahan as $b) {
     	if($b=="-1") $b=$webmaster_id;
@@ -36,8 +41,8 @@ class dashboard extends MX_Controller {
 			$id_emp = $r['id_employee'];
     	if($id_emp==$webmaster_id) $id_emp = "-1";
     	$hadir[$id_emp] = "{y: ".$r['jh'].", id_emp: '".$r['id_employee']."'}";
-    	$off[$id_emp] = $r['off'];
-    	$alpa[$id_emp] = $r['alpa'];
+    	$off[$id_emp] = "{y: ".$r['off'].", id_emp: '".$r['id_employee']."'}";
+    	$alpa[$id_emp] = "{y: ".$r['alpa'].", id_emp: '".$r['id_employee']."'}";
     }
     ksort($hadir);
     ksort($off);

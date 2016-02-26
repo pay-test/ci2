@@ -9,7 +9,7 @@
 			    </ul>
 			    
 			    <?php
-			    if($person_id!=1) {?>
+			    if($person_id > 1 && $flagz==0) {?>
 			    <div class="row-fluid">
 			      <div class="span12">
 			      	<div class="col-md-12">

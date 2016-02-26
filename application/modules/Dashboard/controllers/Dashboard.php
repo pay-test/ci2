@@ -19,6 +19,11 @@ class dashboard extends MX_Controller {
     $bawahan = CekBawahan($webmaster_id);
     //supaya User Login di Bar pertama
     $bawahan[] = "-1";
+    
+    if(count($bawahan) == 1 && $webmaster_id != 1) $this->data['flagz'] = 1;
+    else $this->data['flagz'] = 0;
+    //die($data['flagz']."D");
+    
     sort($bawahan);
     foreach($bawahan as $b) {
     	if($b=="-1") $b=$webmaster_id;

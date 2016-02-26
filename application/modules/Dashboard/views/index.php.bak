@@ -9,7 +9,7 @@
 			    </ul>
 			    
 			    <?php
-			    if($person_id!=1) {?>
+			    if($person_id > 1 && $flagz==0) {die($person_id."/".$flagz);?>
 			    <div class="row-fluid">
 			      <div class="span12">
 			      	<div class="col-md-12">
@@ -87,11 +87,27 @@ $(function () {
     }, {
         name: 'OFF',
         data: [<?php echo $off;?>],
-        color: '#000000'
+        color: '#000000',
+        point: {
+          events: {
+            click: function () {
+            	var nik = this.id_emp;
+            	$("#block_grafik").load("<?php echo site_url('dashboard/list_data/"+nik+"');?>");
+            }
+          }
+      	}
     }, {
         name: 'ALPA',
         data: [<?php echo $alpa;?>],
-        color: '#fd0000'
+        color: '#fd0000',
+        point: {
+          events: {
+            click: function () {
+            	var nik = this.id_emp;
+            	$("#block_grafik").load("<?php echo site_url('dashboard/list_data/"+nik+"');?>");
+            }
+          }
+      	}
     }]
 	});
 	

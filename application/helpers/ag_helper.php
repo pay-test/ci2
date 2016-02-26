@@ -14,13 +14,15 @@ if (!function_exists('permission')){
 	function permission()
 	{
 		$CI =& get_instance();
-		if(!$CI->session->userdata("user_id")){
+		if(!$CI->session->userdata("person_id")){
 			redirect("login");
 		}
 		
-		return $CI->session->userdata("user_id");
+		return $CI->session->userdata("person_id");
 	}
 }
+
+
 
 if (!function_exists('getPersonIdFromNik')){
 function getPersonIdFromNik($nik)
