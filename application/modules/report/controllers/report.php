@@ -197,7 +197,7 @@ class report extends MX_Controller {
 	  $data['list'] = $dataz;
 	  //print_mz($data['list']);
   	$html = $this->load->view('export_overtime_full',$data);
-		//to_excel($html, 'ReportOvertimeFull');
+		to_excel($html, 'ReportOvertimeFull');
   }
   
   function export_ovt_rekap($tgl=NULL, $regs=NULL, $div=NULL, $sec=NULL, $pos=NULL, $grade=NULL)
@@ -230,7 +230,7 @@ class report extends MX_Controller {
 	  $data['list'] = $dataz;
 	  //print_mz($data['list']);
   	$html = $this->load->view('export_overtime_rekap',$data);
-		//to_excel($html, 'ReportOvertimeRekap');
+		to_excel($html, 'ReportOvertimeRekap');
   }
 }
 ?>

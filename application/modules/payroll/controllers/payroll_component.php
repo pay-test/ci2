@@ -26,9 +26,10 @@ class Payroll_component extends MX_Controller {
 		$this->_render_page($this->filename, $this->data);
 	}
 
-    public function ajax_list()
+    public function ajax_list($session_id)
     {
         $list = $this->payroll->get_datatables();//lastq();//print_mz($list);
+        //print_mz($session_id);
         $data = array();
         $no = $_POST['start'];
         foreach ($list as $p_comp) {
@@ -53,10 +54,9 @@ class Payroll_component extends MX_Controller {
             $row[] = $component_type;
             $row[] = $is_annualized;
             $row[] = $tax_component;
-
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$p_comp->id."'".')"><i class="fa fa-pencil"></i></a>
+            $url = base_url('payroll/payroll_component/edit/'.$p_comp->id.'/'.$session_id);
+             $row[] = '<a class="btn btn-sm btn-primary" href="'.$url.'" title="Edit"><i class="fa fa-pencil"></i></a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$p_comp->id."'".')"><i class="fa fa-trash"></i></a>';
-        
 
             $data[] = $row;
         }
@@ -73,9 +73,47 @@ class Payroll_component extends MX_Controller {
 
     public function ajax_edit($id, $session)
     {
+        /*
         $data = $this->payroll->get_by_id($id);
         $data2 = $this->payroll->get_component_value($id, $session);
         echo json_encode(array('data'=>$data, 'data2'=>$data2));
+        */
+        $this->_render_page('payroll/payroll_component/edit', $this->data);
+    }
+
+    public function edit($id, $session_id)
+    {
+        $this->data['title'] = ucfirst($this->title);
+        $this->data['page_title'] = $this->page_title;
+        $this->data['component_type'] = $this->payroll->get_component_type();
+        $this->data['tax_component'] = $this->payroll->get_tax_component();
+        $this->data['component_job_value'] = getAll('payroll_component_job_value');
+        $this->data['job_value'] = getAll('payroll_job_value');
+        $this->data['session_id'] = $session_id;
+        $this->data['data'] = $data = $this->payroll->get_by_id($id);//print_ag($data);
+        $filter = array('payroll_component_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id);
+        $this->data['component_session_id'] = $component_session_id = getValue('id', 'payroll_component_session', $filter);
+        if($component_session_id == 0) $this->db->insert('payroll_component_session', array('session_id'=>$session_id, 'payroll_component_id'=>$id));
+        $filter2 =  array('payroll_component_session_id'=>'where/'.$component_session_id, 'from'=>'order/desc');
+        $this->data['data2'] = $data2 = getAll('payroll_component_value',$filter2);//lastq();print_mz($data2->result());
+        permission();
+        $this->_render_page('payroll_component/edit', $this->data);
+    }
+
+    function edit_component($id)
+    {
+        permission();
+        $data = array(
+            'title' => $this->input->post('title'),
+            'code' => $this->input->post('code'),
+            'component_type_id' => $this->input->post('component_type_id'),
+            'is_annualized' => $this->input->post('is_annualized'),
+            'tax_component_id' => $this->input->post('tax_component_id'),
+            'edited_by' => GetUserID(),
+            'edited_on' => date('Y-m-d H:i:s')
+        );
+        $this->payroll->update(array('id' => $id), $data);
+        echo json_encode(array('status'=>true));
     }
 
     public function ajax_add()
@@ -130,6 +168,41 @@ class Payroll_component extends MX_Controller {
             $this->db->insert('payroll_component_value', $data2);
         }
         echo json_encode(array("status" => TRUE));
+    }
+
+    function add_formula()
+    {
+        permission();
+
+        $data = array(
+            'payroll_component_session_id' => $this->input->post('component_session_id'), 
+            'from' => $this->input->post('from'), 
+            'to' => $this->input->post('to'), 
+            'formula' => $this->input->post('formula'), 
+            'is_condition' => $this->input->post('is_condition'), 
+            'max' => str_replace(',', '', $this->input->post('max')), 
+            'min' => str_replace(',', '', $this->input->post('min')), 
+            );
+        $this->db->insert('payroll_component_value', $data);
+
+        echo json_encode(array('status'=>true));
+    }
+
+    function edit_formula($id)
+    {
+        permission();
+
+        $data = array(
+            'payroll_component_session_id' => $this->input->post('component_session_id'.$id), 
+            'from' => $this->input->post('from'.$id), 
+            'to' => $this->input->post('to'.$id), 
+            'formula' => $this->input->post('formula'.$id), 
+            'is_condition' => $this->input->post('is_condition'.$id), 
+            'max' => str_replace(',', '', $this->input->post('max'.$id)), 
+            'min' => str_replace(',', '', $this->input->post('min'.$id)), 
+            );
+        $this->db->where('id', $id)->update('payroll_component_value', $data);
+        echo json_encode(array('status'=>true, 'data'=>$data));
     }
 
     public function ajax_delete($id)
@@ -189,6 +262,22 @@ class Payroll_component extends MX_Controller {
                     $this->template->add_css('assets/plugins/data-tables/DT_bootstrap.min.css');
                     $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
 
+                    $this->template->add_css('assets/plugins/bootstrap-datepicker/css/datepicker.css');
+                    $this->template->add_js('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
+                    $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_css('assets/plugins/jquery-datatable/css/jquery.dataTables.css');
+                    $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
+                    $this->template->add_js('assets/plugins/jquery-datatable/extra/js/dataTables.tableTools.min.js');
+                    $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
+                    $this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
+                    $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
+                }elseif(in_array($view, array($this->filename.'/edit')))
+                {
+                    $this->template->set_layout('default');
+                    $this->template->add_css('assets/plugins/data-tables/DT_bootstrap.min.css');
+                    $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
+                    $this->template->add_css('assets/plugins/bootstrap-datepicker/css/datepicker.css');
+                    $this->template->add_js('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_css('assets/plugins/jquery-datatable/css/jquery.dataTables.css');
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
