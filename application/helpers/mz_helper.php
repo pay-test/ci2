@@ -111,111 +111,11 @@ if (!function_exists('json_encode'))
     }
 }
 
-if (!function_exists('permission')){
-	function permission()
-	{
-		$CI =& get_instance();
-		if(!$CI->session->userdata("webmaster_id")){
-			redirect("login");
-		}
-		
-		$group = $CI->session->userdata('webmaster_grup');
-		if($group != "8910")
-		{
-			$ref_menu = $CI->uri->segment(1);
-			if($ref_menu == "personal" || $ref_menu == "trainingpi" || $ref_menu == "riwayatkerja") $ref_menu="datakaryawan";
-			$q_path = cekAccessMenu($ref_menu);
-			$jum = $q_path->num_rows();
-			
-			if($jum > 0)
-			{
-				$row = $q_path->row();
-				$id_menu_admin = $row->id;
-				$CI->db->where("id_admin_grup",$group);
-				$CI->db->where("id_menu_admin",$id_menu_admin);
-				$q_menu_admin = $CI->db->get("kg_admin_auth");
-				$jum_menu_admin = $q_menu_admin->num_rows();
-				
-				if($jum_menu_admin == 0)
-				{
-					redirect("forbiden");
-				}
-			}
-			else redirect("forbiden");
-		}
-		
-		return $CI->session->userdata("webmaster_id");
-	}
-}
-
-if (!function_exists('permissionBiasa')){
-	function permissionBiasa()
-	{
-		$CI =& get_instance();
-		if(!$CI->session->userdata("webmaster_id")){
-			redirect("login");
-		}		
-		return $CI->session->userdata("webmaster_id");
-	}
-}
-
 if (!function_exists('GetUserID')){
 	function GetUserID()
 	{
 		$CI =& get_instance();
 		return $CI->session->userdata("webmaster_id");
-	}
-}
-
-if (!function_exists('CekAdminKeuangan')){
-	function CekAdminKeuangan($val)
-	{
-		$admin_keuangan = GetValue("id_admin_wp","admin", array("id"=> "where/".$val));
-		return $admin_keuangan;
-	}
-}
-
-if (!function_exists('CekAksesKegiatan')){
-	function CekAksesKegiatan($tabel, $id)
-	{
-		$CI =& get_instance();
-		$grup = $CI->session->userdata('webmaster_grup');
-		$cek = CekAdminKeuangan(GetUserID());
-		if($cek == 1) $cek_akses = GetValue("id_administrasi", $tabel, array("id"=> "where/".$id));
-		else if($cek == 2) $cek_akses = GetValue("id_keuangan", $tabel, array("id"=> "where/".$id));
-		else $cek_akses=0;
-		
-		if(!$cek_akses) $cek_akses = GetValue("id_pic", $tabel, array("id"=> "where/".$id));
-		
-		$cek_akses = str_replace(" ","",$cek_akses);
-		$cek_akses = str_replace("-+1-","",$cek_akses);
-		
-		if($cek_akses && !preg_match("/-".GetUserID()."-/", $cek_akses) && ($grup != 1 && $grup != 2 && $grup != 5)) return 0;
-		else return 1;
-	}
-}
-
-if (!function_exists('permissionkaryawan')){
-	function permissionkaryawan($id, $path)
-	{
-		$CI =& get_instance();
-		$grup = $CI->session->userdata("webmaster_grup");
-		if($grup == 4){
-			if($path == "jobdesc")
-			redirect("jobdesc/main/".$id);
-			else
-			redirect("datakaryawan/dashboard/".$id);
-		}
-	}
-}
-
-if (!function_exists('permissionaction')){
-	function permissionaction()
-	{
-		$CI =& get_instance();
-		$grup = $CI->session->userdata("webmaster_grup");
-		if($grup == 1) return 0;
-		else return 1;
 	}
 }
 
@@ -582,7 +482,7 @@ if (!function_exists('GetSum')){
 }
 
 if (!function_exists('GetCount')){
-	function GetCount($table,$field,$filter=array(),$get="")
+	function GetCount($table,$field,$filter=array(),$filter_where_in=array(),$get="")
 	{
 		$CI =& get_instance();
 		$CI->db->select("$field as label, COUNT($field) as total");
@@ -599,6 +499,12 @@ if (!function_exists('GetCount')){
 			
 			if($exp[0] == "group") $CI->db->group_by($key);
 		}
+		
+		foreach($filter_where_in as $key=> $value)
+		{
+			$CI->db->where_in($key, $value);
+		}
+		
 		$q = $CI->db->get($table);
 		if($get == "value")
 		{
@@ -958,7 +864,7 @@ if (!function_exists('GetOptPublish')){
 if (!function_exists('GetOptShiftReguler')){	
 	function GetOptShiftReguler()
 	{
-		$opt = array("shift"=> "Shift", "reguler"=> "Reguler");
+		$opt = array(""=> "- Reguler/Shift -", "shift"=> "Shift", "reguler"=> "Reguler");
 		
 		return $opt;
 	}
@@ -978,15 +884,10 @@ if (!function_exists('GetOptAgama')){
 	}
 }
 
-if (!function_exists('GetOptEmployeeStatus')){
-	function GetOptEmployeeStatus()
+if (!function_exists('GetOptStatusForm')){
+	function GetOptStatusForm()
 	{
-		$q = array('permanent', 'contract', 'daily w.');
-		$opt[''] = "- Employee Status -";
-		foreach($q as $r)
-		{
-			$opt[$r] = ucfirst($r);
-		}
+		$opt = array("Waiting"=> "Waiting", "Approve"=> "Approve", "Reject"=> "Reject");
 		
 		return $opt;
 	}
@@ -1006,44 +907,42 @@ if (!function_exists('GetOptBlood')){
 	}
 }
 
-if (!function_exists('GetOptLatestContract')){
-	function GetOptLatestContract()
+if (!function_exists('GetOptGrade')){
+	function GetOptGrade()
 	{
-		$q = array('PKWT I', 'PKWT II');
-		$opt[''] = "- Latest Contract -";
-		foreach($q as $r)
-		{
-			$opt[$r] = $r;
-		}
-		
-		return $opt;
-	}
-}
-
-if (!function_exists('GetOptStatusContract')){
-	function GetOptStatusContract()
-	{
-		$q = array('Permanent','Extending Contract/PKWT','Termination');
-		$opt[''] = "- Status Contract -";
-		foreach($q as $r)
-		{
-			$opt[$r] = $r;
-		}
-		
-		return $opt;
-	}
-}
-
-if (!function_exists('GetOptPIC')){	
-	function GetOptPIC($dep=NULL)
-	{
-		$filter = array();
-		if($dep) $filter['id_department'] = "where/".$dep;
-		$q = GetAll("employee", $filter);
-		$opt[''] = "- Karyawan -";
+		$q = GetAll("hris_job_class", array("gradeval_bottom"=> "order/asc", "gradeval_top"=> "group"));
+		$opt[''] = "- Grade -";
 		foreach($q->result_array() as $r)
 		{
-			$opt[$r['emp_no']] = $r['name'];
+			$opt[$r['gradeval_bottom']] = $r['gradeval_bottom'];
+		}
+		
+		return $opt;
+	}
+}
+
+if (!function_exists('GetOptPositionLevel')){
+	function GetOptPositionLevel()
+	{
+		$q = GetAll("hris_job_class", array("status_cd"=> "where/normal", "job_class_nm"=> "order/asc"));
+		$opt[''] = "- Position Level -";
+		foreach($q->result_array() as $r)
+		{
+			$opt[$r['job_class_id']] = $r['job_class_nm'];
+		}
+		
+		return $opt;
+	}
+}
+
+if (!function_exists('GetOptReason')){	
+	function GetOptReason()
+	{
+		$q = GetAll("kg_ref_reason");
+		$opt[''] = "- Reason -";
+		foreach($q->result_array() as $r)
+		{
+			$opt[$r['id_reason']] = $r['title'];
 		}
 		
 		return $opt;
@@ -1083,11 +982,11 @@ if (!function_exists('GetOptDivision')){
 	function GetOptDivision()
 	{
 		$CI =& get_instance();
-		$q = GetAll("hris_job_class", array("job_class_nm"=> "order/asc"));
+		$q = GetAll("hris_orgs", array("org_class_id"=> "where/3", "status_cd"=> "where/normal", "org_nm"=> "order/asc"));
 		$opt[''] = "- Division -";
 		foreach($q->result_array() as $r)
 		{
-			$opt[$r['job_class_id']] = $r['job_class_nm'];
+			$opt[$r['org_id']] = $r['org_nm'];
 		}
 		
 		return $opt;
@@ -1430,6 +1329,13 @@ if (!function_exists('GetConfig')){
 	}
 }
 
+if (!function_exists('GetConfigDirect')){
+	function GetConfigDirect($param=NULL)
+	{
+		return GetValue("value", "kg_config", array("title"=> "where/".$param));
+	}
+}
+
 if (!function_exists('GetJumHari')){
 	function GetJumHari($bln, $thn)
 	{
@@ -1482,7 +1388,7 @@ if (!function_exists('GetHoliday')){
 	{
 		if(!$tahun) $tahun=date("Y");
 		$holiday = array();
-		$q = GetAll("kg_holiday", array("YEAR(tanggal)"=> "where/".$tahun));
+		$q = GetAll("kg_config_holiday", array("YEAR(tanggal)"=> "where/".$tahun));
 		foreach($q->result_array() as $r) {
 			//$holiday[$r['tanggal']] = $r['ket'];
 			$holiday[] = $r['tanggal'];
@@ -1508,5 +1414,132 @@ if (!function_exists('CekLemburAuto')){
 		else return 1;
 		
 	}
+}
+
+if (!function_exists('GetHourSum')){
+	function GetHourSum($masuk, $keluar)
+	{
+		$hour = floor((strtotime($keluar) - strtotime($masuk)) / 3600);
+		if($hour < 0)
+		{
+			$hour = 24 + $hour;
+			$minute = ceil((((strtotime($keluar) + 86400) - strtotime($masuk)) - (3600 * $hour) ) / 60);
+		} else $minute = ceil(((strtotime($keluar) - strtotime($masuk)) - (3600 * $hour) ) / 60);
+		
+		if($minute < 30) return $hour;
+		else return $hour.".5";
+	}
+}
+
+if (!function_exists('CekGroup')){
+	function CekGroup($val)
+	{
+		if($val=="N.A.") return "REG";
+		else return $val;
+	}
+}
+
+if (!function_exists('GetDivision')){
+	function GetDivision($val)
+	{
+		$id_div = GetValue("parent_id", "hris_orgs", array("org_id"=> "where/".$val));
+		if($id_div) return GetValue("org_nm", "hris_orgs", array("org_id"=> "where/".$id_div));
+		else return "-";
+	}
+}
+
+if (!function_exists('GetAccOvt')){
+	function GetAccOvt($val, $jadwal=1, $config=array())
+	{
+		if(strtolower($jadwal)=="off" || $jadwal==33) $field = "jam_libur_";
+		else $field = "jam_";
+
+		if(count($config) <= 0) {
+			$config=array();
+			$q = GetAll("kg_config");
+	  	foreach($q->result_array() as $r) {
+	  		if(preg_match('/jam_/', $r['title'])) $config[$r['title']] = $r['value'];
+	  	}
+		}
+		
+		$acc=0;
+		for($i=1;$i<=$val;$i++) {
+			if(!isset($config[$field.$i])) $config[$field.$i] = 3;
+			$acc += $config[$field.$i];
+		}
+		if(!isset($config[$field.$i])) $config[$field.$i] = 3;
+		$acc += $config[$field.$i] * ($val - ($i - 1));
+		
+		return $acc;
+	}
+}
+
+if (!function_exists('GetGapok')){
+	function GetGapok($id_emp, $date=NULL)
+	{
+		$tahun = substr($date,0,4);
+		$gapok = GetValue("value", "kg_view_master_com", array("payroll_component_id"=> "where/60", "employee_id"=> "where/".$id_emp));
+		if(!$gapok) $gapok=3000000;
+		return $gapok;
+	}
+}
+
+//Housing Allowance
+if (!function_exists('GetHA')){
+	function GetHA($id_emp, $date=NULL)
+	{
+		$tahun = substr($date,0,4);
+		$ha = GetValue("value", "kg_view_master_com", array("payroll_component_id"=> "where/66", "employee_id"=> "where/".$id_emp));
+		if(!$ha) $ha=1000000;
+		return $ha;
+	}
+}
+
+if(!function_exists('GetPP')){
+	function GetPP($val)
+	{
+		if(file_exists('assets/assets/img/profiles/PICTURE_'.$val.'.JPG')) return assets_url('assets/img/profiles/PICTURE_'.$val.'.JPG');
+		else return assets_url('assets/img/profiles/photo-default.png');
+	}
+}
+
+if (!function_exists('CekBawahan')){
+	function CekBawahan($id_emp)
+	{
+		$bawahan=array();
+		$q = GetAll("hris_employee_job", array("upper_employee_id"=> "where/".$id_emp));
+  	if($q->num_rows() > 0) {
+			foreach($q->result_array() as $r) {
+				$bawahan[] = $r['employee_id'];
+			}
+		}
+		return $bawahan;
+	}
+}
+
+if (!function_exists('GetOTRasio')){
+	function GetOTRasio($id_emp, $date)
+	{
+		$exp = explode("-", $date);
+		$att_start_period = GetConfigDirect('att_start_period');
+		if($exp[2] < $att_start_period) $awal = date("Y-m", mktime(0, 0, 0, $exp[1]-1, $exp[2], $exp[0]))."-".$att_start_period;
+		else $awal = $exp[0]."-".$exp[1]."-".$att_start_period;
+
+		$acc=0;$upah=0;
+    $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "date_full >="=> "where/".$awal, "date_full <="=> "where/".$date));
+    if($qq->num_rows() > 0) {
+	    foreach($qq->result_array() as $ss) {
+	    	if($ss['job_level'] != "nonmanagement") {
+	    		if($ss['ovt_hour_sum'] >= 2) $acc += $ss['ovt_hour_sum'];
+	    	} else $acc += $ss['ovt_hour_cal'];
+	    }
+			
+			if($ss['job_level'] != "nonmanagement") {
+	    	$upah = $acc * GetConfigDirect('rest_time');
+	    } else $upah = $acc * ( GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) ) / GetConfigDirect('total_hour_ovt');
+	  }
+    $ot_rasio = $upah / (GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) + $upah) * 100;
+    return Decimal($ot_rasio)."%";
+  }
 }
 ?>

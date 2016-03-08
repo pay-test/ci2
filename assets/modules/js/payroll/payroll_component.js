@@ -3,14 +3,20 @@ var table;
 
 $(document).ready(function() {
     $(".select2").select2();
-    $('.money').maskMoney();
+    $('.money').maskMoney({allowZero:true});
+    $('.tgl').datepicker({
+        format: 'yyyy-mm-dd', 
+        autoclose: true,
+        todayHighlight: true
+    });
 
     var session_id = $('#session_select option:selected').val();
-    /*$("#session_select").change(function(){
+    //alert(session_id);
+    $("#session_select").change(function(){
         var id = $(this).val();
         if(session_id!=id)location.reload();
     })
-    .change();*/
+    .change();
     //datatables
     table = $('#table').DataTable({ 
     
@@ -21,7 +27,7 @@ $(document).ready(function() {
         "scrollCollapse": true,
         // Load data for the table's content from an Ajax source
         "ajax": {
-            "url": "payroll_component/ajax_list/",
+            "url": "payroll_component/ajax_list/"+session_id,
             "type": "POST"
         },
 
@@ -57,15 +63,6 @@ $('input[type="checkbox"]').on('change', function(e){
             //$(this).next().disabled = true;
         }
 });
-
-$('input:radio[name=is_condition]').change(function() {
-      var val = $('input:radio[name=is_condition]:checked').val();
-      if(val==0){
-        $('#con').hide("slow");
-      }else{
-        $('#con').show("slow");
-      }
-    });
 
 function add_user()
 {
@@ -198,6 +195,160 @@ function delete_user(id)
         });
 
     }
+}
+
+$("#btnSave").on('click', function(){
+        var base_url = $("#base_url").val();
+        $.ajax({
+            url : base_url+'/payroll/payroll_component/add_formula',
+            type: "POST",
+            data: $('#form-add').serialize(),
+            dataType: "JSON",
+            success: function(data)
+            {
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    location.reload();
+                }
+                else
+                {
+                    for (var i = 0; i < data.inputerror.length; i++) 
+                    {
+                        $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                        $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+                $('#btnSave').text('save'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable 
+
+            }
+        });
+    });
+
+$('input:radio[name=is_condition]').change(function() {
+      var val = $('input:radio[name=is_condition]:checked').val();
+      if(val==0){
+        $('#con').hide("slow");
+      }else{
+        $('#con').show("slow");
+      }
+    });
+
+function formulaDetail(id){
+    $("#panel-body"+id).toggle('slow');
+}
+
+function showMinMax(id){
+    //alert('ds');
+    $("#con"+id).toggle('slow');
+}
+
+function edit(){
+    $("#btnEdit").attr('disabled',true);
+    $('#form-component').find('input, select').attr('disabled',false);
+    $(".edit-com").show('slow');
+}
+
+function save(id){
+    var base_url = $("#base_url").val();
+        $.ajax({
+            url : base_url+'/payroll/payroll_component/edit_component/'+id,
+            type: "POST",
+            data: $('#form').serialize(),
+            dataType: "JSON",
+            success: function(data)
+            {
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    //location.reload();
+                    $("#btnEdit").attr('disabled',false);
+                    $('#form-component').find('input, select').attr('disabled',true);
+                    $(".edit-com").hide('slow');
+                }
+                else
+                {
+                    for (var i = 0; i < data.inputerror.length; i++) 
+                    {
+                        $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                        $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+
+            }
+        });
+}
+
+function cancel(){
+    $("#btnEdit").attr('disabled',false);
+    $('#form-component').find('input, select').attr('disabled',true);
+    $(".edit-com").hide('slow');
+}
+
+function formulaEdit(id){
+    $(".edit-com"+id).show('slow');
+    $("#btnEdit"+id).attr('disabled',true);
+    $("#formula"+id).attr('disabled',false);
+    $("#open"+id).attr('disabled',false);
+    $("#close"+id).attr('disabled',false);
+    $("#min"+id).attr('disabled',false);
+    $("#max"+id).attr('disabled',false);
+}
+
+function formulaCancel(id){
+    $(".edit-com"+id).hide('slow');
+    $("#btnEdit"+id).attr('disabled',false);
+     $("#formula"+id).attr('disabled',true);
+    $("#open"+id).attr('disabled',true);
+    $("#close"+id).attr('disabled',true);
+    $("#min"+id).attr('disabled',true);
+    $("#max"+id).attr('disabled',true);
+}
+
+function formulaSave(id){
+    var base_url = $("#base_url").val();
+        $.ajax({
+            url : base_url+'/payroll/payroll_component/edit_formula/'+id,
+            type: "POST",
+            data: $('#form-edit'+id).serialize(),
+            dataType: "JSON",
+            success: function(data)
+            {
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    //location.reload();
+                    $(".edit-com"+id).hide('slow');
+                    $("#btnEdit"+id).attr('disabled',false);
+                    $("#from"+id).text(" From : "+data.data.from);
+                    $("#to"+id).text(" To : "+data.data.to);
+                    $("#formula"+id).attr('disabled',true);
+                    $("#open"+id).attr('disabled',true);
+                    $("#close"+id).attr('disabled',true);
+                    $("#min"+id).attr('disabled',true);
+                    $("#max"+id).attr('disabled',true);
+                }
+                else
+                {
+                    for (var i = 0; i < data.inputerror.length; i++) 
+                    {
+                        $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                        $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+
+            }
+        });
 }
 
 /*************************************

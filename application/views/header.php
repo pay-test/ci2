@@ -63,7 +63,7 @@
               <a href="#" class="dropdown-toggle" id="my-task-list" data-placement="bottom" data-content="" data-toggle="dropdown" data-original-title="Notifications">
                 <div class="user-details">
                   <div class="username">
-                    <span class="badge badge-important">3</span>&nbsp;<?php echo strtok($person_nm, " ")?><span class="bold"></span>
+                    <span class="badge badge-important"><?php echo $inbox;?></span>&nbsp;<?php echo strtok($person_nm, " ")?><span class="bold"></span>
                   </div>
                 </div>
                 <div class="iconset top-down-arrow"></div>
@@ -71,24 +71,14 @@
               <div id="notification-list" style="display:none">
                 <div style="width:300px">
                   <!-- BEGIN NOTIFICATION MESSAGE -->
-                  <div class="notification-messages info">
-                    <div class="user-profile">
-                      <img src="<?php echo assets_url('assets/img/profiles/d.jpg')?>" alt="" data-src="<?php echo assets_url('assets/img/profiles/d.jpg')?>" data-src-retina="<?php echo assets_url('assets/img/profiles/d2x.jpg')?>" width="35" height="35">
-                    </div>
-                    <div class="message-wrapper">
-                      <div class="heading">Title of Notification</div>
-                      <div class="description">Description...</div>
-                      <div class="date pull-left">A min ago</div>
-                    </div>
-                    <div class="clearfix"></div>
-                  </div>
+                  <?php echo $list_notif;?>
                   <!-- END NOTIFICATION MESSAGE -->
                 </div>
               </div>
               <!-- END NOTIFICATION CENTER -->
               <!-- BEGIN PROFILE PICTURE -->
               <div class="profile-pic">
-                <img src="<?php echo assets_url('assets/img/profiles/avatar_small.jpg')?>" alt="" data-src="<?php echo assets_url('assets/img/profiles/avatar_small.jpg')?>" data-src-retina="<?php echo assets_url('assets/img/profiles/avatar_small2x.jpg')?>" width="35" height="35" />
+                <img src="<?php echo $person_img;?>" width="35"/>
               </div>
               <!-- END PROFILE PICTURE -->
             </div>
@@ -100,9 +90,6 @@
                   <div class="iconset top-settings-dark"></div>
                 </a>
                 <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="user-options">
-                  <li><a href="#">Normal Link</a></li>
-                  <li><a href="#">Badge Link&nbsp;&nbsp;<span class="badge badge-important animated bounceIn">2</span></a></li>
-                  <li class="divider"></li>
                   <li><a href="<?php echo base_url('login/logout')?>"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Log out</a></li>
                 </ul>
               </li>

@@ -1,110 +1,216 @@
-<div class="grid simple transparent">
-	<div class="grid-title">
-		<h4>List <span class="semi-bold">Attendance</span></h4></a>
-		<div class="actions">
-			<a href="javascript:void(0);" onclick="backShift('<?php echo $periode;?>')"><i class='fa fa-chevron-circle-left'></i> Back</a>
-		</div>
-	</div>
-</div>
 
-<div class="col-md-6">
-    <div class="row">
-        <div class="tiles white col-md-12  no-padding">         
-            <div class="tiles-body">
-                <div class="row">
-                  <div class="col-md-3">
-                      <div class="">
-                          <img width="100" height="100" src="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" data-src="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" data-src-retina="<?php echo assets_url('assets/img/profiles/photo-default.png')?>" alt="">
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                      <span class="semi-bold">Name</span>
-                  </div>
-                  <div class="col-md-4">
-                      <span class="semi-bold">: <?php echo $person_nm;?></span>
-                  </div>
-                  <br/><br/>
-                  <div class="col-md-4">
-                      <span class="semi-bold">Period</span>
-                  </div>
-                  <div class="col-md-4">
-                      <span class="semi-bold">: <?php echo urldecode($periode);?></span>
-                  </div>
-                  <br/><br/>
-                  <div class="col-md-4">
-                      <span class="semi-bold">Group</span>
-                  </div>
-                  <div class="col-md-4">
-                      <span class="semi-bold">: <?php echo $group;?></span>
+<div class="row column-seperation">
+  <div class="col-md-12">
+  	<div class="col-md-12">
+		    <div class="row">
+		        <div class="tiles white col-md-12 no-padding info_header">         
+	            <div class="tiles-body">
+	            	<?php
+	            	foreach($emp->result_array() as $r) {
+              	?>
+	            	<div class="col-md-2 pull-left">
+                  <div class="col-md-12">
+                  	<img height="135" src="<?php echo GetPP($r['person_id']);?>" alt="<?php echo $r['person_nm'];?>" title="<?php echo $r['person_nm'];?>">
                   </div>
                 </div>
-            </div>
-        </div>
+                    
+                <div class="col-md-5">
+                  <div class="col-md-3">
+                      <span class="semi-bold">Name</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['person_nm'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Division</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo GetDivision($r['org_id']);?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Section</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['org_nm'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Job Title</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['job_nm'];?></span>
+                  </div>
+                </div>
+                
+                <div class="col-md-5">
+                  <div class="col-md-3">
+                      <span class="semi-bold">NIK</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['ext_id'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Group</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo CekGroup($r['group_shift']);?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Grade</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $r['grade_job_class'];?></span>
+                  </div>
+                  <br/><br/>
+                  <div class="col-md-3">
+                      <span class="semi-bold">Period</span>
+                  </div>
+                  <div class="col-md-9">
+                      <span>: <?php echo $period;?></span>
+                  </div>
+                </div>
+                <?php
+                }
+                ?>
+	            </div>
+		        </div>
+		    </div>
+		</div>
+		
+		<!--<div class="grid simple transparent">
+			<div class="grid-title">
+				<h4>Attendance <span class="semi-bold">Detail</span></h4>
+				<div class="actions">
+					<a href="javascript:void(0);" onclick="backAtt('<?php echo $period;?>')"><i class='fa fa-chevron-circle-left'></i> Back</a>
+				</div>
+			</div>
+		</div>-->
+
+    <div class="grid-body">
+    	<form id="form_edit_shift" action="attendance/update_shift" method="post" enctype="multipart/form-data">
+    	<?php
+    	$holiday = GetHoliday();
+    	$opt_shift = array("1"=> 1, "2"=> 2, "3"=> 3, "OFF"=> "OFF", "REG"=> "REG");
+    	foreach($shift->result_array() as $r) {
+    		echo form_hidden("id", isset($r["id"]) ? $r["id"] : 0);
+				echo form_hidden("id_employee", $r['id_employee']);
+				echo form_hidden("bulan", $r['bulan']);
+				echo form_hidden("tahun", $r['tahun']);
+    		
+    		$jml_hari = date("t", mktime(0, 0, 0, $r['bulan'], 1, $r['tahun']));
+    		$nm_bulan = date("M", mktime(0, 0, 0, $r['bulan'], 1, $r['tahun']));
+				
+				//for($i=1;$i<=2;$i++) {
+					$awal=intval(substr($tgl,8,2));
+					
+					echo "<table class='shift table table-striped'><tr><th>Date ( ".$nm_bulan." )</th>";
+					for($a=$awal;$a<=$jml_hari;$a++) {
+						$dt = $r['tahun']."-".$r['bulan']."-".sprintf("%02d", $a);
+						if(date("w", strtotime($dt)) == 0 || date("w", strtotime($dt)) == 6) $cls="sunday";
+						else $cls="";
+						$day = substr(date("l", strtotime($dt)),0,1);
+						echo "<td width='50' class='".$cls."'>".$day." / ".$a."</td>";
+					}
+					
+					echo "</tr><tr><th>Schedule</th>";
+					for($a=$awal;$a<=$jml_hari;$a++) {
+						$auto=0;
+						$dt = $r['tahun']."-".$r['bulan']."-".sprintf("%02d", $a);
+						if($r['tgl_'.$a] == 3) {
+							$auto = CekLemburAuto($r['id_employee'], $dt) ? 1 : 0;
+						}
+						
+						if(in_array($dt, $holiday)) {
+							if(preg_match("/MCCI/", $holiday[$dt])) $cls="holiday_office";
+							else $cls="holiday";
+						}
+						else if($auto) $cls="lembur_auto";
+						else if(strtoupper($r['tgl_'.$a])=="OFF") $cls="offz";
+						else if(strtoupper($shift_ril['tgl_'.$a]) != strtoupper($r['tgl_'.$a])) $cls="tukeran";
+						else $cls="";
+						
+						if($cls=="tukeran") echo "<td class='".$cls."' alt='".strtoupper($shift_ril['tgl_'.$a])."' title='".strtoupper($shift_ril['tgl_'.$a])."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
+						else echo "<td class='".$cls."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
+					}
+					
+					if($i==2 && $jml_hari%2 == 1) echo "<td width='50' style='border:0px !important;'>&nbsp;</td>";
+					echo "</tr></table>";
+				//}
+				//
+    	}
+    	
+    	foreach($shift_2->result_array() as $r) {
+    		echo form_hidden("id2", isset($r["id"]) ? $r["id"] : 0);
+				echo form_hidden("id_employee", $r['id_employee']);
+				echo form_hidden("bulan2", $r['bulan']);
+				echo form_hidden("tahun2", $r['tahun']);
+    		
+    		//$jml_hari = date("t", mktime(0, 0, 0, $r['bulan'], 1, $r['tahun']));
+				$nm_bulan = date("M", mktime(0, 0, 0, $r['bulan'], 1, $r['tahun']));
+				
+				//for($i=1;$i<=2;$i++) {
+					$akhir=intval(substr($tgl,19,2));
+					
+					echo "<table class='shift table table-striped'><tr><th>Date ( ".$nm_bulan." )</th>";
+					for($a=1;$a<=$akhir;$a++) {
+						$dt = $r['tahun']."-".$r['bulan']."-".sprintf("%02d", $a);
+						if(date("w", strtotime($dt)) == 0 || date("w", strtotime($dt)) == 6) $cls="sunday";
+						else $cls="";
+						$day = substr(date("l", strtotime($dt)),0,1);
+						echo "<td width='50' class='".$cls."'>".$day." / ".$a."</td>";
+					}
+					
+					echo "</tr><tr><th>Schedule</th>";
+					for($a=1;$a<=$akhir;$a++) {
+						$auto=0;
+						$dt = $r['tahun']."-".$r['bulan']."-".sprintf("%02d", $a);
+						if($r['tgl_'.$a] == 3) {
+							$auto = CekLemburAuto($r['id_employee'], $dt) ? 1 : 0;
+						}
+						
+						if(in_array($dt, $holiday)) {
+							if(preg_match("/MCCI/", $holiday[$dt])) $cls="holiday_office";
+							else $cls="holiday";
+						}
+						else if($auto) $cls="lembur_auto";
+						else if(strtoupper($r['tgl_'.$a])=="OFF") $cls="offz";
+						else if(strtoupper($shift_ril_2['tgl_'.$a]) != strtoupper($r['tgl_'.$a])) $cls="tukeran";
+						else $cls="";
+						
+						if($cls=="tukeran") echo "<td class='".$cls."' alt='".strtoupper($shift_ril_2['tgl_'.$a])."' title='".strtoupper($shift_ril_2['tgl_'.$a])."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
+						else echo "<td class='".$cls."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
+					}
+					
+					if($i==2 && $jml_hari%2 == 1) echo "<td width='50' style='border:0px !important;'>&nbsp;</td>";
+					echo "</tr></table>";
+				//}
+				//
+    	}
+    	?>
+    	
+    	<div>
+    		<label class="legend offz"></label><label class="title_legend">OFF</label>
+    		<label class="legend holiday_office"></label><label class="title_legend">Company Holiday</label>
+    		<label class="legend holiday"></label><label class="title_legend">Holiday</label>
+    		<label class="clearfix"></label>
+    		<label class="legend lembur_auto"></label><label class="title_legend">Automatic OT</label>
+    		<label class="legend tukeran"></label><label class="title_legend">Shift Exchange</label>
+    	</div>
+    	
+    	<div class="clearfix_button pull-right">
+				<br><br>
+				<button type="submit" class="btn btn-success btn-submit-shift">&nbsp;Submit</button>
+				<button type="submit" class="btn btn-cancel-shift" rel="<?php echo str_replace(" ", "%20", $period);?>">&nbsp;Back</button>
+				<br><br>
+			</div>
+    	</form>
     </div>
+  </div>
 </div>
 
-<form id="form_edit_shift" action="attendance/shift_update" method="post" enctype="multipart/form-data">
-<table class="table table-striped">
-	<?php 
-		echo form_hidden("id", isset($val["id"]) ? $val["id"] : 0);
-		echo form_hidden("id_employee", $val['id_employee']);
-		echo form_hidden("bulan", $val['bulan']);
-		echo form_hidden("tahun", $val['tahun']);
-		$jml_hari = date("t", mktime(0, 0, 0, $val['bulan'], 1, $val['tahun']));
-		$loop=round($jml_hari/2);
-	?>
-	<?php for($a=1;$a<=$loop;$a++)
-  {
-  	$b=$a+$loop;
-  	if(!isset($tgl['tgl_'.$a])) $tgl['tgl_'.$a]="";
-  	if(!isset($tgl['tgl_'.$a])) $tgl['tgl_'.$a]="";
-		?>
-		<tr>
-			<td>
-				<div class="row">
-					<div class="col-md-3 bold">Tanggal <?php echo $a?></div>
-					<div class="col-md-8">
-						<div class="radio radio-primary"> 
-							<input type="radio" id="1_<?php echo $a?>" name="tgl_<?php echo $a?>" value="1" <?php if($tgl['tgl_'.$a]=='1') echo "checked";?>><label for="1_<?php echo $a;?>">1</label>
-							<input type="radio" id="2_<?php echo $a?>" name="tgl_<?php echo $a?>" value="2" <?php if($tgl['tgl_'.$a]=='2') echo "checked";?>><label for="2_<?php echo $a;?>">2</label>
-							<input type="radio" id="3_<?php echo $a?>" name="tgl_<?php echo $a?>" value="3" <?php if($tgl['tgl_'.$a]=='3') echo "checked";?>><label for="3_<?php echo $a;?>">3</label>
-							<input type="radio" id="off_<?php echo $a?>" name="tgl_<?php echo $a?>" value="off" <?php if($tgl['tgl_'.$a]=='off') echo "checked";?>><label for="off_<?php echo $a;?>">OFF</label>
-							<input type="radio" id="ns_<?php echo $a?>" name="tgl_<?php echo $a?>" value="ns" <?php if($tgl['tgl_'.$a]=='ns') echo "checked";?>><label for="ns_<?php echo $a;?>">Reg</label>
-							<!--<input type="checkbox" name="separo[]" value="<?php echo $a?>" <?php if(isset($separo[$a])) echo "checked";?>> Lembur 1/2&nbsp;&nbsp;
-							<input type="checkbox" name="pts[]" value="<?php echo $a?>" <?php if(isset($pts[$a])) echo "checked";?>> Lembur Putus-->
-						</div>
-					</div>
-				</div>
-			</td>
-			
-			<?php if($b <= $jml_hari) {?>
-			<td>
-				<div class="row">
-					<div class="col-md-3 bold">Tanggal <?php echo $b?></div>
-					<div class="col-md-8">
-						<div class="radio radio-primary"> 
-							<input type="radio" id="1_<?php echo $b?>" name="tgl_<?php echo $b?>" value="1" <?php if($tgl['tgl_'.$b]=='1') echo "checked";?>><label for="1_<?php echo $b;?>">1</label>
-							<input type="radio" id="2_<?php echo $b?>" name="tgl_<?php echo $b?>" value="2" <?php if($tgl['tgl_'.$b]=='2') echo "checked";?>><label for="2_<?php echo $b;?>">2</label>
-							<input type="radio" id="3_<?php echo $b?>" name="tgl_<?php echo $b?>" value="3" <?php if($tgl['tgl_'.$b]=='3') echo "checked";?>><label for="3_<?php echo $b;?>">3</label>
-							<input type="radio" id="off_<?php echo $b?>" name="tgl_<?php echo $b?>" value="off" <?php if($tgl['tgl_'.$b]=='off') echo "checked";?>><label for="off_<?php echo $b;?>">OFF</label>
-							<input type="radio" id="ns_<?php echo $b?>" name="tgl_<?php echo $b?>" value="ns" <?php if($tgl['tgl_'.$b]=='ns') echo "checked";?>><label for="ns_<?php echo $b;?>">Reg</label>
-							<!--<input type="checkbox" name="separo[]" value="<?php echo $b?>" <?php if(isset($separo[$b])) echo "checked";?>> Lembur 1/2&nbsp;&nbsp;
-							<input type="checkbox" name="pts[]" value="<?php echo $b?>" <?php if(isset($pts[$b])) echo "checked";?>> Lembur Putus-->
-						</div>
-					</div>
-				</div>
-			</td>
-			<?php }?>
-		</tr>
-		<?php 
-	}
-	?>
-</table>
-</form>
-
-<div class="clearfix_button pull-right">
-	<button type="submit" class="btn btn-success btn-submit-shift">&nbsp;Submit</button>
-	<br><br><br>
-</div>
 
 <script src="<?php echo assets_url('modules/js/attendance.js')?>"></script>

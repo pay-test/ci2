@@ -100,14 +100,13 @@ class Payroll_component_model extends CI_Model {
 		return $query->row();
 	}
 
-	public function get_component_value($id, $session_id)
+	public function get_component_value($id)
 	{
 		$this->db->from('payroll_component_value');
-		$this->db->where('payroll_component_id',$id);
-		$this->db->where('session_id',$session_id);
+		$this->db->where('payroll_component_session_id',$id);
 		$query = $this->db->get();
 
-		return $query->row();
+		return $query;
 	}
 
 	public function save($data)

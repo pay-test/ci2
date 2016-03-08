@@ -135,7 +135,7 @@
   <?php 
   $salute='';
     if(date('m-d') == date('m-d', strtotime($dob))){
-      $salute .= 'Happy birthday to you<br/>';
+      $salute .= 'Happy birthday to '.$employee_nm.'<br/>';
     }
     foreach($family_dob->result() as $f):
       if(date('m-d') == date('m-d', strtotime($f->date_of_birth))){

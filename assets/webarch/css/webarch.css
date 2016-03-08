@@ -6934,6 +6934,7 @@ code:hover {
   border-radius: 2px;
   box-shadow: none;
 }
+
 .panel-group {
   margin-bottom: 18px;
 }
@@ -6968,6 +6969,52 @@ code:hover {
   content: "\f055";
   color: #8E9AA2;
 }
+
+
+.panel-group {
+  margin-bottom: 18px;
+}
+/* CUSTOM PANEL hEADING*/
+.panel-default > .panel-heading2 {
+  background-image: none;
+  background-color: #e7ebed;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+
+.panel-group .panel-heading2.collapsed {
+  background-color: #e7ebed;
+}
+.panel-group .panel-heading2 + .panel-collapse .panel-body {
+  border: 0;
+}
+.panel-group .panel-heading2 .panel-title > a {
+  color: #505458;
+  font-size: 13px;
+  font-weight: normal;
+  display: block;
+}
+.panel-group .panel-heading2 .panel-title > a:hover {
+  color: #505458 !important;
+}
+.panel-group .panel-heading2 .panel-title > a:hover:after {
+  color: #505458 !important;
+}
+.panel-group .panel-heading2 .panel-title > a:after {
+  font-family: 'FontAwesome';
+  content: "\f056";
+  float: right;
+  color: #505458;
+}
+.panel-group .panel-heading2 .panel-title > a.collapsed {
+  color: #8E9AA2;
+}
+.panel-group .panel-heading2 .panel-title > a.collapsed:after {
+  content: "\f055";
+  color: #8E9AA2;
+}
+
 .panel-group .panel + .panel {
   margin-top: 2px;
 }
