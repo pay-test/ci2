@@ -71,7 +71,9 @@ class Payroll_master extends MX_Controller {
     }
 
     function get_formula($payroll_master_id, $session_id){
-        $data2 = $this->payroll->get_master_component($payroll_master_id)->result();//lastq();
+        $today = date('Y-m-d');
+        $data2 = $this->payroll->get_master_component($payroll_master_id)->result();
+        //lastq();
         //print_mz($data2);
         $emp_id = getValue('employee_id', 'payroll_master', array('id'=>'where/'.$payroll_master_id));
         $session_before = $session_id - 1;
@@ -90,12 +92,36 @@ class Payroll_master extends MX_Controller {
         //print_mz($new_sal);
         $m = 0;
         foreach ($data2 as $value) {
-            $t = $value->formula;//print_r("idnya $value->component formulanya $value->formula <br/>");
+            //$component_id = 66;
+            $filter = array('payroll_component_id'=>'where/'.$value->component_id, 'session_id'=>'where/'.$session_id);
+            $component_session_id = getValue('id', 'payroll_component_session', $filter);//lastq();
+            $com_val = $this->db->select('*')->where('payroll_component_session_id', $component_session_id)->get('payroll_component_value')->result();
+            $formula = '';
+            //print_ag($com_val);
+            if(!empty($com_val)){
+                //print_ag($com_val);
+                foreach ($com_val as $c) {
+                    $from = date('Y-m-d', strtotime($c->from));
+                    $to = date('Y-m-d', strtotime($c->to));
+                    //print_ag("$today lebih besar dari $from , $today kurang dari $to");
+                    //print_mz($from);
+                    //if($today > $from && $today < $to)die('s');
+                    if($today >= $from && $today <= $to){
+                        $formula = $c->formula;//echo $formula;
+                        $is_condition = $c->is_condition;
+                        $min = $c->min;
+                        $max = $c->max;
+                    }
+                }
+            }
+                //print_ag($is_condition);
+            //die();
+            //echo $formula;
+            $t = $formula;//print_r("idnya $value->component formulanya $value->formula <br/>");
             //$t = 'IF ( BWGS * HOUS ) > 2 * 5000000 ; 2 * 5000000 * 4 / 100';
             //$t = getValue('formula', 'payroll_component_value', array('id'=>'where/28'));//print_mz($t);
             $tx = explode(' ', $t);$r='';//print_mz($tx);
             if($t != null && $value->component_id!=60):
-               //echo $value->formula;
                 if(!in_array('IF', $tx)){
                     for($i=0;$i<sizeof($tx);$i++)://print_mz($tx);
                         if(preg_match("/[a-z]/i", $tx[$i])){
@@ -141,7 +167,7 @@ class Payroll_master extends MX_Controller {
                      endfor;
                 }else{ 
                         $com = explode(PHP_EOL, $t);
-                        //print_mz($com);   
+                        //print_ag($com);   
                         for($j=0;$j<sizeof($com);$j++){  
                             $ntx = '';
                             $bwgs = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/60'));
@@ -191,7 +217,9 @@ class Payroll_master extends MX_Controller {
 
                                 $ntx .= $xj[$i];
                             }
-                                //print_ag($j.'-'.$ntx);
+
+                                //print_ag($value->code);
+                                //print_ag($xj);
 
                             if($xj[6] == '>') {
                                 $f = current(explode(";", $ntx));//print_mz($ntx);
@@ -246,10 +274,13 @@ class Payroll_master extends MX_Controller {
                 
                 $f= $this->evalmath($r);
                 $tz =@eval("return " . $f . ";" );//print_ag($tz);
-                $is_condition = getValue('is_condition', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                //$is_condition = getValue('is_condition', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                //$is_condition = 0;
                 if($is_condition == 1){
-                    $min = getValue('min', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
-                    $max = getValue('max', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                    //$min = 1000;
+                    //$max = 70000000;
+                    //$min = getValue('min', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                    //$max = getValue('max', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
 
                     if($tz > $max):
                         $tz = $max;

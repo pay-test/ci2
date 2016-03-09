@@ -92,8 +92,9 @@ class Payroll_component extends MX_Controller {
         $this->data['session_id'] = $session_id;
         $this->data['data'] = $data = $this->payroll->get_by_id($id);//print_ag($data);
         $filter = array('payroll_component_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id);
-        $this->data['component_session_id'] = $component_session_id = getValue('id', 'payroll_component_session', $filter);
-        if($component_session_id == 0) $this->db->insert('payroll_component_session', array('session_id'=>$session_id, 'payroll_component_id'=>$id));
+        $component_session_num_rows = getAll('payroll_component_session', $filter)->num_rows();//print_mz($component_session_id);
+        if($component_session_num_rows < 1) $this->db->insert('payroll_component_session', array('session_id'=>$session_id, 'payroll_component_id'=>$id));
+         $this->data['component_session_id'] = $component_session_id = getValue('id', 'payroll_component_session', $filter);//print_mz($component_session_id);
         $filter2 =  array('payroll_component_session_id'=>'where/'.$component_session_id, 'from'=>'order/desc');
         $this->data['data2'] = $data2 = getAll('payroll_component_value',$filter2);//lastq();print_mz($data2->result());
         permission();
@@ -178,7 +179,7 @@ class Payroll_component extends MX_Controller {
             'payroll_component_session_id' => $this->input->post('component_session_id'), 
             'from' => $this->input->post('from'), 
             'to' => $this->input->post('to'), 
-            'formula' => $this->input->post('formula'), 
+            'formula' => strtoupper($this->input->post('formula')), 
             'is_condition' => $this->input->post('is_condition'), 
             'max' => str_replace(',', '', $this->input->post('max')), 
             'min' => str_replace(',', '', $this->input->post('min')), 
@@ -196,7 +197,7 @@ class Payroll_component extends MX_Controller {
             'payroll_component_session_id' => $this->input->post('component_session_id'.$id), 
             'from' => $this->input->post('from'.$id), 
             'to' => $this->input->post('to'.$id), 
-            'formula' => $this->input->post('formula'.$id), 
+            'formula' => strtoupper($this->input->post('formula'.$id)),
             'is_condition' => $this->input->post('is_condition'.$id), 
             'max' => str_replace(',', '', $this->input->post('max'.$id)), 
             'min' => str_replace(',', '', $this->input->post('min'.$id)), 
