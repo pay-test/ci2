@@ -167,18 +167,19 @@ class Payroll_master_model extends CI_Model {
 
 	public function get_master_component($payroll_master_id)
 	{
+		$today = date('Y-m-d');
 		return $this->db->select('payroll_master_component.id as id,
 								  payroll_component.title as component, 
 							      payroll_component.code as code, 
-							      payroll_component_value.formula as formula, 
 							      payroll_master_component.value as value,
 							      payroll_master_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_master_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id', 'left')
-				 ->join('payroll_component_value', 'payroll_component_value.payroll_component_id = payroll_component.id', 'left')
 				 ->where('payroll_master_component.payroll_master_id', $payroll_master_id)
 				 ->where('payroll_master_component.is_deleted', 0)
+				 //->where('payroll_component_value.from >=', $today)
+                 //->where('payroll_component_value.to <=', $today)
 				 ->get();
 	}
 
