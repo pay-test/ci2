@@ -14,6 +14,6 @@
   $(document).ready(function() {
     //$(".select2").select2();
     //datatables
-    $('.auto').maskMoney();
+    $('.auto').maskMoney({allowNegative:true});
 });
 </script>

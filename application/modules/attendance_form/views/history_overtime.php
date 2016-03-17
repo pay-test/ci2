@@ -1,15 +1,21 @@
 
 <div class="row column-seperation">
   <div class="col-md-12">
-  	<div class="panel-group" id="accordion" data-toggle="collapse">
+  	<div id="coba" class="grid simple transparent">
+			<div class="grid-title">
+				<h4>List of <span class="semi-bold"><?php echo ucwords(lang('overtime'))?></span></h4>
+			</div>
+		</div>
+
+    <div class="panel-group" id="accordion" data-toggle="collapse">
 		  <div class="panel panel-default">
-				<div class="panel-heading">
+				<!--<div class="panel-heading">
 				  <h4 class="panel-title">
 					<a class="" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
 					   Search
 					</a>
 				  </h4>
-				</div>
+				</div>-->
 				<div id="collapseOne" class="panel-collapse collapse in">
 				  <div class="panel-body">
 					 <form id="search_ovt" action="<?php echo site_url($path_file.'/history_overtime');?>" method="post">
@@ -47,6 +53,11 @@
 	                  </div>
 	              </div>
 		          </div>
+		          <div class="col-sm-12" style="padding:0px;color:#ff0000;">
+		          	<div class="col-md-5">
+		          		choose period then click <i class="fa fa-search"></i>
+		          	</div>
+		          </div>
 		        </div>
 		       </form>
 				  </div>
@@ -54,13 +65,7 @@
 		  </div>
 		</div>
 		
-		<div id="coba" class="grid simple transparent">
-			<div class="grid-title">
-				<h4>List of <span class="semi-bold">Overtime</span></h4>
-			</div>
-		</div>
-
-    <div class="grid-body ">
+		<div class="grid-body ">
     	<table class="table table-hover table-condensed" id="table">
         <thead>
           <tr>

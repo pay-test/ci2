@@ -117,6 +117,7 @@
                 <li><a href="<?php echo base_url('payroll/payroll_tax_progressive')?>">Tax Progressive</a></li>
                 <li><a href="<?php echo base_url('payroll/payroll_tax_method')?>">Tax Method</a></li>
                 <li><a href="<?php echo base_url('payroll/job_value')?>">Job Value</a></li>
+                <li><a href="<?php echo base_url('payroll/payroll_umk')?>">UMK</a></li>
               </ul>
             </li>
             <li <?php echo $active2?>>

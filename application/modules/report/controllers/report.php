@@ -123,17 +123,15 @@ class report extends MX_Controller {
 	    
 	    //Acc Ovt
 	    $acc=0;
-	    $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$r->id_employee, "date_full >="=> "where/".$exp[0], "date_full <="=> "where/".$exp[1]));
+	    $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$r->id_employee, "date_full >="=> "where/".$exp[0], "date_full <="=> "where/".$exp[1], "date_temp"=> "where/0000-00-00"));
 	    foreach($q->result_array() as $s) {
-	    	/*$cek_jadwal = GetValue("tgl_".intval($s['tanggal']), "kg_jadwal_shift", array("id_employee"=> "where/".$r->id_employee, "bulan"=> "where/".$s['bulan'], "tahun"=> "where/".$s['tahun']));
-	    	if($cek_jadwal==3) {
-	    		if(CekLemburAuto($r->id_employee, $s['date_full'])) $cek_jadwal=33;
-	    	}
-	    	
-	    	$upd = GetAccOvt($s['ovt_hour_sum'], $cek_jadwal, $config);
-	    	$this->db->where("id", $s['id']);
-	    	$this->db->update("kg_overtime", array("ovt_hour_cal"=> $upd));
-	    	//lastq();*/
+	    	if($s['job_level'] != "nonmanagement") {
+	    		if($s['ovt_hour_sum'] >= 2) $acc += $s['ovt_hour_sum'];
+	    	} else $acc += $s['ovt_hour_cal'];
+	    }
+	    
+	    $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$r->id_employee, "date_temp >="=> "where/".$exp[0], "date_temp <="=> "where/".$exp[1]));
+	    foreach($q->result_array() as $s) {
 	    	if($s['job_level'] != "nonmanagement") {
 	    		if($s['ovt_hour_sum'] >= 2) $acc += $s['ovt_hour_sum'];
 	    	} else $acc += $s['ovt_hour_cal'];
@@ -142,10 +140,10 @@ class report extends MX_Controller {
 	    if($r->job_level != "nonmanagement") {
 	    	$upah = $acc * GetConfigDirect('rest_time');
 	    } else $upah = $acc * ( GetGapok($r->id_employee, $exp[0]) + GetHA($r->id_employee, $exp[0]) ) / GetConfigDirect('total_hour_ovt');
-	    $ot_rasio = $upah / (GetGapok($r->id_employee, $exp[0]) + GetHA($r->id_employee, $exp[0]) + $upah) * 100;
+	    $ot_rasio = GetOTRasio($r->id_employee, $exp[1]);//$upah / (GetGapok($r->id_employee, $exp[0]) + GetHA($r->id_employee, $exp[0]) + $upah) * 100;
 	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="detailOvertime('."'".$r->id_employee."'".')"><i class="glyphicon glyphicon-info-sign"></i> Detail</a>';
 	    //$data[] = array($no, $r->ext_id, $r->person_nm, GetMonth(intval(substr($tgl,16,2))).' '.substr($tgl,11,4), $r->ovt_hour_sum, $acc, Decimal($ot_rasio)."%", Rupiah($upah), $edit);
-	    $data[] = array($no, $r->ext_id, $r->person_nm, GetMonth(intval(substr($tgl,16,2))).' '.substr($tgl,11,4), Decimal($r->ovt_hour_sum,1), Decimal($acc), Decimal($ot_rasio)."%", Rupiah($upah), $edit);
+	    $data[] = array($no, $r->ext_id, $r->person_nm, GetMonth(intval(substr($tgl,16,2))).' '.substr($tgl,11,4), Decimal($r->ovt_hour_sum,1), Decimal($acc), $ot_rasio, Rupiah($upah), $edit);
 	  }
 	
 	  $output = array(
@@ -213,7 +211,14 @@ class report extends MX_Controller {
 	    
 	    //Acc Ovt
 	    $acc=0;
-	    $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$r->id_employee, "date_full >="=> "where/".$exp[0], "date_full <="=> "where/".$exp[1]));
+	    $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$r->id_employee, "date_full >="=> "where/".$exp[0], "date_full <="=> "where/".$exp[1], "date_temp"=> "where/0000-00-00"));
+	    foreach($q->result_array() as $s) {
+	    	if($s['job_level'] != "nonmanagement") {
+	    		if($s['ovt_hour_sum'] >= 2) $acc += $s['ovt_hour_sum'];
+	    	} else $acc += $s['ovt_hour_cal'];
+	    }
+	    
+	    $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$r->id_employee, "date_temp >="=> "where/".$exp[0], "date_temp <="=> "where/".$exp[1]));
 	    foreach($q->result_array() as $s) {
 	    	if($s['job_level'] != "nonmanagement") {
 	    		if($s['ovt_hour_sum'] >= 2) $acc += $s['ovt_hour_sum'];
@@ -223,9 +228,9 @@ class report extends MX_Controller {
 	    if($r->job_level != "nonmanagement") {
 	    	$upah = $acc * GetConfigDirect('rest_time');
 	    } else $upah = $acc * ( GetGapok($r->id_employee, $exp[0]) + GetHA($r->id_employee, $exp[0]) ) / GetConfigDirect('total_hour_ovt');
-	    $ot_rasio = $upah / (GetGapok($r->id_employee, $exp[0]) + GetHA($r->id_employee, $exp[0]) + $upah) * 100;
+	    $ot_rasio = GetOTRasio($r->id_employee, $exp[1]);//$upah / (GetGapok($r->id_employee, $exp[0]) + GetHA($r->id_employee, $exp[0]) + $upah) * 100;
 	    //$edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="detailOvertime('."'".$r->id_employee."'".')"><i class="glyphicon glyphicon-info-sign"></i> Detail</a>';
-	    $dataz[] = array($no, $r->ext_id, $r->person_nm, GetMonth(intval(substr($tgl,16,2))).' '.substr($tgl,11,4), Decimal($r->ovt_hour_sum,1), Decimal($acc), Decimal($ot_rasio)."%", Number($upah));
+	    $dataz[] = array($no, $r->ext_id, $r->person_nm, GetMonth(intval(substr($tgl,16,2))).' '.substr($tgl,11,4), Decimal($r->ovt_hour_sum,1), Decimal($acc), $ot_rasio, Number($upah));
 	  }
 	  $data['list'] = $dataz;
 	  //print_mz($data['list']);

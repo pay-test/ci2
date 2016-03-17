@@ -5,10 +5,10 @@
       <th style="width:5%">NIK</th>
       <th style="width:15%">Name</th>
       <th>Date</th>
-      <th>Actual Hour</th>
-      <th>Calculation Hour</th>
-      <th>Ovt Reason</th>
-      <th>Ovt Detail Reason</th>
+      <th>Actual Hours</th>
+      <th>Calculation Hours</th>
+      <th>Overtime Reason</th>
+      <th>Overtime Detail Reason</th>
     </tr>
   </thead>
   <tbody>

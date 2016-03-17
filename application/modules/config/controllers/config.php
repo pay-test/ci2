@@ -97,6 +97,7 @@ class config extends CI_Controller {
 		$data['create_date'] = date("Y-m-d H:i:s");
 		$this->db->insert("kg_".$this->tabel."_temp", $data);
 		//print_mz($data);
+		redirect(site_url('config'));
 	}
 	
 	

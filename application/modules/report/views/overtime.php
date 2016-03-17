@@ -98,9 +98,9 @@
             <th style="width:5%">NIK</th>
             <th style="width:15%">Name</th>
             <th>Period</th>
-            <th>Actual Hour</th>
-            <th>Calculation Hour</th>
-            <th>OT Rasio</th>
+            <th>Actual Hours</th>
+            <th>Calculation Hours</th>
+            <th>Overtime Rasio</th>
             <th>Amount</th>
             <th style="width:5%">Action</th>
           </tr>
@@ -134,19 +134,7 @@ $(document).ready(function() {
       //Set column definition initialisation properties.
       "columnDefs": [
       {
-          "targets": [0], //index column
-          "orderable": false, //set not orderable
-      },
-      {
-          "targets": [6], //last column
-          "orderable": false, //set not orderable
-      },
-      {
-          "targets": [7], //last column
-          "orderable": false, //set not orderable
-      },
-      {
-          "targets": [8], //last column
+          "targets": [0,6,7,8], //index column
           "orderable": false, //set not orderable
       },
       ],

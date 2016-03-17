@@ -53,6 +53,32 @@ class payroll_config extends MX_Controller {
         lastq();
     }
 
+    function edit_jam(){
+        $id = $this->input->post('id');
+        $filter =  array('id'=>'where/'.$id);
+        $session_id = $this->input->post('session_id');
+        $value = str_replace(',', '', $this->input->post('value'));
+        $data = array('session_id' => $session_id,
+                      'value' => $value
+         );
+        $num = getAll('payroll_jam',array('session_id'=>'where/'.$session_id))->num_rows();
+        if($num>0)$this->db->where('id', $id)->update('payroll_jam', $data);else $this->db->insert('payroll_jam', $data);
+        lastq();
+    }
+
+    function edit_jam_std(){
+        $id = $this->input->post('id');
+        $filter =  array('id'=>'where/'.$id);
+        $session_id = $this->input->post('session_id');
+        $value = str_replace(',', '', $this->input->post('value'));
+        $data = array('session_id' => $session_id,
+                      'value' => $value
+         );
+        $num = getAll('payroll_jam_std',array('session_id'=>'where/'.$session_id))->num_rows();
+        if($num>0)$this->db->where('id', $id)->update('payroll_jam_std', $data);else $this->db->insert('payroll_jam_std', $data);
+        lastq();
+    }
+
     function edit_divider(){
         $id = $this->input->post('id');
         $value = str_replace(',', '', $this->input->post('value'));
@@ -109,6 +135,30 @@ class payroll_config extends MX_Controller {
         //$data['com'] = $this->payroll->get_com_table($sess_id);
 
         $this->load->view('payroll_config/jm_table', $data);
+    }
+
+    function get_jam()
+    {
+        $sess_id = $this->input->post('id');
+        $filter = array('session_id'=>'where/'.$sess_id
+                        );
+        $q = getAll('payroll_jam', $filter);
+        $num = $q->num_rows();
+        $v = $q->row();
+        $value = ($num>0)?$v->value:0;
+        $id = ($num>0)?$v->id:0;
+
+        $q2 = getAll('payroll_jam_std', $filter);//print_mz($q2->result());
+        $num2 = $q2->num_rows();
+        $v2 = $q2->row();
+        $value2 = ($num2>0)?$v2->value:0;
+        $id2 = ($num2>0)?$v2->id:0;
+
+        $jam = array('value'=>$value, 'id'=>$id);
+        $std = array('value'=>$value2, 'id'=>$id2);
+
+
+        echo json_encode(array('jam'=>$jam, 'std'=>$std));
     }
 
     function get_divider()

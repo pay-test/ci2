@@ -101,7 +101,7 @@ class Payroll_master_model extends CI_Model {
 		return $this->db->count_all_results();
 	}
 
-	public function get_by_id($id)
+	public function get_by_id($id, $session_id)
 	{	
 		//var $table = 'hris_employee';
 		//var $table_join1 = 'hris_users';
@@ -112,6 +112,10 @@ class Payroll_master_model extends CI_Model {
 			'.$this->table_join1.'.user_nm as user_nm,
 			'.$this->table_join2.'.person_nm as person_nm,
 			'.$this->table_join3.'.id as group_id,
+			'.$this->table_join4.'.payroll_currency_id,
+			'.$this->table_join4.'.is_expatriate,
+			'.$this->table_join4.'.payroll_ptkp_id,
+			'.$this->table_join4.'.payroll_tax_method_id,
 			hris_job_class.job_class_nm,
 			hris_jobs.job_class_id,');
 
@@ -128,6 +132,7 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);
 		$this->db->where('hris_employee.status_cd', 'normal');
 		$this->db->where($this->table.'.employee_id', $id);
+		$this->db->where($this->table_join4.'.session_id', $session_id);
 		$query = $this->db->get();
 
 		return $query->row();
@@ -161,7 +166,7 @@ class Payroll_master_model extends CI_Model {
 				 ->join('payroll_component', 'payroll_component.id = payroll_group_component.payroll_component_id')
 				 ->join('payroll_group','payroll_group.id = payroll_group_component.payroll_group_id')
 				 ->where('payroll_group.id', $id)
-				 ->order_by('payroll_group_component.payroll_component_id')
+				 ->order_by('payroll_component.component_type_id', 'asc')
 				 ->get();
 	}
 
@@ -180,6 +185,7 @@ class Payroll_master_model extends CI_Model {
 				 ->where('payroll_master_component.is_deleted', 0)
 				 //->where('payroll_component_value.from >=', $today)
                  //->where('payroll_component_value.to <=', $today)
+                 ->order_by('payroll_master_component.id', 'asc')
 				 ->get();
 	}
 
@@ -213,6 +219,18 @@ class Payroll_master_model extends CI_Model {
 		$this->db->where($this->table_join7.'.is_deleted',0);
 		$this->db->order_by($this->table_join7.'.id','asc');
 		return $this->db->get($this->table_join7);
+	}
+
+	public function get_currency()
+	{	
+		$this->db->where('payroll_currency'.'.is_deleted',0);
+		$this->db->order_by('payroll_currency'.'.id','asc');
+		return $this->db->get('payroll_currency');
+	}
+
+	public function get_tax_method()
+	{	
+		return $this->db->get('payroll_tax_method');
 	}
 
 	public function get_employee_detail($employee_id = 0) {

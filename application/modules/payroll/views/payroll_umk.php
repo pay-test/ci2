@@ -15,16 +15,9 @@
           <p>YOU ARE HERE</p>
         </li>
         <li><a href="#" class="active"><?php echo 'Payroll'; ?></a> </li>
-        <li><a href="#" class="active"><?php echo 'Config Tax'; ?></a> </li>
+        <li><a href="#" class="active"><?php echo 'UMK'; ?></a> </li>
       </ul>
         <div class="tabbable">
-            <ul id="myTab2" class="nav nav-tabs nav-justified">
-                <li class="active">
-                    <a href="#tab-excrate" data-toggle="tab">
-                        Exchange Rate
-                    </a>
-                </li>
-            </ul>
             <div class="tab-content" style="height:550px;overflow:auto;">
                  <!-- TAB Exchange Rate -->
                 <div class="tab-pane fade in active" id="tab-rate">
@@ -37,7 +30,7 @@
                                             <label class="label-form">Select Session</label>
                                         </div>
                                         <div class="col-md-3">
-                                            <select class="select2" id="session_select_rate" style="width:100%">
+                                            <select class="select2" id="session_select" style="width:100%">
                                                 <option>-- Select Session --</option>
                                                 <?php foreach($session->result() as $s):
                                                     $selected = ($s->id == sessNow()) ? "selected='selected'" : '';
@@ -50,9 +43,9 @@
                                             <label class="label-form">Value</label>
                                         </div>
                                         <div class="col-md-2">
-                                            <label style="font-weight:700" class="form-label" id="rate-value"></label>
-                                            <input type="hidden" class="form-control" id="rate-id">
-                                            <input type="text" style="display:none" class="form-control money" id="rate-value-text">
+                                            <label style="font-weight:700" class="form-label" id="value"></label>
+                                            <input type="hidden" class="form-control" id="id">
+                                            <input type="text" style="display:none" class="form-control money" id="value-text">
                                         </div>
                                     </div>
                                 </div>

@@ -29,7 +29,7 @@ $(document).ready(function() {
     $('.tgl_limit').change(function(){
     	$.ajax({
 			 type: "POST",
-			 url: "attendance_form/get_current_schedule/"+$(this).val(),
+			 url: $("#base_url").val()+"attendance_form/get_current_schedule/"+$(this).val(),
 			 data: 'flag=hitung',
 			 cache: false,
 			 success: function(data) 
@@ -38,6 +38,20 @@ $(document).ready(function() {
     		$("#time_out").val(data.substr(6,5));
     		$("#scan_in").val(data.substr(12,5));
     		$("#scan_out").val(data.substr(18,5));
+			 }
+			});
+			
+			$.ajax({
+			 type: "POST",
+			 url: $("#base_url").val()+"attendance_form/get_detail_ot/"+$(this).val(),
+			 data: 'flag=hitung',
+			 cache: false,
+			 success: function(data) 
+			 {
+				/*$("#time_in").val(data.substr(0,5));
+    		$("#time_out").val(data.substr(6,5));
+    		$("#scan_in").val(data.substr(12,5));
+    		$("#scan_out").val(data.substr(18,5));*/
 			 }
 			});
     });

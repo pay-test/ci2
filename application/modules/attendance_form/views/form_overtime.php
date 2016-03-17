@@ -1,13 +1,15 @@
 <div class="row column-seperation">
   <div class="col-md-12">
-  	<!--<div class="grid simple transparent">
+
+  	<div id="coba" class="grid simple transparent">
 			<div class="grid-title">
 				<h4>Form <span class="semi-bold"><?php echo ucwords(lang('overtime'))?></span></h4></a>
 			</div>
-		</div>-->
+		</div>
 		
 		<form id="form_edit_att" action="<?php echo site_url('attendance_form/update_overtime');?>" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="id" value="<?php echo $id;?>">
+		<input type="hidden" id="base_url" value="<?php echo base_url()?>">
 		<input type="hidden" name="id_emp" value="<?php echo $id_emp;?>">
 		<!--<table class="table table-striped">-->
 		<div class="row">
@@ -43,18 +45,18 @@
 		           		<div class="row">
 			           		<div class="col-md-12">
 				            	<div class="col-md-6 no-padding">
-					              <label class="form-label">Employee</label>
+					              <label class="form-label"><b>Employee</b></label>
 					              <div class="row">
 					              	<div class="col-md-12">
-					                  <b><?php echo $employee_nm;?></b>
+					                  <?php echo $employee_nm;?>
 					                </div>
 					              </div>
 					            </div>
 					            <div class="col-md-6 no-padding">
-					            	<label class="form-label">Date</label>
+					            	<label class="form-label"><b>Date</b></label>
 					              <div class="row">
 					              	<div class="col-md-12">
-					                  <b><?php echo FormatTanggalShort($tgl);?></b>
+					                  <?php echo FormatTanggalShort($tgl);?>
 					                  <input type="hidden" name="date_full" value="<?php echo $tgl;?>">
 					                </div>
 					              </div>
@@ -80,7 +82,7 @@
 		          		<div class="row">
 			            	<div class="col-md-12">
 			            		<div class="col-md-12 no-padding">
-			            			<label class="form-title"><b>Your Current Schedule</b></label>
+			            			<label class="form-title"><b><?php if(!$flag) echo "Your";?> Current Schedule</b></label>
 			            		</div>
 			            		<div class="col-md-6 no-padding">
 				                <label class="form-label">Time In</label>
@@ -101,7 +103,7 @@
 				                </div>
 				              </div>
 				              <div class="col-md-6 no-padding">
-				                <label class="form-label">Scan In</label>
+				                <label class="form-label">Actual In</label>
 				                <div class="input-group transparent col-md-10">
 				                  <input type="text" class="form-control" id="scan_in" name="scan_in" value="<?php echo $scan_in;?>" readonly >
 				                  <span class="input-group-addon ">
@@ -110,7 +112,7 @@
 				                </div>
 				              </div>
 				              <div class="col-md-6 no-padding">
-				                <label class="form-label">Scan Out</label>
+				                <label class="form-label">Actual Out</label>
 				                <div class="input-group transparent col-md-10">
 				                  <input type="text" class="form-control" id="scan_out" name="scan_out" value="<?php echo $scan_out;?>" readonly >
 				                  <span class="input-group-addon ">
@@ -126,12 +128,12 @@
 		          		<div class="row">
 			            	<div class="col-md-12">
 			            		<div class="col-md-12 no-padding">
-			            			<label class="form-title"><b>Your Overtime Schedule <?php if($revisi) echo "<span class='red' style='display:inline;'>( change by supevisor )</span>";?></b></label>
+			            			<label class="form-title"><b><?php if(!$flag) echo "Your";?> Overtime Schedule <?php if($revisi) echo "<span class='red' style='display:inline;'>( change by supevisor )</span>";?></b></label>
 			            		</div>
 			            		<div class="col-md-6 no-padding">
 				                <label class="form-label">Start Overtime</label>
 				                <div class="input-group transparent clockpicker col-md-10">
-				                  <input type="text" style="border-color:#0000ff;" class="form-control" placeholder="Pick a time" name="start_ovt" value="<?php echo $start_ovt;?>" required <?php echo $dis;?>>
+				                  <input type="text" style="border-color:#0000ff;" class="form-control" placeholder="Pick a time" name="start_ovt" value="<?php echo $start_ovt;?>" required <?php echo $dis;?> readonly>
 				                  <span class="input-group-addon" style="border-color:#0000ff;">
 				                   <i class="fa fa-clock-o"></i>
 				                  </span>
@@ -140,7 +142,7 @@
 				              <div class="col-md-6 no-padding">
 				                <label class="form-label">End Overtime</label>
 				                <div class="input-group transparent clockpicker col-md-10">
-				                  <input type="text" style="border-color:#0000ff;" class="form-control" placeholder="Pick a time" name="end_ovt" value="<?php echo $end_ovt;?>" required <?php echo $dis;?>>
+				                  <input type="text" style="border-color:#0000ff;" class="form-control" placeholder="Pick a time" name="end_ovt" value="<?php echo $end_ovt;?>" required <?php echo $dis;?> readonly>
 				                  <span class="input-group-addon" style="border-color:#0000ff;">
 				                   <i class="fa fa-clock-o"></i>
 				                  </span>
@@ -149,12 +151,28 @@
 			            	</div>
 			            </div>
 		            </div>
-		          	
+		            
 		            <?php if($flag) { ?>
 		            <div class="form-group">
-		              <label class="form-label-long">OT Rasio : <b><?php echo $ot_rasio;?></b></label>
+		            	<div class="row">
+			            	<div class="col-md-12">
+			            		<div class="col-md-12 no-padding">
+			            			<label class="form-title"><b>Detail Overtime this Period</b></label>
+			            		</div>
+			            		<div class="col-md-12 no-padding">
+		              			<label class="form-title"><span class="detail_ot">Overtime Rasio</span> : <b><?php echo $ot_rasio;?></b></label>
+		              		</div>
+		              		<div class="col-md-12 no-padding">
+		              			<label class="form-title"><span class="detail_ot">Actual Hours</span> : <b><?php echo $actual_hours;?></b> hour(s)</label>
+		              		</div>
+		              		<div class="col-md-12 no-padding">
+		              			<label class="form-title"><span class="detail_ot">Calculation Hours</span> : <b><?php echo $cal_hours;?></b> hour(s)</label>
+		              		</div>
+		              	</div>
+		              </div>
 		            </div>
-		          	<?php }?>
+		          	<?php } ?>
+		          	
 		          </div>
 		        </div>
 		      </div>
@@ -166,7 +184,7 @@
 		      <div class="grid-body no-border">
 		        <div class="row">
 		          <div class="col-md-12 col-sm-12 col-xs-12">
-		            <div class="form-group" style="display:none;">
+		            <!--<div class="form-group" style="display:none;">
 		              <label class="form-label">Flag</label>
 		              <div class="row">
 			              <div class="col-md-12">
@@ -180,27 +198,31 @@
 			                </div>
 			              </div>
 				          </div>
-		            </div>
+		            </div>-->
 		            <div class="form-group">
-		              <label class="form-label">Reason</label>
+		              <label class="form-label"><b>Reason</b></label>
 		              <div class="row">
 		              	<div class="col-md-12">
-		              		<?php echo form_dropdown("ovt_reason", $opt_reason, $ovt_reason, "required ".$dis);?>
+		              		<?php if($dis) echo GetValue("title", "kg_ref_reason", array("id_reason"=> "where/".$ovt_reason));
+		              		else echo form_dropdown("ovt_reason", $opt_reason, $ovt_reason, "required ");?>
 		              	</div>
 		              </div>
 		            </div>
 		            <div class="form-group">
-		              <label class="form-label">Detail Reason</label>
+		              <label class="form-label"><b>Detail Reason</b></label>
 		              <div class="row">
 		              	<div class="col-md-12">
+		              		<?php if($dis) echo $ovt_detail_reason;
+		              		else { ?>
 		              		<textarea rows="3" style="width:100%;" name="ovt_detail_reason" required <?php echo $dis;?>><?php echo $ovt_detail_reason;?></textarea>
+		              		<?php }?>
 		              	</div>
 		              </div>
 		            </div>
 		            
 		            <?php if($flag || $ovt_status=="Approve" || $ovt_status=="Reject") { ?>
 		            <div class="form-group">
-		              <label class="form-label">Feedback</label>
+		              <label class="form-label-long"><b>Feedback by Supervisor</b></label>
 		              <div class="row">
 		              	<div class="col-md-12">
 		              		<?php if($ovt_status=="Waiting") {?>
@@ -210,7 +232,7 @@
 		              </div>
 		            </div>
 		            <div class="form-group">
-		              <label class="form-label">Status</label>
+		              <label class="form-label"><b>Status</b></label>
 		              <div class="row">
 		              	<div class="col-md-12">
 		              		<?php

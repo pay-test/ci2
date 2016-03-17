@@ -1,6 +1,10 @@
 /*.tab-content{min-height:545px !important;}*/
 select, input {color:#282323;}
+#coba{margin-bottom:5px;}
+.center{text-align:center;}
+.right{text-align:right;}
 
+.grid{margin-bottom:10px;}
 .span1{width:40px !important;}
 .span1_2{width:65px !important;}
 .span2{width:100px !important;}
@@ -18,13 +22,17 @@ select, input {color:#282323;}
 .form-label2{width:50px;line-height:30px;text-align:center;display:inline-block;}
 .form-group{border-bottom: 1px solid #eee;margin-bottom: 10px;padding-bottom: 10px;}
 
+.table-detailOT {width:100%;}
 .table-detailOT th{background:#0090d9 !important;color:#fff;}
 .table-detailOT td{background:#fff !important;border-bottom:1px solid #ccc !important;}
+
+span.detail_ot{width:135px;float:left;display:block;}
 
 .info_header{background:#eee !important;padding-bottom:20px !important;margin-bottom:20px !important;}
 .info_header .tiles-body{color:#515050 !important;}
 
 .panel-group{margin-bottom:0px !important;}
+.notification-messages-full{width:280px;background:#FE5C5C !important;color:#fff !important;}
 
 /* Datatables */
 #table_length select{width:60px !important;}
@@ -46,6 +54,8 @@ table.shift select{background:none !important;border:0px !important;text-align:c
 .blue{color:#0000ff;}
 
 .legend{width:20px;height:20px;display:block;float:left;}
+.legend_grafik{display: block;float: left;height: 13px;width: 20px;margin-top:3px;}
 .title_legend{margin-left:10px;float:left;margin-right:20px;width:150px;}
+.title_legend_grafik{margin-left:5px;float:left;margin-right:15px;width:55px;font-size:12px;font-weight:bold;color:#000;}
 #grafik_att{position:relative;}
 .item-title{color:#fff !important;}

@@ -21,10 +21,12 @@ class Payroll_master extends MX_Controller {
 
         permission();
 
-         $year_now = date('Y');
+        $year_now = date('Y');
         $this->data['period'] = $this->setup->render_periode($year_now);
         $this->data['session'] = getAll('hris_global_sess', array('id'=>'order/desc'));
         $this->data['ptkp'] = options_row('payroll', 'get_ptkp','id','title', '-- Choose Tax Status --');
+        $this->data['currency'] = options_row('payroll', 'get_currency','id','title', '-- Choose Currency --');
+        $this->data['tax_method'] = options_row('payroll', 'get_tax_method','id','title', '-- Choose Tax Method --');
 		$this->_render_page($this->filename, $this->data);
 	}
 
@@ -60,7 +62,7 @@ class Payroll_master extends MX_Controller {
 
     public function ajax_edit($id, $session_id)
     {
-        $data = $this->payroll->get_by_id($id);//print_mz($data); 
+        $data = $this->payroll->get_by_id($id, $session_id);//print_mz($data); 
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id));//print_mz($payroll_master_id);
         $this->cek_master_component($payroll_master_id, $session_id);
         $this->get_formula($payroll_master_id, $session_id);
@@ -203,16 +205,18 @@ class Payroll_master extends MX_Controller {
 
                                             //print_ag($xj[$i]);
                                             $code = getValue('id', 'payroll_component', array('code'=>'where/'.$xj[$i]));
-                                            $xj[$i] = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$code));//print_ag($xj[$i]);
+                                            $xj[$i] = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$payroll_master_id, 'payroll_component_id'=>'where/'.$code));
+                                            //print_ag($xj[$i]);
                                             break;
                                     }
 
                                     //print_ag('awa'.$j.'-'.$xj[$i]);
                                 }
-                                //print_mz('ds');
-
-                                if (strpos($tx[$i], '%') !== false) {
-                                     $xj[$i] =substr_replace($xj[$i], '/100', -1);
+                                //print_ag($value->component);
+                                //print_ag($xj[$i]);
+                                if ($xj[$i] == '%'){
+                                     $xj[$i] ='/100';
+                                     //print_ag('ke_replace '.$xj[$i]);
                                 }
 
                                 $ntx .= $xj[$i];
@@ -267,7 +271,7 @@ class Payroll_master extends MX_Controller {
                             //print_ag($bwgshous.$xj[6].$f.$r);
                             //print_ag($bwgshous.$xj[6].$f.$r);
                             //print_mz($com);
-                            //print_mz($ntx);
+                            //print_ag($ntx);
 
                 //print_ag($f);
                 }
@@ -371,10 +375,13 @@ class Payroll_master extends MX_Controller {
                 'employee_id' => $employee_id,
                 'payroll_group_id' => $group_id,
                 'payroll_ptkp_id' => $this->input->post('payroll_ptkp_id'),
+                'is_expatriate' => $this->input->post('is_expatriate'),
+                'payroll_currency_id' => $this->input->post('currency'),
+                'payroll_tax_method_id' => $this->input->post('tax_method'),
             );
 
         if($num_rows>0) {
-            $this->db->where('employee_id', $employee_id)->where('session_id', $this->input->post('session_id'))->update('payroll_master', $data);   
+            $this->db->where('employee_id', $employee_id)->where('session_id', $this->input->post('session_id'))->update('payroll_master', $data);
         }else{
             $this->db->insert('payroll_master', $data);
         }

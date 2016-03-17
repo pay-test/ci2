@@ -22,6 +22,7 @@
     <div class="row-fluid">
       <div class="span12">
           <div class="col-md-12">
+            <input type="hidden" id="base_url" value="<?php echo base_url()?>">
             <ul class="nav nav-tabs" role="tablist">
             	<?php if($flag) {$cls1="";$cls3="active";}
             	else {$cls3="";$cls1="active";}?>
@@ -32,11 +33,11 @@
                 <a href="#" onclick="loadHistoryOvt()" role="tab" data-toggle="tab"><?php echo  "List of ".ucwords(lang('overtime'))?></a>
               </li>
               <li class="<?php echo $cls3;?>">
-                <a href="#" onclick="loadApprovalOvt()" role="tab" data-toggle="tab"><?php echo  "Waiting / Approval"?></a>
+                <a href="#" onclick="loadApprovalOvt()" role="tab" data-toggle="tab"><?php echo  "Overtime Request Status"?></a>
               </li>
             </ul>
           	<div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
-            <input type="hidden" value="<?php echo base_url()?>" id="base_url"></input>
+            
             <div class="tab-content">
               <div class="tab-pane active" id="content">
             </div>

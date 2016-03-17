@@ -1507,10 +1507,26 @@ if (!function_exists('CekBawahan')){
 	function CekBawahan($id_emp)
 	{
 		$bawahan=array();
-		$q = GetAll("hris_employee_job", array("upper_employee_id"=> "where/".$id_emp));
+		//$q = GetAll("hris_employee_job", array("upper_employee_id"=> "where/".$id_emp));
+		$q = GetAll("kg_view_employee", array("upper_employee_id"=> "where/".$id_emp, "grade_job_class"=> "order/desc", "person_id"=> "order/asc"));
   	if($q->num_rows() > 0) {
 			foreach($q->result_array() as $r) {
-				$bawahan[] = $r['employee_id'];
+				$bawahan[] = $r['person_id'];
+			}
+		}
+		return $bawahan;
+	}
+}
+
+if (!function_exists('CekBawahanByGrade')){
+	function CekBawahanByGrade($id_emp)
+	{
+		$bawahan=array();
+		$color=array("11"=> "800000", "10"=> "000080", "9"=> "666666", "8"=> "00BB27", "7"=> "fd0000", "6"=> "0000ff", "5"=> "FBBF0F", "4"=> "00ff00", "3"=> "ff9900", "2"=> "FF00FF", "1"=> "B8860B");
+		$q = GetAll("kg_view_employee", array("upper_employee_id"=> "where/".$id_emp, "grade_job_class"=> "order/desc", "person_id"=> "order/asc"));
+  	if($q->num_rows() > 0) {
+			foreach($q->result_array() as $r) {
+				$bawahan[] = array("grade"=> $r['grade_job_class'], "id_emp"=> $r['person_id'], "color"=> $color[$r['grade_job_class']]);
 			}
 		}
 		return $bawahan;
@@ -1526,20 +1542,74 @@ if (!function_exists('GetOTRasio')){
 		else $awal = $exp[0]."-".$exp[1]."-".$att_start_period;
 
 		$acc=0;$upah=0;
-    $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "date_full >="=> "where/".$awal, "date_full <="=> "where/".$date));
+    $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "ovt_status"=> "where/Approve", "date_full >="=> "where/".$awal, "date_full <="=> "where/".$date, "date_temp"=> "where/0000-00-00"));
     if($qq->num_rows() > 0) {
 	    foreach($qq->result_array() as $ss) {
 	    	if($ss['job_level'] != "nonmanagement") {
 	    		if($ss['ovt_hour_sum'] >= 2) $acc += $ss['ovt_hour_sum'];
 	    	} else $acc += $ss['ovt_hour_cal'];
 	    }
-			
-			if($ss['job_level'] != "nonmanagement") {
-	    	$upah = $acc * GetConfigDirect('rest_time');
-	    } else $upah = $acc * ( GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) ) / GetConfigDirect('total_hour_ovt');
 	  }
+	  if(!isset($ss['job_level'])) $ss['job_level'] = "";
+	  
+    $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "ovt_status"=> "where/Approve", "date_temp >="=> "where/".$awal, "date_temp <="=> "where/".$date));
+    if($qq->num_rows() > 0) {
+	    foreach($qq->result_array() as $ss) {
+	    	if($ss['job_level'] != "nonmanagement") {
+	    		if($ss['ovt_hour_sum'] >= 2) $acc += $ss['ovt_hour_sum'];
+	    	} else $acc += $ss['ovt_hour_cal'];
+	    }
+	  }
+		if(!isset($ss['job_level'])) $ss['job_level'] = "";
+		if($ss['job_level'] != "nonmanagement") {
+    	$upah = $acc * GetConfigDirect('rest_time');
+    } else $upah = $acc * ( GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) ) / GetConfigDirect('total_hour_ovt');
+
     $ot_rasio = $upah / (GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) + $upah) * 100;
     return Decimal($ot_rasio)."%";
+  }
+}
+
+if (!function_exists('GetOTCal')){
+	function GetOTCal($id_emp, $date)
+	{
+		$exp = explode("-", $date);
+		$att_start_period = GetConfigDirect('att_start_period');
+		if($exp[2] < $att_start_period) $awal = date("Y-m", mktime(0, 0, 0, $exp[1]-1, $exp[2], $exp[0]))."-".$att_start_period;
+		else $awal = $exp[0]."-".$exp[1]."-".$att_start_period;
+
+		$acc=0;$sum_hour=0;
+    $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "ovt_status"=> "where/Approve", "date_full >="=> "where/".$awal, "date_full <="=> "where/".$date, "date_temp"=> "where/0000-00-00"));
+    if($qq->num_rows() > 0) {
+	    foreach($qq->result_array() as $ss) {
+	    	if($ss['job_level'] != "nonmanagement") {
+	    		if($ss['ovt_hour_sum'] >= 2) {
+	    			$acc += $ss['ovt_hour_sum'];
+	    			$sum_hour += $ss['ovt_hour_sum'];
+	    		}
+	    	} else {
+	    		$acc += $ss['ovt_hour_cal'];
+	    		$sum_hour += $ss['ovt_hour_sum'];
+	    	}
+	    }
+	  }
+	  
+	  $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "ovt_status"=> "where/Approve", "date_temp >="=> "where/".$awal, "date_temp <="=> "where/".$date));
+    if($qq->num_rows() > 0) {
+	    foreach($qq->result_array() as $ss) {
+	    	if($ss['job_level'] != "nonmanagement") {
+	    		if($ss['ovt_hour_sum'] >= 2) {
+	    			$acc += $ss['ovt_hour_sum'];
+	    			$sum_hour += $ss['ovt_hour_sum'];
+	    		}
+	    	} else {
+	    		$acc += $ss['ovt_hour_cal'];
+	    		$sum_hour += $ss['ovt_hour_sum'];
+	    	}
+	    }
+	  }
+    
+    return $sum_hour."~".$acc;
   }
 }
 ?>

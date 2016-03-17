@@ -69,7 +69,7 @@ class attendance_form extends MX_Controller {
   	$data['tgl'] = "";
   	$data['time_in']=$data['time_out']=$data['scan_in']=$data['scan_out']=$data['start_ovt']=$data['end_ovt']="";
   	$data['ovt_flag']=$data['ovt_reason']=$data['ovt_detail_reason']=$data['ovt_feedback']=$data['ovt_status']="";
-  	$data['id_emp']=$data['ot_rasio']=$data['revisi']="";
+  	$data['id_emp']=$data['ot_rasio']=$data['actual_hours']=$data['cal_hours']=$data['revisi']="";
   	$data['opt_reason'] = GetOptReason();
   	$data['opt_ovt_flag'] = array(array("J","J"),	array("O","O"), array("T","T"),	array("N.A.","N.A."));
   	$data['opt_status'] = GetOptStatusForm();
@@ -104,8 +104,12 @@ class attendance_form extends MX_Controller {
 					else $revisi=0;
 					$data['revisi'] = $revisi;
 					
-					//OT Rasio
+					//Detail OT
 					$data['ot_rasio']=GetOTRasio($r['id_employee'], $r['date_full']);
+					$sum_cal = GetOTCal($r['id_employee'], $r['date_full']);
+					$exp = explode("~", $sum_cal);
+					$data['actual_hours'] = $exp[0];
+					$data['cal_hours'] = $exp[1];
 					
 				} else $data['flag'] = "";
 			}
@@ -209,6 +213,18 @@ class attendance_form extends MX_Controller {
 			    	}
 			    	
 			    	$data['ovt_hour_cal'] = GetAccOvt($data['ovt_hour_sum'], $cek_jadwal);
+			    	
+			    	$exp = explode("-", $date_full);
+			    	//Cek Closing Period
+			    	$tgl_closing = GetConfigDirect('close_period');
+			    	$start_period = GetConfigDirect('att_start_period');
+			    	if(intval($exp[2]) > $tgl_closing) $closing = date("Y-m-d", mktime(0, 0, 0, $exp[1]+1, $tgl_closing, $exp[0]));
+			    	else $closing = $exp[0]."-".$exp[1]."-".$tgl_closing;
+			    	
+			    	if(date("Y-m-d") > $closing) {
+			    		$data['date_temp'] = str_replace("-".$tgl_closing, "-".$start_period, $closing);
+			    	}
+			    	
 					}
 					//print_mz($data);
 					$this->db->where("id", $id);
@@ -218,7 +234,7 @@ class attendance_form extends MX_Controller {
 					//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
 					
 					//$this->session->set_flashdata("message", lang('edit')." ".$this->title." ".lang('msg_sukses'));
-					$this->session->set_userdata("message", "Update Overtime Success");
+					$this->session->set_userdata("message", "Submitted");
 				//}
 			}
 			else
@@ -233,7 +249,7 @@ class attendance_form extends MX_Controller {
 				//$logs = $this->db->last_query();
 				//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
 				
-				$this->session->set_userdata("message", "Insert Overtime Success");
+				$this->session->set_userdata("message", "Your request has been submitted");
 			}
 		} else $this->session->set_userdata("message", "Failed");
 		
@@ -323,7 +339,7 @@ class attendance_form extends MX_Controller {
 				if($r['scan_pulang']=="-") $r['scan_pulang']="--:--";
 				echo "~".$r['scan_masuk']."~".$r['scan_pulang'];
 			}
-		} else echo "~00:00~00:00";
+		} else echo "~--:--~--:--";
 	}
   
   

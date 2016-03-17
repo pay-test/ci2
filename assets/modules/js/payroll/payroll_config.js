@@ -26,6 +26,29 @@ $(document).ready(function() {
     })
     .change();
 
+    //JAM
+    $("#session_select_jam").change(function(){
+        var id = $(this).val();
+        if(id != 0){
+           $.ajax({
+                type: 'POST',
+                url: 'payroll_config/get_jam',
+                data: {id : id},
+                dataType: "JSON",
+                success: function(data) {
+                    $('#jam-value').html('<a href="javascript:void(0)"><u>'+data.jam.value+'</u></a>');
+                    $('#jam-id').val(data.jam.id);
+                    $('#jam-value-text').val(data.jam.value);
+                    $('#jam-std-value').html('<a href="javascript:void(0)"><u>'+data.std.value+'</u></a>');
+                    $('#jam-std-id').val(data.std.id);
+                    $('#jam-std-value-text').val(data.std.value);
+                }
+            });
+        }
+    })
+    .change();
+
+    //DIVIDER
     $("#session_select_divider").change(function(){
         var id = $(this).val();
         if(id != 0){
@@ -190,6 +213,79 @@ $(document).ready(function() {
           }
         });
 
+    //EDIT JAM
+    $("#jam-value").click(function(){
+      $("#jam-value").hide();
+      $("#jam-value-text").show();
+      $("#jam-value-text").focus();
+    });
+
+    $("#jam-value-text").add(".editbox_min").mouseup(function()
+    {
+      return false
+    });
+
+    $("#jam-std-value").click(function(){
+      $("#jam-std-value").hide();
+      $("#jam-std-value-text").show();
+      $("#jam-std-value-text").focus();
+    });
+
+    $("#jam-std-value-text").add(".editbox_min").mouseup(function()
+    {
+      return false
+    });
+
+    $("#jam-value-text").keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        var ID=$("#jam-id").val(),
+            session_id = $('#session_select_jam option:selected').val();
+            value=$("#jam-value-text").val();
+          var dataString = 'id='+ ID +'&value='+value+'&session_id='+session_id;
+          var img = "<?php echo assets_url('assets/img/loading.gif')?>"
+          $("#jam-value-text").html('<img src="'+img+'" />'); // Loading image
+          
+            $.ajax({
+              type: "POST",
+              url: "payroll_config/edit_jam/",
+              data: dataString,
+              cache: false,
+              success: function(html){
+                $("#jam-value").html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
+              }
+            });
+              $("#jam-value-text").hide();
+              $("#jam-value").show();  
+              $("#jam-value").change();
+          }
+        });
+
+    $("#jam-std-value-text").keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        var ID=$("#jam-std-id").val(),
+            session_id = $('#session_select_jam option:selected').val();
+            value=$("#jam-std-value-text").val();
+          var dataString = 'id='+ ID +'&value='+value+'&session_id='+session_id;
+          var img = "<?php echo assets_url('assets/img/loading.gif')?>"
+          $("#jam-std-value-text").html('<img src="'+img+'" />'); // Loading image
+          
+            $.ajax({
+              type: "POST",
+              url: "payroll_config/edit_jam_std/",
+              data: dataString,
+              cache: false,
+              success: function(html){
+                $("#jam-std-value").html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
+              }
+            });
+              $("#jam-std-value-text").hide();
+              $("#jam-std-value").show();  
+              $("#jam-std-value").change();
+          }
+        });
+
 
   // Outside click action
   $(document).mouseup(function(){
@@ -201,6 +297,10 @@ $(document).ready(function() {
     $(".text-val-max").hide();
     $("#rate-value-text").hide();
     $("#rate-value").show();
+    $("#jam-value-text").hide();
+    $("#jam-value").show();
+    $("#jam-std-value-text").hide();
+    $("#jam-std-value").show();
     $("#divider-value-text").hide();
     $("#divider-value").show();
     $("#cola-value-text").hide();
@@ -210,6 +310,8 @@ $(document).ready(function() {
   $(document).keypress(function(event){
     var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){ 
+        $("#rate-value-text").hide();
+        $("#rate-value").show();
         $("#rate-value-text").hide();
         $("#rate-value").show();
         $("#divider-value-text").hide();

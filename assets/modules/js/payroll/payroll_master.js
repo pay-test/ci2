@@ -106,6 +106,9 @@ function edit_user(id)
                 $('#session-show').text('Session '+session_id);
                 $('[name="job_class_nm"]').val(data.data1.job_class_nm);
                 $('[name="payroll_ptkp_id"]').select2().select2('val',data.ptkp);
+                $('[name="currency"]').select2().select2('val',data.data1.payroll_currency_id);
+                $('[name="is_expatriate"]').select2().select2('val',data.data1.is_expatriate);
+                $('[name="tax_method"]').select2().select2('val',data.data1.payroll_tax_method_id);
                 //$('[name="group_id"]').select2().select2('val',data.data1.group_id);
                 $('[name="group_id"]').val(data.data1.group_id);
                 $('#modal_form').modal('show'); // show bootstrap modal when complete loaded

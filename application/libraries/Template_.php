@@ -164,72 +164,61 @@ class Template {
         {
             $css[] = '<link rel="stylesheet" href="' . assets_url($css_file) . '">';
         }
-        $person_id = $this->_ci->session->userdata('person_id');
+         $person_id = $this->_ci->session->userdata('person_id');
         $data['person_id'] = $person_id;
-				$data['person_nm'] = getValue('person_nm', 'hris_persons', array('person_id'=>'where/'.$person_id));
-				if(!$data['person_nm']) $data['person_nm']="Administrator";
+                $data['person_nm'] = getValue('person_nm', 'hris_persons', array('person_id'=>'where/'.$person_id));
+                if(!$data['person_nm']) $data['person_nm']="Administrator";
         $data['person_img'] = file_exists('assets/assets/img/profiles/PICTURE_'.$person_id.'.JPG') ? assets_url('assets/img/profiles/PICTURE_'.$person_id.'.JPG') : assets_url('assets/img/profiles/photo-default.png');
         
         //Inbox Overtime
         $inbox = 0;
-				$list_notif = "";
-				//Alert No Slide
-				$bawahan = CekBawahan($person_id);
-				if(count($bawahan) > 0) {
-					$q = GetAll("kg_view_attendance", array("no_slide"=> "where/1", "date_full "=> "order/asc", "date_full"=> "group"), array("id_employee"=> $bawahan));
-	      	if($q->num_rows() > 0) {
-	      		foreach($q->result_array() as $r) {
-							$inbox++;
-							$list_notif .= "<a href='".site_url('dashboard/index_slide/'.$r['date_full'])."'>
-							<div class='notification-messages notification-messages-full info'>
-	                    <div class='message-wrapper'>
-	                      <div class='heading'>Alert - No Slide Attend</div>
-	                      <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
-	                    </div>
-	                    <div class='clearfix'></div>
-	                  </div></a>";
-	          }
-					}
-					
-	        //Cek Bawahan
-	      	$q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Waiting"), array("id_employee"=> $bawahan));
-					foreach($q->result_array() as $r) {
-						$inbox++;
-						$img = GetPP($r['id_employee']);
-						$list_notif .= "<a href='".site_url('attendance_form/overtime/'.$r['id'])."'><div class='notification-messages info'>
-	                  <div class='user-profile'>
-	                    <img src='".$img."' width='35' height='35'>
-	                  </div>
-	                  <div class='message-wrapper'>
-	                    <div class='heading'>".$r['person_nm']." - Overtime</div>
-	                    <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
-	                    <!--<div class='date pull-left'>A min ago</div>-->
-	                  </div>
-	                  <div class='clearfix'></div>
-	                </div></a>";
-					}
-					
-					$q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Approve", "is_read"=> "where/0", "create_user_id"=> "where/".$person_id));
-					foreach($q->result_array() as $r) {
-						$inbox++;
-						$img = GetPP($r['modify_user_id']);
-						$list_notif .= "<a href='".site_url('attendance_form/overtime/'.$r['id'])."'><div class='notification-messages info'>
-	                  <div class='user-profile'>
-	                    <img src='".$img."' width='35' height='35'>
-	                  </div>
-	                  <div class='message-wrapper'>
-	                    <div class='heading'>".strtok(GetValue("person_nm", "hris_persons", array("person_id"=> "where/".$r['modify_user_id'])), " ")." - Approval Overtime</div>
-	                    <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
-	                    <!--<div class='date pull-left'>A min ago</div>-->
-	                  </div>
-	                  <div class='clearfix'></div>
-	                </div></a>";
-					}
-				}
-				$data['inbox'] = $inbox;
-				$data['list_notif'] = $list_notif;
-				
-        
+                $list_notif = "";
+        //Cek Bawahan
+        $bawahan=array();
+        $q = GetAll("hris_employee_job", array("upper_employee_id"=> "where/".$person_id));
+        if($q->num_rows() > 0) {
+                    foreach($q->result_array() as $r) {
+                        $bawahan[] = $r['employee_id'];
+                    }
+                    
+                    $q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Waiting"), array("id_employee"=> $bawahan));
+                    foreach($q->result_array() as $r) {
+                        $inbox++;
+                        $img = GetPP($r['id_employee']);
+                        $list_notif .= "<a href='".site_url('attendance_form/overtime/'.$r['id'])."'><div class='notification-messages info'>
+                    <div class='user-profile'>
+                      <img src='".$img."' width='35' height='35'>
+                    </div>
+                    <div class='message-wrapper'>
+                      <div class='heading'>".$r['person_nm']." - Overtime</div>
+                      <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
+                      <!--<div class='date pull-left'>A min ago</div>-->
+                    </div>
+                    <div class='clearfix'></div>
+                  </div></a>";
+                    }
+                }
+                
+                $q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Approve", "is_read"=> "where/0", "create_user_id"=> "where/".$person_id));
+                foreach($q->result_array() as $r) {
+                    $inbox++;
+                    $img = GetPP($r['modify_user_id']);
+                    $list_notif .= "<a href='".site_url('attendance_form/overtime/'.$r['id'])."'><div class='notification-messages info'>
+                  <div class='user-profile'>
+                    <img src='".$img."' width='35' height='35'>
+                  </div>
+                  <div class='message-wrapper'>
+                    <div class='heading'>".strtok(GetValue("person_nm", "hris_persons", array("person_id"=> "where/".$r['modify_user_id'])), " ")." - Approval Overtime</div>
+                    <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
+                    <!--<div class='date pull-left'>A min ago</div>-->
+                  </div>
+                  <div class='clearfix'></div>
+                </div></a>";
+                }
+                $data['inbox'] = $inbox;
+                $data['list_notif'] = $list_notif;
+
+       
         $menu = $this->_ci->uri->segment(1, 0);
         $data['active']=$data['active1']=$data['active2']=$data['active3']=$data['active4']="";
         switch ($menu) {
@@ -259,20 +248,10 @@ class Template {
         //Sub Menu
         $submenu = $this->_ci->uri->segment(2);
         $param=$menu."/".$submenu;
-        $data['active_1']=$data['active_2']=$data['active_3']="";
         $data['active2_1']=$data['active2_2']=$data['active2_3']="";
         $data['active3_1']=$data['active3_2']=$data['active3_3']="";
         $data['active4_1']=$data['active4_2']=$data['active4_3']="";
         switch ($param) {
-            case 'dashboard/index':
-                $data['active_1'] = "class='active'";
-                break;
-            case 'dashboard/index_slide':
-                $data['active_2'] = "class='active'";
-                break;
-            case 'dashboard/overtime':
-                $data['active_3'] = "class='active'";
-                break;
             case 'attendance/':
                 $data['active2_1'] = "class='active'";
                 break;

@@ -86,7 +86,7 @@
                 <div class="form-body">
                   <div class="form-group">
                     <div class="col-md-9">
-                        <span>Generate base salary from formula</span>
+                        <span>Generate basic salary from formula</span>
                         <span class="help-block"></span>
                     </div>
                   </div>
@@ -97,7 +97,7 @@
                   <hr/>
                   <div class="row">
                     <div class="form-group">
-                      <span class="text-extra-small" >Generate salary value is used to calculate the base salary's of each employee, this feature is used when there is a new employee who has not calculated the basic salary of the previous period and when there is a change in the job value matrix configuration
+                      <span class="text-extra-small">Generate salary value is used to calculate the basic salary's of each employee, this feature is used when there is a new employee who has not calculated the basic salary of the previous period and when there is a change in the job value matrix configuration
                       </span>
                     </div>
                   </div>
