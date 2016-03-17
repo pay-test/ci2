@@ -154,7 +154,7 @@ function edit_user(id)
     function drawRow(rowData) {
         var row = $("<tr />")
         $("#component_table_body").append(row);
-        $(document).find('.auto').maskMoney();
+        $(document).find('.auto').maskMoney({allowNegative:true});
         var v = parseFloat(rowData.value);
         row.append($("<td>" + rowData.component + "</td>"));
         row.append($("<td>" + rowData.code + "</td>"));

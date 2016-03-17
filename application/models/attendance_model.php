@@ -7,6 +7,7 @@ class attendance_model extends CI_Model {
 	var $table_basic = 'kg_kehadirandetil';
 	var $column = array('id','ext_id','person_nm','jhk','jh','off','cuti','ijin','sakit','alpa'); //set column field database for order and search
 	var $column_detail = array('id','date_full','jh','off','cuti','ijin','sakit','alpa','scan_masuk','scan_pulang'); //set column field database for order and search
+	var $column_detail_grafik = array('id','date_full','jh','off','alpa','scan_masuk','scan_pulang'); //set column field database for order and search
 	
 	public function __construct()
 	{
@@ -119,9 +120,52 @@ class attendance_model extends CI_Model {
 		}
 	}
 	
+	private function _get_datatables_query_detail_grafik($param=NULL)
+	{
+		$exp = explode("~", $param['tgl']);
+		$where = "date_full >= '".$exp[0]."' AND date_full <= '".$exp[1]."' ";
+		if(isset($param['id_emp'])) $where .= "AND id_employee='".$param['id_emp']."' ";
+		
+		//Query
+		$this->db->select("*");
+		$this->db->from($this->table);
+		$exp = explode("~", $param['tgl']);
+		$this->db->where("date_full >=", $exp[0]);
+		$this->db->where("date_full <=", $exp[1]);
+		
+		$i = 0;
+	  $like="";
+		foreach ($this->column_detail_grafik as $item) 
+		{
+			if($_POST['search']['value'])
+			{
+				//($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
+				$like .= ($i===0) ? " AND (".$item." LIKE '%".$_POST['search']['value']."%' " : " OR ".$item." LIKE '%".$_POST['search']['value']."%' ";
+			}
+				
+			$column[$i] = $item;
+			$i++;
+		}
+		if($like != "") {
+			$like .= ")";
+			$this->db->where($where.$like);
+		} else $this->db->where($where);
+		
+		if(isset($_POST['order'])) // here order processing
+		{
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		} 
+		else if(isset($this->order))
+		{
+			$order = $this->order;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+	}
+	
 	function get_datatables($param=NULL)
 	{
 		if(isset($param['detailz'])) $this->_get_datatables_query_detail($param);
+		else if(isset($param['detailz_grafik'])) $this->_get_datatables_query_detail_grafik($param);
 		else $this->_get_datatables_query($param);
 		if($_POST['length'] != -1) $this->db->limit($_POST['length'], $_POST['start']);
 		$query = $this->db->get();
@@ -132,6 +176,7 @@ class attendance_model extends CI_Model {
 	function count_filtered($param=NULL)
 	{
 		if(isset($param['detailz'])) $this->_get_datatables_query_detail($param);
+		else if(isset($param['detailz_grafik'])) $this->_get_datatables_query_detail_grafik($param);
 		else $this->_get_datatables_query($param);
 		$query = $this->db->get();
 		return $query->num_rows();
@@ -140,6 +185,7 @@ class attendance_model extends CI_Model {
 	public function count_all($param=NULL)
 	{
 		if(isset($param['detailz'])) $this->_get_datatables_query_detail($param);
+		else if(isset($param['detailz_grafik'])) $this->_get_datatables_query_detail_grafik($param);
 		else $this->_get_datatables_query($param);
 		$query = $this->db->get();	
 		return $query->num_rows();

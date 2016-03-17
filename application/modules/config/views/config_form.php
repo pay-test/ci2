@@ -37,6 +37,14 @@
 								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1'")." 1 to 31";
 							?>
 						</div>
+						
+						<div class="form-group">
+							<label class="form-label">Close Period</label>
+							<?php
+								$nm_f = "close_period";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1'")." 1 to 31";
+							?>
+						</div>
           </div>
         </div>
       </div>
@@ -60,24 +68,38 @@
 						</div>
 						
 						<div class="form-group">
-							<label class="form-label">Shift</label>
+							<label class="form-label">Reguler</label>
 							<?php
-								$nm_f = "shift_1";
-								echo "1 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")."&nbsp;&nbsp;&nbsp;";
-								$nm_f = "shift_2";
-								echo "2 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")."&nbsp;&nbsp;&nbsp;";
-								$nm_f = "shift_3";
-								echo "3 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "reguler_start";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")." to ";
+								$nm_f = "reguler_end";
+								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
+								$nm_f = "alert_reguler";
+								echo "&nbsp;&nbsp;Alert ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'");
 							?>
 						</div>
 						
 						<div class="form-group">
-							<label class="form-label">Reguler</label>
+							<label class="form-label">Shift</label>
 							<?php
-								$nm_f = "reguler_start";
-								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'")." to ";
-								$nm_f = "reguler_end";
-								echo form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2 clockpicker'");
+								$nm_f = "shift_1";
+								echo "1 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "shift_2";
+								echo "2 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "shift_3";
+								echo "3 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")."&nbsp;&nbsp;&nbsp;";
+							?>
+						</div>
+						
+						<div class="form-group">
+							<label class="form-label">Alert Shift</label>
+							<?php
+								$nm_f = "alert_shift_1";
+								echo "1 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "alert_shift_2";
+								echo "2 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")."&nbsp;&nbsp;&nbsp;";
+								$nm_f = "alert_shift_3";
+								echo "3 ".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")."&nbsp;&nbsp;&nbsp;";
 							?>
 						</div>
           </div>
@@ -134,6 +156,14 @@
 								$nm_f = "rest_time_hour";
 								echo "&nbsp;&nbsp;&nbsp;&nbsp;".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1'")." hours";
 							?>
+						</div>
+						<div class="form-group">
+							<label class="form-label">Plot OT Rasio</label>
+							<?php
+								$nm_f = "limit_ot_rasio_grafik";
+								echo "&nbsp;&nbsp;".form_input($nm_f, $config[$nm_f], "id='".$nm_f."' class='span1_2'")." %";
+							?>
+							
 						</div>
 						
 						<div class="form-group">

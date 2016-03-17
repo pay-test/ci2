@@ -264,6 +264,7 @@ class attendance extends MX_Controller {
 		$id = $this->input->post('id');
 		$data['id_employee'] = $this->input->post('id_employee');
 		$data['jhk'] = 1;//$this->input->post('jhk');
+		$data['no_slide'] = 0; //Sudah Absen
 		$data['sakit']=$data['cuti']=$data['ijin']=$data['alpa']=$data['off']=0;
 		$data['pg']=$data['pc']=$data['jh']=$data['hr']=$data['lembur']=$data['late']=0;
 		$absen = $this->input->post('absen');

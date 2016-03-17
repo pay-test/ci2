@@ -110,7 +110,7 @@ class Monthly_income_model extends CI_Model {
 		$this->db->join($this->table_join1, $this->table_join1.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join2, $this->table_join2.'.person_id = '.$this->table.'.employee_id', 'left');
 		$this->db->join($this->table_join4, $this->table_join4.'.employee_id = '.$this->table.'.employee_id', 'left');
-		$this->db->join($this->table_join3, $this->table_join4.'.payroll_group_id = '.$this->table_join3.'.id', 'left');
+		$this->db->join($this->table_join3, $this->table_join4.'.payroll_group_id = '.$this->table_join3.'.job_class_id', 'left');
 		//$this->db->join($this->table_join5, $this->table_join4.'.id = '.$this->table_join5.'.payroll_monthly_income_id', 'left');
 		//$this->db->join($this->table_join6, $this->table_join4.'.payroll_period_id = '.$this->table_join6.'.id', 'left');
 		$this->db->where('user_nm REGEXP "^[0-9]"', NULL, FALSE);

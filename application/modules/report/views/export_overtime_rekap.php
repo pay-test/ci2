@@ -5,9 +5,9 @@
       <th style="width:5%">NIK</th>
       <th style="width:15%">Name</th>
       <th>Period</th>
-      <th>Actual Hour</th>
-      <th>Calculation Hour</th>
-      <th>OT Rasio</th>
+      <th>Actual Hours</th>
+      <th>Calculation Hours</th>
+      <th>Overtime Rasio</th>
       <th>Amount</th>
     </tr>
   </thead>

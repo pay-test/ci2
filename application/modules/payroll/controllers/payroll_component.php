@@ -5,6 +5,7 @@ class Payroll_component extends MX_Controller {
 	var $title = "payroll";
     var $page_title = "Component";
 	var $filename = "payroll_component";
+    var $session_id = '2015';
 	public $data;
 	function __construct()
 	{
@@ -203,6 +204,8 @@ class Payroll_component extends MX_Controller {
             'min' => str_replace(',', '', $this->input->post('min'.$id)), 
             );
         $this->db->where('id', $id)->update('payroll_component_value', $data);
+        $component_id = getValue('payroll_component_id', 'payroll_component_session', array('id'=>'where/'.$this->input->post('component_session_id'.$id)));
+        $this->update_master_component_value($component_id);//lastq();
         echo json_encode(array('status'=>true, 'data'=>$data));
     }
 
@@ -299,6 +302,243 @@ class Payroll_component extends MX_Controller {
         {
             return $this->load->view($view, $data, TRUE);
         }
+    }
+
+    function update_master_component_value($component_id)
+    {
+        $today = date('Y-m-d');
+        $master_id = GetAllSelect('payroll_master_component', 'payroll_component_id, payroll_master_id', array('payroll_component_id'=>'where/'.$component_id))->result();
+        $filter = array('payroll_component_id'=>'where/'.$component_id, 'session_id'=>'where/'.$this->session_id);
+        $component_session_id = getValue('id', 'payroll_component_session', $filter);//lastq();
+        $com_val = $this->db->select('*')->where('payroll_component_session_id', $component_session_id)->get('payroll_component_value')->result();
+        $formula = '';
+        if(!empty($com_val)){
+            //print_ag($com_val);
+            foreach ($com_val as $c) {
+                $from = date('Y-m-d', strtotime($c->from));
+                $to = date('Y-m-d', strtotime($c->to));
+                //print_ag("$today lebih besar dari $from , $today kurang dari $to");
+                //print_mz($from);
+                //if($today > $from && $today < $to)die('s');
+                if($today >= $from && $today <= $to){
+                    $formula = $c->formula;//echo $formula;
+                    $is_condition = $c->is_condition;
+                    $min = $c->min;
+                    $max = $c->max;
+                }
+            }
+        }
+        $tx = explode(' ', $formula);$r='';
+        foreach($master_id as $value){
+            if($formula != null && $component_id!=60):
+                if(!in_array('IF', $tx)){
+                    for($i=0;$i<sizeof($tx);$i++)://print_mz($tx);
+                        if(preg_match("/[a-z]/i", $tx[$i])){
+                            
+                            $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
+                            $detail = $this->payroll->get_employee_detail($emp_id);
+                            $det = $detail->row();
+                            $employee_job_id = getValue('job_id', 'hris_employee_job', array('employee_id'=>'where/'.$emp_id));
+                            $job_value_id = getValue('job_value_id', 'hris_jobs', array('job_id'=>'where/'.$employee_job_id));
+                            $filter = array(
+                                'session_id' => 'where/'.$session_id,
+                                'job_value_id' => 'where/'.$job_value_id,
+                                'job_class_id' => 'where/'.$det->job_class_id
+                                );
+                            $job_value_matrix = GetAll('payroll_job_value_matrix',$filter);//lastq();
+                            $job_value_matrix_num = GetAll('payroll_job_value_matrix',$filter)->num_rows();//lastq();
+
+                            if($tx[$i] == 'JVM'){
+                                $g = $jvm = ($job_value_matrix_num>0)?$job_value_matrix->row()->value:0;
+                                //print_r('jvm='.$g.'-');
+                            }elseif($tx[$i] == 'VAR'){
+                                $cm_param = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session_id, 'job_class_id' => 'where/'.$det->job_class_id));
+                                $cm_param_num = GetAll('payroll_compensation_mix', array('session_id' => 'where/'.$session_id, 'job_class_id' => 'where/'.$det->job_class_id))->num_rows();
+                                //lastq();
+                                $row = $cm_param->row();
+                                $g = $var = ($cm_param_num>0)?$row->var/100:0/100;
+
+                                //print_mz('var='.$var.'-');
+                            }elseif($tx[$i] == 'CONV'){
+                                $g = getValue('value', 'payroll_exchange_rate', array('session_id'=>'where/'.$session_id));
+                            }else{
+                                $g = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$value->payroll_master_id, 'payroll_component_id'=>'where/'.$g));
+                                //print_r($g.'-');
+                            }
+                            //print_r($value->component.'='.$g.'<br/>');
+                            $tx[$i] = $g;
+                        }
+
+                        if (strpos($tx[$i], '%') !== false) {
+                             $tx[$i] =substr_replace($tx[$i], '/100', -1);
+                        }else{false;}
+                        $r .= $tx[$i];
+                     endfor;
+                }else{ 
+                        $com = explode(PHP_EOL, $formula);
+                        //print_ag($com);   
+                        for($j=0;$j<sizeof($com);$j++){  
+                            $ntx = '';
+                            $bwgs = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$value->payroll_master_id, 'payroll_component_id'=>'where/60'));
+                            $hous = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$value->payroll_master_id, 'payroll_component_id'=>'where/66'));//print_mz($xj[$i]);
+                            $bwgshous = $bwgs+$hous;//print_mz($bwgshous);
+                            $xj = explode(' ', $com[$j]);//print_ag($xj);
+                            $n = '';
+                            for($i=7;$i<sizeof($xj);$i++){
+                                if(preg_match("/[a-z]/i", $xj[$i])){
+                                        //echo $j.'-'.$xj[$i].'<br/>';
+                                    switch ($xj[$i]) {
+                                        case 'TK0':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'TK0'));
+                                            break;
+                                        case 'K0':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K0'));
+                                            break;
+                                        case 'K1':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K1'));//print_mz($xj[$i]);
+                                            break;
+                                        case 'K2':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K2'));
+                                            break;
+                                        case 'K3':
+                                            $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K3'));
+                                            break;
+                                        case 'UMK':
+                                            //$xj[$i]=getValue('value', 'UMK', array('session'=>'where/'.$session_id));
+                                            $xj[$i]=3000000;
+                                            break;
+                                        
+                                        default:
+
+                                            //print_ag($xj[$i]);
+                                            $code = getValue('id', 'payroll_component', array('code'=>'where/'.$xj[$i]));
+                                            $xj[$i] = getValue('value', 'payroll_master_component', array('payroll_master_id'=>'where/'.$value->payroll_master_id, 'payroll_component_id'=>'where/'.$code));
+                                            //print_ag($xj[$i]);
+                                            break;
+                                    }
+
+                                    //print_ag('awa'.$j.'-'.$xj[$i]);
+                                }
+                                //print_ag($value->component);
+                                //print_ag($xj[$i]);
+                                if ($xj[$i] == '%'){
+                                     $xj[$i] ='/100';
+                                     //print_ag('ke_replace '.$xj[$i]);
+                                }
+
+                                $ntx .= $xj[$i];
+                            }
+
+                                //print_ag($value->code);
+                                //print_ag($xj);
+
+                            if($xj[6] == '>') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous > $f)$r = $l;
+                            }elseif($xj[6] == '<') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous < $f)$r=$l;
+                            }elseif($xj[6] == '<=') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous <= $f)$r=$l;
+                            }elseif($xj[6] == '>=') {
+                                $f = current(explode(";", $ntx));//print_mz($ntx);
+                                $f= $this->evalmath($f);
+                                $f = @eval("return " . $f . ";" );
+                                //print_mz($f);
+                                $l = substr($ntx, strpos($ntx, ";") + 1);//print_ag($j.'-'.$l);
+                                $l = $this->evalmath($l);
+                                $l = @eval("return " . $l . ";" );//print_ag('>'.$bwgshous.$xj[6].$f.'='.$r);
+                                //print_mz($bwgshous.' > '.$f);
+                                if($bwgshous >= $f)$r=$l;
+                            }
+                            //print_ag($bwgshous.$xj[6].$f.'='.$r);
+                        }
+                            //print_ag($bwgshous.$xj[6].$f.$r);
+                            //print_ag($bwgshous.$xj[6].$f.$r);
+                            //print_mz($com);
+                            //print_ag($ntx);
+
+                //print_ag($f);
+                }
+                
+                $f= $this->evalmath($r);
+                $tz =@eval("return " . $f . ";" );//print_ag($tz);
+                //$is_condition = getValue('is_condition', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                //$is_condition = 0;
+                if($is_condition == 1){
+                    //$min = 1000;
+                    //$max = 70000000;
+                    //$min = getValue('min', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+                    //$max = getValue('max', 'payroll_component_value', array('payroll_component_id'=>'where/'.$value->component_id));
+
+                    if($tz > $max):
+                        $tz = $max;
+                    elseif($tz < $min):
+                        $tz = $min;
+                    else:
+                        $tz= $tz;
+                    endif;
+                }
+                $this->db->where('payroll_master_id', $value->payroll_master_id)->where('payroll_component_id', $component_id)->update('payroll_master_component', array('value'=>$tz));
+                //echo '<pre>';print_r($this->db->last_query());echo "</pre><br/>";
+            endif;
+        }
+    }
+
+    function evalmath($equation)
+    {
+        $result = 0;
+        // sanitize imput
+        $equation = preg_replace("/[^a-z0-9+\-.*\/()%]/","",$equation);
+
+        // convert alphabet to $variabel 
+        $equation = preg_replace("/([a-z])+/i", "\$$0", $equation); 
+
+
+        // convert percentages to decimal
+        $equation = preg_replace("/([+-])([0-9]{1})(%)/","*(1\$1.0\$2)",$equation);
+        $equation = preg_replace("/([+-])([0-9]+)(%)/","*(1\$1.\$2)",$equation);
+        $equation = preg_replace("/([0-9]{1})(%)/",".0\$1",$equation);
+        $equation = preg_replace("/([0-9]+)(%)/",".\$1",$equation);
+        /* 
+        if ( $equation != "" )
+        {
+        $result = @eval("return " . $equation . ";" );
+
+        }
+        */
+        /* 
+        if ($result == null)
+        {
+        throw new Exception("Unable to calculate equation");
+        }
+
+        return $result;
+        */
+        return $equation;
+
     }
 }
 ?>

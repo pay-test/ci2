@@ -55,7 +55,7 @@
 		            <div class="form-group">
 		          		<div class="row">
 			            	<div class="col-md-12">
-			                <label class="form-label">Scan In</label>
+			                <label class="form-label">Actual In</label>
 			                <div class="input-group transparent clockpicker col-md-4">
 			                  <input type="text" class="form-control" placeholder="Pick a time" name="scan_masuk" value="<?php echo $val['scan_masuk'];?>">
 			                  <span class="input-group-addon ">
@@ -68,7 +68,7 @@
 		            <div class="form-group">
 		          		<div class="row">
 			            	<div class="col-md-12">
-			            		<label class="form-label">Scan Out</label>
+			            		<label class="form-label">Actual Out</label>
 			                <div class="input-group transparent clockpicker col-md-4">
 			                  <input type="text" class="form-control" placeholder="Pick a time" name="scan_pulang" value="<?php echo $val['scan_pulang'];?>">
 			                  <span class="input-group-addon ">
@@ -85,8 +85,8 @@
 		  </div>
 		  
 		  <div class="clearfix_button pull-right">
-				<button type="submit" class="btn btn-success btn-submit-att" rel="<?php echo $param_btn;?>">&nbsp;Submit</button>
-				<button type="submit" class="btn btn-cancel-att-detail" rel="<?php echo $param_btn;?>">&nbsp;Back</button>
+				<button type="button" class="btn btn-success btn-submit-att" rel="<?php echo $param_btn;?>">&nbsp;Submit</button>
+				<button type="button" class="btn btn-cancel-att-detail" rel="<?php echo $param_btn;?>">&nbsp;Back</button>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
 			</div>
 		</div>

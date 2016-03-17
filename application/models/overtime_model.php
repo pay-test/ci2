@@ -20,7 +20,7 @@ class overtime_model extends CI_Model {
 	{
 		//Param
 		$exp = explode("~", $param['tgl']);
-		$where = "date_full >= '".$exp[0]."' AND date_full <= '".$exp[1]."' AND ovt_status='Approve' ";
+		$where = "((date_full >= '".$exp[0]."' AND date_full <= '".$exp[1]."' AND date_temp='0000-00-00') || (date_temp >= '".$exp[0]."' AND date_temp <= '".$exp[1]."')) AND ovt_status='Approve' ";
 		if(isset($param['divisi']) && $param['divisi'] > 0) {
 			$id_sec = "(";
 			$q = GetAll("hris_orgs", array("parent_id"=> "where/".$param['divisi']));

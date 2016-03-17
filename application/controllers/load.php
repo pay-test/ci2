@@ -1732,6 +1732,184 @@ class load extends CI_Controller {
 		die("Success");
 	}
 	
+	function baca_alert($tglz=NULL)
+	{
+		$create_date=date("Y-m-d H:i:s");
+		$path=str_replace("localhost", "127.0.0.1", base_url());
+		
+		$emp=$flag_emp=array();
+		$q=GetAll("hris_persons", array("status_cd"=> "where/normal"));
+		//die($q->num_rows()."S");
+		foreach($q->result_array() as $r) {
+			if(!isset($emp[$r['ext_id']])) $emp[$r['ext_id']] = $r['person_id'];
+		}
+		//print_mz($emp);
+		
+		//if($handle = opendir("./device/fam/BACKUPDATA/")) {
+			$baca="";
+			if(!$tglz) $tglz = date("Y-m-d");
+			$file = "./device/fam/BACKUPDATA/".$tglz;
+			if(file_exists($file)) {
+				$linesz = filesize($file);
+				if($linesz > 0)
+				{
+					$open = fopen($file, "r");
+					$baca .= fread($open, $linesz);
+				}
+			}
+			
+			$file = "./device/jho/BACKUPDATA/".$tglz;
+			if(file_exists($file)) {
+				$linesz = filesize($file);
+				if($linesz > 0)
+				{
+					$open = fopen($file, "r");
+					$baca .= fread($open, $linesz);
+				}
+			}
+	    //die($baca);
+	    /*$file = "./device/DATATKS.SDF";
+			if(file_exists($file)) {
+				$linesz = filesize($file);
+				if($linesz > 0)
+				{
+					$open = fopen($file, "r");
+					$baca .= fread($open, $linesz);
+				}
+			}*/
+	    $exp = explode("\n", $baca);		
+			$exp = array_filter($exp);
+										
+			$absen=array();
+			foreach($exp as $r) {
+				$datez=substr($r,0,8);
+				$jamz=substr($r,8,4);
+				$nikz=substr($r,12,8);
+				$in_outz=substr($r,20,1);
+				$absen[$datez][$nikz][$in_outz] = $jamz;
+			}
+			//print_mz($absen);
+			
+			
+			//print_mz($emp);
+			$create_date=date("Y-m-d H:i:s");
+			$new_tgl = date("Ymd");
+			//echo $new_tgl."<br>";
+			if(isset($absen[$new_tgl])) {
+				foreach($absen[$new_tgl] as $nik=> $arr_in_out) {
+					$day=$new_tgl;
+					
+					//if($day >= "20151201" && $day <= "20151215") {
+					//if($day >= "20151116" && $day <= "20151130") {
+						$tgl=substr($day,6,2);
+						$bln=substr($day,4,2);
+						$thn=substr($day,0,4);
+						//foreach($arr_nik as $nik=> $arr_in_out) {
+							$m=0;
+							//if($nik=="09503612" || $nik=="09304218") {
+							foreach($arr_in_out as $in_out=> $jam) {
+								$m++;
+								$jam = substr($jam,0,2).":".substr($jam,2,2);
+								if(isset($emp[$nik])) {
+									//Menandakan bahwa karyawan absen
+									//$flag_emp[$day][$nik]=1;
+									
+									if($in_out==1) {
+										$data = array("id_employee"=> $emp[$nik], "jhk"=> 1, "jh"=> 1, "alpa"=> 0, "off"=> 0, "tanggal"=> $tgl, "bulan"=> $bln, "tahun"=> $thn,
+										"scan_masuk"=> $jam, "create_date"=> $create_date);
+										
+										//Cek Late
+										$cek_jadwal = GetValue("tgl_".intval($tgl), "kg_jadwal_shift", array("id_employee"=> "where/".$emp[$nik], "bulan"=> "where/".$bln, "tahun"=> "where/".$thn));
+										$data['late'] = $this->cek_late($cek_jadwal, $jam);
+										
+										$cek_absen = GetValue("id", "kg_kehadirandetil", array("id_employee"=> "where/".$emp[$nik], "tanggal"=> "where/".$tgl, "bulan"=> "where/".$bln, "tahun"=> "where/".$thn));
+										if(!$cek_absen) {
+											$this->db->insert("kg_kehadirandetil", $data);
+										} else {
+											$this->db->where("id_employee", $emp[$nik]);
+											$this->db->where("tanggal", $tgl);
+											$this->db->where("bulan", $bln);
+											$this->db->where("tahun", $thn);
+											$this->db->update("kg_kehadirandetil", $data);
+										}
+									} else if($m==2 && $in_out==0) {
+										$data = array("scan_pulang"=> $jam);
+										$this->db->where("id_employee", $emp[$nik]);
+										$this->db->where("tanggal", $tgl);
+										$this->db->where("bulan", $bln);
+										$this->db->where("tahun", $thn);
+										$this->db->update("kg_kehadirandetil", $data);
+									} else if($m==1 && $in_out==0) {
+										$exp = explode("-", date("Y-m-d", mktime(0, 0, 0, $bln, $tgl-1, $thn)));
+										$cek_malam = GetValue("tgl_".intval($exp[2]), "kg_jadwal_shift", array("id_employee"=> "where/".$emp[$nik], "bulan"=> "where/".$exp[1], "tahun"=> "where/".$exp[0]));
+										if($cek_malam == "3") {
+											$cek_kemarin = GetValue("id", "kg_kehadirandetil", array("id_employee"=> "where/".$emp[$nik], "tanggal"=> "where/".$exp[2], "bulan"=> "where/".$exp[1], "tahun"=> "where/".$exp[0]));
+											if($cek_kemarin) {
+												$data = array("scan_pulang"=> $jam);
+												$this->db->where("id_employee", $emp[$nik]);
+												$this->db->where("tanggal", $exp[2]);
+												$this->db->where("bulan", $exp[1]);
+												$this->db->where("tahun", $exp[0]);
+												$this->db->update("kg_kehadirandetil", $data);
+											} else {
+												$data = array("id_employee"=> $emp[$nik], "jhk"=> 1, "jh"=> 1, "alpa"=> 0, "off"=> 0, "tanggal"=> $exp[2], "bulan"=> $exp[1], "tahun"=> $exp[0],
+												"scan_pulang"=> $jam, "create_date"=> $create_date);
+												$this->db->insert("kg_kehadirandetil", $data);
+											}
+										} else {
+											$data = array("id_employee"=> $emp[$nik], "jhk"=> 1, "jh"=> 1, "alpa"=> 0, "off"=> 0, "tanggal"=> $tgl, "bulan"=> $bln, "tahun"=> $thn,
+											"scan_pulang"=> $jam, "create_date"=> $create_date);
+											$this->db->insert("kg_kehadirandetil", $data);
+										}
+									}
+								}
+							}
+							//}
+						//}
+						//print_mz($flag_emp);
+					//}
+				}
+				
+				foreach($emp as $nik=> $r) {
+					//if($nik=="09503612" || $nik=="09304218") {
+						//if(!isset($flag_emp[$day][$nik])) {
+							//echo $day."<br>";
+							$cek_absen = GetValue("id", "kg_kehadirandetil", array("id_employee"=> "where/".$emp[$nik], "tanggal"=> "where/".$tgl, "bulan"=> "where/".$bln, "tahun"=> "where/".$thn));
+							if(!$cek_absen) {
+								$cek_off = GetValue("tgl_".intval($tgl), "kg_jadwal_shift", array("id_employee"=> "where/".$emp[$nik], "bulan"=> "where/".$bln, "tahun"=> "where/".$thn));
+								if(strtolower($cek_off) != "off") {
+									$data = array("id_employee"=> $emp[$nik], "jhk"=> 1, "alpa"=> 1, "tanggal"=> $tgl, "bulan"=> $bln, "tahun"=> $thn,
+									"create_date"=> $create_date);
+									$this->db->insert("kg_kehadirandetil", $data);
+								} else {
+									$data = array("id_employee"=> $emp[$nik], "jhk"=> 1, "off"=> 1, "tanggal"=> $tgl, "bulan"=> $bln, "tahun"=> $thn,
+									"create_date"=> $create_date);
+									$this->db->insert("kg_kehadirandetil", $data);
+								}
+							}
+						//}
+					//}
+				}
+				//die();
+			} else {
+				$tgl=date("d");
+				$bln=date("m");
+				$thn=date("Y");
+				foreach($emp as $nik=> $r) {
+					$cek_absen = GetValue("id", "kg_kehadirandetil", array("id_employee"=> "where/".$emp[$nik], "tanggal"=> "where/".$tgl, "bulan"=> "where/".$bln, "tahun"=> "where/".$thn));
+					if(!$cek_absen) {
+						$data = array("id_employee"=> $emp[$nik], "jhk"=> 0, "no_slide"=> 1, "tanggal"=> $tgl, "bulan"=> $bln, "tahun"=> $thn,
+						"create_date"=> $create_date);
+						//print_mz($data);
+						$this->db->insert("kg_kehadirandetil", $data);
+					}
+				}
+			}
+			//die($entry);
+		//}
+		die("Success");
+	}
+	
 	function cek_late($jadwal, $jam)
 	{
 		$jam = intval(str_replace(":","",$jam));

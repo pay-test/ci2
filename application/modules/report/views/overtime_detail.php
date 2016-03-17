@@ -101,8 +101,8 @@
           <tr>
             <th style="width:5%">No</th>
             <th style="width:15%">Date</th>
-            <th>Actual Hour</th>
-            <th>Calculation Hour</th>
+            <th>Actual Hours</th>
+            <th>Calculation Hours</th>
             <th>Reason</th>
             <th>Detail Reason</th>
             <!--<th style="width:5%">Action</th>-->

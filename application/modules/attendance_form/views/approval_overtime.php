@@ -1,15 +1,21 @@
 
 <div class="row column-seperation">
   <div class="col-md-12">
-  	<div class="panel-group" id="accordion" data-toggle="collapse">
+  	<div id="coba" class="grid simple transparent">
+			<div class="grid-title">
+				<h4><?php echo ucwords(lang('overtime'))?> <span class="semi-bold">Request Status</span></h4>
+			</div>
+		</div>
+
+    <div class="panel-group" id="accordion" data-toggle="collapse">
 		  <div class="panel panel-default">
-				<div class="panel-heading">
+				<!--<div class="panel-heading">
 				  <h4 class="panel-title">
 					<a class="" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
 					   Search
 					</a>
 				  </h4>
-				</div>
+				</div>-->
 				<div id="collapseOne" class="panel-collapse collapse in">
 				  <div class="panel-body">
 					 <form id="search_ovt" action="<?php echo site_url($path_file.'/approval_overtime');?>" method="post">
@@ -47,6 +53,11 @@
 	                  </div>
 	              </div>
 		          </div>
+		          <div class="col-sm-12" style="padding:0px;color:#ff0000;">
+		          	<div class="col-md-5">
+		          		choose period then click <i class="fa fa-search"></i>
+		          	</div>
+		          </div>
 		        </div>
 		       </form>
 				  </div>
@@ -60,8 +71,8 @@
           <tr>
             <th style="width:5%">No</th>
             <th>Date</th>
-            <th>Request OT</th>
-            <th>Approval OT</th>
+            <th>Request Overtime</th>
+            <th>Approval Overtime</th>
             <th>Actual Hour</th>
             <th>Reason</th>
             <th>Feedback</th>

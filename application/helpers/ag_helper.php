@@ -83,3 +83,19 @@ if ( ! function_exists('get_query_view'))
 		echo "</pre>";
 	}
 }
+
+if (!function_exists('get_total_hadir_satu_periode')){	
+	function get_total_hadir_satu_periode($emp_id, $period_id)
+	{
+		$CI =& get_instance();
+		$filter_period = array('id'=>'where/'.$period_id);
+		$month = getValue('month', 'payroll_period', $filter_period);
+		$year = getValue('year', 'payroll_period', $filter_period);
+		$date_end = $year.'-'.$month.'-'.'15';
+		$date_start = date("Y-m-d", strtotime( date( $date_end, strtotime( date("Y-m-d") ) ) . "-1 month" ) );
+		$date_start = date("Y-m-d", strtotime( date( $date_start, strtotime( date("Y-m-d") ) ) . "+1 day" ) );
+		$q = "select jh from kg_view_attendance WHERE (date_full BETWEEN '2015-09-29' AND '2016-01-30') and id_employee = $emp_id and jh=1";
+		$q = $CI->db->query($q)->num_rows();
+		return $q;
+	}
+}

@@ -103,25 +103,36 @@
                 <input type="text" class="form-control" name="job_class_nm" value="" readonly="">
               </div>
             </div>
+
+            <div class="row form-row">
+              <label class="control-label col-md-4">Tax Method</label>
+              <div class="col-md-8">
+                <?php 
+                    $js = 'class="select2 form-control" style="width:100%" id="tax_method"';
+                    echo form_dropdown('tax_method', $tax_method,'',$js); 
+                ?>
+              </div>
+            </div><br/>
+
           </div>
 
           <div class="col-md-6">
             <div class="row form-row">
               <label class="control-label col-md-4">Expatriate</label>
               <div class="col-md-8">
-                <select class="select2 form-control" style="width:100%" name="currency">
-                  <option value="idr">Non-Expatriate</option>
-                  <option value="usd">Expatriate</option>
+                <select class="select2 form-control" style="width:100%" name="is_expatriate">
+                  <option value="0">Non-Expatriate</option>
+                  <option value="1">Expatriate</option>
                 </select>
               </div>
             </div><br/>
             <div class="row form-row">
               <label class="control-label col-md-4">Currency</label>
               <div class="col-md-8">
-                <select class="select2 form-control" style="width:100%" name="currency">
-                  <option value="idr">IDR(Rp.)</option>
-                  <option value="usd">USD($)</option>
-                </select>
+                <?php 
+                    $js = 'class="select2 form-control" style="width:100%" id="currency"';
+                    echo form_dropdown('currency', $currency,'',$js); 
+                ?>
               </div>
             </div><br/>
             <div class="row form-row">

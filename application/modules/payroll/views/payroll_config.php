@@ -38,6 +38,12 @@
                 </li>
 
                 <li>
+                    <a href="#tab-jam" data-toggle="tab">
+                        JAM
+                    </a>
+                </li>
+
+                <li>
                     <a href="#tab-divider" data-toggle="tab">
                         Payroll Divider
                     </a>
@@ -143,6 +149,54 @@
                                     <hr/>
                                     <div id="table_jm">
 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Tab Payroll Jam-->
+                <div class="tab-pane fade" id="tab-jam">
+                    <div class="container-fluid container-fullw bg-white">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="divider">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">Select Session</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="select2" id="session_select_jam" style="width:100%">
+                                                <option>-- Select Session --</option>
+                                                <?php foreach($session->result() as $s):
+                                                    $selected = ($s->id == sessNow()) ? "selected='selected'" : '';
+                                                ?>
+                                                    <option value="<?php echo $s->id?>" <?php echo $selected?>><?php echo $s->description?></option>
+                                                <?php endforeach;?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">JAM Value</label>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label style="font-weight:700" class="form-label" id="jam-value"></label>
+                                            <input type="hidden" class="form-control" id="jam-id">
+                                            <input type="text" style="display:none" class="form-control" id="jam-value-text">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="label-form">JAM STD Value</label>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label style="font-weight:700" class="form-label" id="jam-std-value"></label>
+                                            <input type="hidden" class="form-control" id="jam-std-id">
+                                            <input type="text" style="display:none" class="form-control" id="jam-std-value-text">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -20,6 +20,7 @@ class Payroll_setup extends MX_Controller {
 
         $year_now = date('Y');
         $this->data['period'] = $this->payroll->render_periode($year_now);
+        $this->data['period'] = getAll('payroll_period');
 
         permission();
         $this->_render_page($this->filename, $this->data);
@@ -33,6 +34,7 @@ class Payroll_setup extends MX_Controller {
         echo json_encode(array("status" => $status));
     }
 
+    //FUNGSI BUAT COPY DATA DATA DARI SESSION KEMAREN KE SESSION SEKARANG
     public function generate_new_session()
     {
         $sess_now = sessNow();
@@ -78,6 +80,9 @@ class Payroll_setup extends MX_Controller {
     }
         echo json_encode(array("result" => TRUE));
     }
+
+    //FUNGSI BUAT NGITUNG PPH
+
     public function process() {
         $i = 0;
         //$employee_id = "113";
@@ -88,9 +93,18 @@ class Payroll_setup extends MX_Controller {
         $this->update_monthly($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
+        //Biaya Jabatan
+        $bj_persen = getValue('value', 'payroll_biaya_jabatan', array('id'=>'where/1'))/100;
+        $bj_max = getValue('max', 'payroll_biaya_jabatan', array('id'=>'where/1'));
        foreach ($query as $value) {
-           //print_mz($value->employee_id);
-            $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$value->employee_id, 'payroll_period_id'=>'where/'.$period_id));//lastq();print_mz($monthly_income_id);
+            $emp_id = $value->employee_id;
+            $filter = array('employee_id'=>'where/'.$emp_id);
+            //Nilai PTKP Tiap Karyawan
+            $emp_ptkp_id = getValue('payroll_ptkp_id', 'payroll_master', $filter);
+            $emp_ptkp = getValue('value', 'payroll_ptkp', array('id'=>'where/'.$emp_ptkp_id));
+            $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));//lastq();print_mz($monthly_income_id);
+
+            $ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
             $q = $this->payroll->get_monthly_income($monthly_income_id)->result();//print_mz($q);
             /*echo '<pre>';
             print_r($q);
@@ -118,6 +132,12 @@ class Payroll_setup extends MX_Controller {
                     //print_r($income."<br>");
                 }
             }
+
+            $income = $income;
+            //$deduction = 1000162-500000; 
+ 
+
+
             /*
             echo '<pre>';
             print_r('income = '.$income.'<br>');
@@ -126,19 +146,24 @@ class Payroll_setup extends MX_Controller {
             print_r('ded = '.$deduction.'<br>');
             echo '</pre>';
             */
-            $ptkp = getValue('value',' payroll_ptkp', array('id'=>'where/1'));//echo $ptkp.'-';
+            $ptkp = $emp_ptkp;//echo $ptkp.'-';
             //$income_bruto = $income - $deduction;
-            $biaya_jabatan= $income * (5/100);//echo $biaya_jabatan.'-';
+            $biaya_jabatan = $income * $bj_persen;//echo $biaya_jabatan.'-';
+            $biaya_jabatan = ($biaya_jabatan>$bj_max) ? $bj_max : $biaya_jabatan; 
             $income_netto = $income - $deduction - $biaya_jabatan;//echo $income_netto.'-';
             $income_netto_year = round($income_netto * 12);//echo $income_netto_year.'-';
             $income_netto_year_pembulatan = substr_replace($income_netto_year, '000', -3);
+            /*
             if ($value->employee_id == 644) {
                 //print_mz($income_netto_year);
             }
+            */
             //print_r($income_netto_year_pembulatan.'-');
             $pkp = $income_netto_year_pembulatan - $ptkp;//print_r('pkp = '.$pkp.'-');
-            $pph_tahun = $pkp * (5/100);//echo $pph_tahun.'-';
+            // Pajak Progressif
+            $pph_tahun = $this->hitung_pajak_progressif($pkp);//echo $pph_tahun.'-';
             $pph_bulan = round($pph_tahun / 12);//print_mz($pph_bulan);
+            $pph_bulan = ($pph_bulan>0) ? $pph_bulan : 0;//print_mz($pph_bulan);
             $pph_component_id = 55;
             $pph_num_rows = GetAllSelect('payroll_monthly_income_component','payroll_component_id', array('payroll_monthly_income_id' => 'where/'.$monthly_income_id, 'payroll_component_id'=>'where/'.$pph_component_id))->num_rows();
             $data = array('payroll_monthly_income_id' => $monthly_income_id,
@@ -146,8 +171,8 @@ class Payroll_setup extends MX_Controller {
                           'value' => $pph_bulan,
              );
             if($pph_num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $pph_component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);} 
-         /*
-       echo '<pre>';
+             /*
+           echo '<pre>';
             print_r($this->db->last_query());
             echo '</pre>';
             */
@@ -163,6 +188,60 @@ class Payroll_setup extends MX_Controller {
         echo json_encode(array("result" => TRUE));
     }
 
+    //FUNGSI BUAT NGAMBIL UPAH OVERTIME DI PERIODE GAJIAN
+    function get_ot_value($emp_id, $period_id, $monthly_income_id)
+    {
+        $is_management = getValue('job_level', 'kg_view_overtime', array('id_employee'=>'where/'.$emp_id));
+        $filter_period = array('id'=>'where/'.$period_id);
+        $month = getValue('month', 'payroll_period', $filter_period);
+        $year = getValue('year', 'payroll_period', $filter_period);
+        $date_end = $year.'-'.$month.'-'.'15';
+        $date_start = date("Y-m-d", strtotime( date( $date_end, strtotime( date("Y-m-d") ) ) . "-1 month" ) );
+        $date_start = date("Y-m-d", strtotime( date( $date_start, strtotime( date("Y-m-d") ) ) . "+1 day" ) );
+        //Acc Ovt
+        $acc=0;
+        $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$emp_id, "date_full >="=> "where/".$date_start, "date_full <="=> "where/".$date_end, "date_temp"=> "where/0000-00-00"));
+        foreach($q->result_array() as $s) {
+            if($s['job_level'] != "nonmanagement") {
+                if($s['ovt_hour_sum'] >= 2) $acc += $s['ovt_hour_sum'];
+            } else $acc += $s['ovt_hour_cal'];
+        }
+
+        //print_mz($acc);
+        
+        $q = GetAll("kg_view_overtime", array("id_employee"=> "where/".$emp_id, "date_temp >="=> "where/".$date_start, "date_temp <="=> "where/".$date_end));
+        foreach($q->result_array() as $s) {
+            if($s['job_level'] != "nonmanagement") {
+                if($s['ovt_hour_sum'] >= 2) $acc += $s['ovt_hour_sum'];
+            } else $acc += $s['ovt_hour_cal'];
+        }
+
+        if($is_management != "nonmanagement") {
+            $upah = $acc * GetConfigDirect('rest_time');
+            $component_id = 82;
+             $num_rows = GetAllSelect('payroll_monthly_income_component','payroll_component_id', array('payroll_monthly_income_id' => 'where/'.$monthly_income_id, 'payroll_component_id'=>'where/'.$component_id))->num_rows();
+            $data = array('payroll_monthly_income_id' => $monthly_income_id,
+                          'payroll_component_id' => $component_id,
+                          'value' => $upah,
+             );
+            if($num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);} 
+        }else{
+            $upah = $acc * ( GetGapok($emp_id, $date_start) + GetHA($emp_id, $date_start) ) / GetConfigDirect('total_hour_ovt');
+            $component_id = 82;
+            $num_rows = GetAllSelect('payroll_monthly_income_component','payroll_component_id', array('payroll_monthly_income_id' => 'where/'.$monthly_income_id, 'payroll_component_id'=>'where/'.$component_id))->num_rows();
+            $data = array('payroll_monthly_income_id' => $monthly_income_id,
+                          'payroll_component_id' => $component_id,
+                          'value' => $upah,
+             );
+            if($num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);} 
+        }
+        $ot_rasio = GetOTRasio($emp_id, $date_end);//$upah / (GetGapok($emp_id, $exp[0]) + GetHA($emp_id, $exp[0]) + $upah) * 100;
+        return $upah;
+        //$data[] = array($no, $r->ext_id, $r->person_nm, GetMonth(intval(substr($tgl,16,2))).' '.substr($tgl,11,4), $r->ovt_hour_sum, $acc, Decimal($ot_rasio)."%", Rupiah($upah), $edit);
+      
+    }
+
+    //FUNGSI BUAT UPDATE NILAI GAJI BULANAN NGAMBIL DARI MASTER
     public function update_monthly($period_id)
     {
         //$this->_validate();
@@ -205,131 +284,35 @@ class Payroll_setup extends MX_Controller {
         endforeach;
         return true;
     }
-/*
-    public function set_periode() {
-        $period_id = $this->input->post('periode2');
-        $status = $this->input->post('status');
-        $data = array('status' => $status);
-        $where = array('id' => $period_id);
-        $update = $this->payroll->update($where,$data);
-        echo json_encode(array("periode" => $period_id, "status"=> $status, "is_update" => $update));
-    }
-*/
-    public function ajax_list()
+
+    function hitung_pajak_progressif($pkp)
     {
-        $list = $this->payroll->get_datatables();//lastq();//print_mz($list);
-        $data = array();
-        $no = $_POST['start'];
-        foreach ($list as $p_comp) {
-            //get component type
-            $component_type = $this->all_model->GetValue('title','payroll_setup_type','id = '.$p_comp->component_type_id);
-            //get tax component
-            $tax_component = $this->all_model->getValue('title','payroll_tax_component','id = '.$p_comp->tax_component_id);
-            if (!$tax_component) {
-                $tax_component = "";
-            }
-            //status attribute
-            if ($p_comp->is_annualized == 1) {
-                $is_annualized = "Annualized";
-            }else{
-                $is_annualized = "Not Annualized";
-            }
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = $p_comp->title;
-            $row[] = $p_comp->code;
-            $row[] = $component_type;
-            $row[] = $is_annualized;
-            $row[] = $tax_component;
-
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$p_comp->id."'".')"><i class="fa fa-pencil"></i></a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$p_comp->id."'".')"><i class="fa fa-trash"></i></a>';
-        
-
-            $data[] = $row;
+        $p1_max = getValue('value_max', 'payroll_tax_progressive', array('id'=>'where/1'));
+        $p2_min = getValue('value_min', 'payroll_tax_progressive', array('id'=>'where/2'));
+        $p3_min = getValue('value_min', 'payroll_tax_progressive', array('id'=>'where/3'));
+        $p4_min = getValue('value_min', 'payroll_tax_progressive', array('id'=>'where/4'));
+        $p2_max = getValue('value_max', 'payroll_tax_progressive', array('id'=>'where/2'));
+        $p3_max = getValue('value_max', 'payroll_tax_progressive', array('id'=>'where/3'));
+        if($pkp<=$p1_max){
+            $prg = $pkp * 5/100;
+        }elseif($pkp>$p2_min&&$pkp<=$p2_max){
+            $prg1 = $p1_max * 5/100;
+            $prg2 = ($pkp - $p1_max) * 15/100;
+            $prg = $prg1 + $prg2;
+        }elseif($pkp>$p3_min&&$pkp<=$p3_max){
+            $prg1 = $p1_max * 5/100;//print_ag($prg1);
+            $prg2 = ($p2_max-$p1_max) * 15/100;//print_ag($prg2);
+            $prg3 = ($pkp - $p2_max) * 25/100;
+            $prg = $prg1  + $prg2 + $prg3;
+        }elseif($pkp>$p4_min){
+            $prg1 = $p1_max * 5/100;//print_ag($prg1);
+            $prg2 = ($p2_max-$p1_max) * 15/100;//print_ag($prg2);
+            $prg3 = ($p3_max-$p2_max) * 25/100;//print_ag($prg3);
+            $prg4 = ($pkp - $p3_max) * 30/100;//print_ag($prg4);
+            $prg = $prg1  + $prg2 + $prg3 + $prg4;
         }
 
-        $output = array(
-                        "draw" => $_POST['draw'],
-                        "recordsTotal" => $this->payroll->count_all(),
-                        "recordsFiltered" => $this->payroll->count_filtered(),
-                        "data" => $data,
-                );
-        //output to json format
-        echo json_encode($output);
-    }
-
-    public function ajax_edit($id)
-    {
-        $data = $this->payroll->get_by_id($id); // if 0000-00-00 set tu empty for datepicker compatibility
-        echo json_encode($data);
-    }
-
-    public function ajax_add()
-    {
-        $this->_validate();
-        $data = array(
-                'title' => $this->input->post('title'),
-                'code' => $this->input->post('code'),
-                'component_type_id' => $this->input->post('component_type_id'),
-                'is_annualized' => $this->input->post('is_annualized'),
-                'tax_component_id' => $this->input->post('tax_component_id'),
-                'created_by' => GetUserID(),
-                'created_on' => date('Y-m-d H:i:s')
-            );
-        $insert = $this->payroll->save($data);
-        echo json_encode(array("status" => TRUE));
-    }
-
-    public function ajax_update()
-    {
-        $this->_validate();
-        $data = array(
-                'title' => $this->input->post('title'),
-                'code' => $this->input->post('code'),
-                'component_type_id' => $this->input->post('component_type_id'),
-                'is_annualized' => $this->input->post('is_annualized'),
-                'tax_component_id' => $this->input->post('tax_component_id'),
-                'edited_by' => GetUserID(),
-                'edited_on' => date('Y-m-d H:i:s')
-            );
-        $this->payroll->update(array('id' => $this->input->post('id')), $data);
-        echo json_encode(array("status" => TRUE));
-    }
-
-    public function ajax_delete($id)
-    {
-        $this->payroll->delete_by_id($id);
-        echo json_encode(array("status" => TRUE));
-    }
-
-    private function _validate()
-    {
-        $data = array();
-        $data['error_string'] = array();
-        $data['inputerror'] = array();
-        $data['status'] = TRUE;
- 
-        if($this->input->post('title') == '')
-        {
-            $data['inputerror'][] = 'title';
-            $data['error_string'][] = 'Name is required';
-            $data['status'] = FALSE;
-        }
- 
-        if($this->input->post('code') == '')
-        {
-            $data['inputerror'][] = 'code';
-            $data['error_string'][] = 'Code is required';
-            $data['status'] = FALSE;
-        }
- 
-        if($data['status'] === FALSE)
-        {
-            echo json_encode($data);
-            exit();
-        }
+        return $prg;
     }
 
     function _render_page($view, $data=null, $render=false)
@@ -371,6 +354,7 @@ class Payroll_setup extends MX_Controller {
         }
     }
 
+    // FUNCTION BUAT NGITUNG BASIC SALARY
     function generate_value() {
         //set session
         $y = date('Y');
@@ -378,7 +362,7 @@ class Payroll_setup extends MX_Controller {
         $session = (date('Y-m-d H:i:s') < $start_ses) ? $y-1 : $y;//print_mz($session); 
         //$session = 2016;
         $asid = 14;
-        //$employee_id = 644;
+        $employee_id = 644;
         //generate configuration
         $actual_allowance = 2000;
         $employee_jam = 75/100;
@@ -387,11 +371,10 @@ class Payroll_setup extends MX_Controller {
         $divider = GetValue('value','payroll_pembagi',array('session_id' => 'where/'.$session));
 
         //job match parameter
-        $jm_param = GetAll('payroll_jm_parameter',array('session_id' => $session));
+        $jm_param = getAll('payroll_jm_parameter',array('session_id' => 'where/'.$session));//lastq();
         $row = $jm_param->row();
         $jm_min = $row->min/100;
         $jm_max = $row->max/100;
-        //print_mz($jm_param);
 
         //$employee = GetAll('hris_employee',array('status_cd' => 'where/normal', 'employee_id' => 'where/'.$employee_id));
         
@@ -399,7 +382,7 @@ class Payroll_setup extends MX_Controller {
         //$employee = $this->db->query("SELECT * FROM (`hris_employee`) WHERE `status_cd` = 'normal' AND `employee_id` = '$employee_id'");//lastq();
         foreach ($employee->result_array() as $emp) {
             $employee_id = $emp['employee_id'];
-            //$employee_id = 644;
+            $employee_id = 644;
             $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
             //print_mz($employee_jm*100);
             //die($employee_id);
@@ -456,13 +439,13 @@ class Payroll_setup extends MX_Controller {
                 $fix_val = $jvp * $fix;
                 //print_r(' fix value = '.$fix_val);
                 $gs = $fix_val * (67/100); //guarantee salary
-
+                    //print_ag('gs'.$gs);
                 $fix_gs_diff = $fix_val - $gs;
-                //print_mz($gs);
+                //print_ag('fixvalgsdiff'.$fix_gs_diff);
                 if ($employee_jm >= $jm_min AND $employee_jm <= $jm_max) {
-                    $jm_diff = $employee_jm - $jm_min;
+                    $jm_diff = ($employee_jm - $jm_min) * 100;
                     //value per 1%
-                    $vp1 = $fix_gs_diff / ($jm_max - $jm_min);
+                    $vp1 = $fix_gs_diff / (($jm_max - $jm_min)*100);//print_mz($vp1);
                     $fix_value = ($jm_diff) * $vp1;
 
                     $fix_value = $fix_value + $gs; // fix value
@@ -473,6 +456,13 @@ class Payroll_setup extends MX_Controller {
                     $fix_value = $fix_val;
                 }
 
+                //print_ag('jm_diff'.$jm_diff);
+                //print_ag('vp1'.$vp1);
+                //print_ag('fix_value'.$fix_value);
+                /*
+                print_ag('fixgsdiff'.$fix_gs_diff);
+                print_ag($jm_max. '-' .$jm_min);
+                */
                 //print_mz($fix_value);
 
                 //count VAR compensation
@@ -505,7 +495,7 @@ class Payroll_setup extends MX_Controller {
                 //print_mz(round($var_value));
     */
                 $total_sal = $fix_value; //+ $var_value;
-                //print_mz($salary);
+                //print_ag($total_sal);
             }else if($det->job_level == 'nonmanagement') {
                 $min_range = ($job_value_matrix_num!=0)?$jvm->value_min:0;
                 $max_range = ($job_value_matrix_num!=0)?$jvm->value_max:0;
@@ -540,7 +530,7 @@ class Payroll_setup extends MX_Controller {
                 $total_sal = $salary_1 + $salary_2;
                 //print_mz($salary_1);
             }
-
+            //print_mz($jvp);
             $total_sal = ($total_sal * $exchange_rate) / $divider;
             //print_mz($total_sal);
             $data = array('value' => $total_sal);
@@ -563,7 +553,7 @@ class Payroll_setup extends MX_Controller {
                     );
                 $this->all_model->Insert('payroll_master_component',$data_insert);
             }
-
+                //lastq();
             $hous_component = GetAll('payroll_master_component',array('payroll_master_id' => 'where/'.$master_id, 'payroll_component_id' => 'where/66'));
             $hous_num_row = $hous_component->num_rows();
             //$formula = getValue('formula', 'payroll_component_value', array('payroll_component_id'=>'where/66', 'session_id'=>'where'.$session_id));
@@ -575,6 +565,7 @@ class Payroll_setup extends MX_Controller {
             }else{
                 $formula = $total_sal*(10/100);
             }
+            //die();
             if ($hous_num_row > 0) {
                 $this->db->where('payroll_master_id', $master_id)->where('payroll_component_id', 66)->update('payroll_master_component',array('value'=>$formula));
             } else {

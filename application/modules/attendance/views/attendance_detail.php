@@ -107,8 +107,8 @@
             <th>Izin</th>
             <th>Sick</th>
             <th>Absence</th>
-            <th>In</th>
-            <th>Out</th>
+            <th>Actual In</th>
+            <th>Actual Out</th>
             <th>Schedule</th>
             <th style="width:5%">Action</th>
           </tr>
