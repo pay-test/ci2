@@ -2,7 +2,7 @@ var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
-    $(".select2").select2();
+    //$(".select2").select2();
     //datatables
     table = $('#table').DataTable({ 
 

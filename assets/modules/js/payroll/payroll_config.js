@@ -4,7 +4,7 @@ $(document).ready(function() {
     $("#session_select").change(function(){
         var id = $(this).val();
         if(id != 0){
-           $('#table_matrix').load('payroll_config/get_table_matrix/'+id);
+           $('#component').load('payroll_config/get_table_component/'+id);
            $("#sess").val(id);
         }
     })

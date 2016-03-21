@@ -2,9 +2,9 @@ var save_method; //for save method string
 var table;
 
 $(document).ready(function() {
-    $(".select2").select2();
+    //$(".select2").select2();
     //datatables
-    table = $('#table').DataTable({ 
+    table = $('#table-ptkp').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
@@ -72,17 +72,17 @@ $(document).ready(function() {
 function add_user()
 {
     save_method = 'add';
-    $('#form')[0].reset(); // reset form on modals
+    $('#form-ptkp')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-    $('#modal_form').modal('show'); // show bootstrap modal
+    $('#modal_form_ptkp').modal('show'); // show bootstrap modal
     $('.modal-title').text('Add Payroll Tax Component'); // Set Title to Bootstrap modal title
 }
 
 function edit_user(id)
 {
     save_method = 'update';
-    $('#form')[0].reset(); // reset form on modals
+    $('#form-ptkp')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
     var array_comp = [];
@@ -98,7 +98,7 @@ function edit_user(id)
             $('[name="id"]').val(data.id);
             $('[name="title"]').val(data.title);
             $('[name="value"]').val(data.value);
-            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+            $('#modal_form_ptkp').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Tax Component'); // Set title to Bootstrap modal title
 
         },
@@ -130,14 +130,14 @@ function save()
     $.ajax({
         url : url,
         type: "POST",
-        data: $('#form').serialize(),
+        data: $('#form-ptkp').serialize(),
         dataType: "JSON",
         success: function(data)
         {
 
             if(data.status) //if success close modal and reload ajax table
             {
-                $('#modal_form').modal('hide');
+                $('#modal_form_ptkp').modal('hide');
 
                 reload_table();
             }
@@ -176,7 +176,7 @@ function delete_user(id)
             success: function(data)
             {
                 //if success reload ajax table
-                $('#modal_form').modal('hide');
+                $('#modal_form_ptkp').modal('hide');
                 reload_table();
             },
             error: function (jqXHR, textStatus, errorThrown)
