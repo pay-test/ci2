@@ -4,7 +4,7 @@ var table;
 $(document).ready(function() {
     //$(".select2").select2();
     //datatables
-    table = $('#table-ptkp').DataTable({ 
+    table_ptkp = $('#table-ptkp').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
@@ -29,7 +29,7 @@ $(document).ready(function() {
         ] */
     });
 
-    $('#table_wrapper .dataTables_length select').addClass("select2-wrapper span12");
+    $('#table-ptkp_wrapper .dataTables_length select').addClass("select2-wrapper span12");
     $(".select2-wrapper").select2({minimumResultsForSearch: -1});
 
     //set input/textarea/select event when change value, remove class error and remove text help block
@@ -69,7 +69,7 @@ $(document).ready(function() {
 
 
 
-function add_user()
+function add_ptkp()
 {
     save_method = 'add';
     $('#form-ptkp')[0].reset(); // reset form on modals
@@ -79,7 +79,7 @@ function add_user()
     $('.modal-title').text('Add Payroll Tax Component'); // Set Title to Bootstrap modal title
 }
 
-function edit_user(id)
+function edit_ptkp(id)
 {
     save_method = 'update';
     $('#form-ptkp')[0].reset(); // reset form on modals
@@ -109,12 +109,12 @@ function edit_user(id)
     });
 }
 
-function reload_table()
+function reload_table_ptkp()
 {
-    table.ajax.reload(null,false); //reload datatable ajax 
+    table_ptkp.ajax.reload(null,false); //reload datatable ajax 
 }
 
-function save()
+function save_ptkp()
 {
     $('#btnSave').text('saving...'); //change button text
     $('#btnSave').attr('disabled',true); //set button disable 
@@ -139,7 +139,7 @@ function save()
             {
                 $('#modal_form_ptkp').modal('hide');
 
-                reload_table();
+                reload_table_ptkp();
             }
             else
             {
@@ -164,7 +164,7 @@ function save()
     });
 }
 
-function delete_user(id)
+function delete_ptkp(id)
 {
     if(confirm('Are you sure delete this data?'))
     {
@@ -177,7 +177,7 @@ function delete_user(id)
             {
                 //if success reload ajax table
                 $('#modal_form_ptkp').modal('hide');
-                reload_table();
+                reload_table_ptkp();
             },
             error: function (jqXHR, textStatus, errorThrown)
             {

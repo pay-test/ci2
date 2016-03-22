@@ -34,8 +34,8 @@ class Payroll_tax_progressive extends MX_Controller {
             $row[] = $tax->value_max;
             $row[] = $tax->percentage;
 
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_progressive('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_progressive('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
 
             $data[] = $row;

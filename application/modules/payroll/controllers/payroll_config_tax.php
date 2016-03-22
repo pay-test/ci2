@@ -23,11 +23,19 @@
         }
 
         
-        function edit_tax_rate($type){
-            $id = $this->input->post('id');
-            $value = str_replace(',', '', $this->input->post('value'));
-            $this->db->where('id', $id)->update('payroll_tax_exchange_rate', array($type=>$value));
+        function edit_tax_rate(){
+            $table = 'payroll_tax_exchange_rate';
+            $session_id = $this->input->post('session_id');
+            permission();
+            $filter =  array('session_id'=>'where/'.$session_id);
+            $num_rows = getAll($table, $filter)->num_rows();//lastq();
+            $data = array('value' => str_replace(',', '', $this->input->post('value')),
+                          'session_id'=> $session_id,
+                );
+            if($num_rows>0)$this->db->where('session_id', $session_id)->update($table, $data);
+            else $this->db->insert($table, $data);
             lastq();
+            return true;
         }
 
         //FOR JS FUNCTION
@@ -109,6 +117,10 @@
                     $this->template->add_js('assets/plugins/data-tables/jquery.dataTables.min.js');
                     $this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
+                    $this->template->add_js('modules/js/payroll/payroll_tax_method.js');
+                    //$this->template->add_js('modules/js/payroll/payroll_tax_progressive.js');
+                    //$this->template->add_js('modules/js/payroll/payroll_tax_component.js');
+                    //$this->template->add_js('modules/js/payroll/payroll_ptkp.js');
                 }
 
                 

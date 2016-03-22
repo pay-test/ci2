@@ -4,7 +4,7 @@ var table;
 $(document).ready(function() {
     //$(".select2").select2();
     //datatables
-    table = $('#table').DataTable({ 
+    table_component = $('#table').DataTable({ 
 
         "processing": true, //Feature control the processing indicator.
         "serverSide": true, //Feature control DataTables' server-side processing mode.
@@ -69,7 +69,7 @@ $(document).ready(function() {
 
 
 
-function add_user()
+function add_component()
 {
     save_method = 'add';
     $('#form')[0].reset(); // reset form on modals
@@ -79,7 +79,7 @@ function add_user()
     $('.modal-title').text('Add Payroll Tax Component'); // Set Title to Bootstrap modal title
 }
 
-function edit_user(id)
+function edit_component(id)
 {
     save_method = 'update';
     $('#form')[0].reset(); // reset form on modals
@@ -109,12 +109,12 @@ function edit_user(id)
     });
 }
 
-function reload_table()
+function reload_table_component()
 {
-    table.ajax.reload(null,false); //reload datatable ajax 
+    table_component.ajax.reload(null,false); //reload datatable ajax 
 }
 
-function save()
+function save_component()
 {
     $('#btnSave').text('saving...'); //change button text
     $('#btnSave').attr('disabled',true); //set button disable 
@@ -139,7 +139,7 @@ function save()
             {
                 $('#modal_form').modal('hide');
 
-                reload_table();
+                reload_table_component();
             }
             else
             {
@@ -164,7 +164,7 @@ function save()
     });
 }
 
-function delete_user(id)
+function delete_component(id)
 {
     if(confirm('Are you sure delete this data?'))
     {
@@ -177,7 +177,7 @@ function delete_user(id)
             {
                 //if success reload ajax table
                 $('#modal_form').modal('hide');
-                reload_table();
+                reload_table_component();
             },
             error: function (jqXHR, textStatus, errorThrown)
             {

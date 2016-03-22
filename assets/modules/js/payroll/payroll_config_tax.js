@@ -68,15 +68,17 @@ $(document).ready(function() {
     $("#rate-value-text").keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){
+        var session_id = $('#session_select option:selected').val();
+        //alert(session_id);
         var ID=$("#rate-id").val();
         var value=$("#rate-value-text").val();
-          var dataString = 'id='+ ID +'&value='+value;
+           var dataString = 'id='+ ID +'&value='+value +'&session_id='+session_id;
           var img = "<?php echo assets_url('assets/img/loading.gif')?>"
           $("#rate-value-text").html('<img src="'+img+'" />'); // Loading image
           
             $.ajax({
               type: "POST",
-              url: "payroll_config/edit_rate/",
+              url: "payroll_config_tax/edit_tax_rate/",
               data: dataString,
               cache: false,
               success: function(html){

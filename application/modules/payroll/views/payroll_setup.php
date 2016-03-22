@@ -77,7 +77,7 @@
         <div class="col-md-6">
           <div class="grid simple ">
             <div class="grid-title">
-              <h4><span class="semi-bold">Generate Salary Value</span></h4>
+              <h4><span class="semi-bold">Generate Basic Salary Value</span></h4>
             </div>
             <div class="grid-body">
               <?php echo form_open(base_url('payroll/payroll_setup/generate_value'), array('id'=>'form-process'))?>
@@ -108,6 +108,7 @@
           </div>
         </div>
       </div> <!-- e.o row fluid -->
+      <!--
       <div class="row-fluid">
           <div class="col-md-6"></div>
         <div class="col-md-6">
@@ -145,5 +146,6 @@
           </div>
         </div>
       </div>
+      -->
 </div>
 <!-- END CONTAINER -->

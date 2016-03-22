@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-primary" onclick="add_user()"><i class="fa fa-plus"></i> add</button><br/><br/>
+<button type="button" class="btn btn-primary" onclick="add_ptkp()"><i class="fa fa-plus"></i> add</button><br/><br/>
   <table class="table table-hover table-condensed" id="table-ptkp">
     <thead>
       <tr>

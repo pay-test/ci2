@@ -82,6 +82,41 @@ class Payroll_component extends MX_Controller {
         $this->_render_page('payroll/payroll_component/edit', $this->data);
     }
 
+    public function add()
+    {
+        $this->data['title'] = ucfirst($this->title);
+        $this->data['page_title'] = $this->page_title;
+        $this->data['component_type'] = $this->payroll->get_component_type();
+        $this->data['tax_component'] = $this->payroll->get_tax_component();
+        $this->data['component_job_value'] = getAll('payroll_component_job_value');
+        $this->data['job_value'] = getAll('payroll_job_value');
+        $this->data['session_id'] = getAll('hris_global_sess');
+        permission();
+        $this->_render_page('payroll_component/add', $this->data);
+    }
+
+    public function doAdd()
+    {
+        permission();
+        $session_id = $this->input->post('session_id');
+        $data = array(
+            'title' => $this->input->post('title'),
+            'code' => $this->input->post('code'),
+            'component_type_id' => $this->input->post('component_type_id'),
+            'is_annualized' => $this->input->post('is_annualized'),
+            'tax_component_id' => $this->input->post('tax_component_id'),
+            'created_by' => GetUserID(),
+            'created_on' => date('Y-m-d H:i:s')
+        );
+        $insert = $this->payroll->save($data);
+        $data2 = array('session_id' => $session_id,
+                       'payroll_component_id' => $insert,
+         );
+
+        $this->db->insert('payroll_component_session', $data2);
+        echo json_encode(array("status" => TRUE, "id"=>$insert, "session_id"=>$session_id));
+    }
+
     public function edit($id, $session_id)
     {
         $this->data['title'] = ucfirst($this->title);
@@ -275,7 +310,9 @@ class Payroll_component extends MX_Controller {
                     $this->template->add_js('assets/plugins/datatables-responsive/js/datatables.responsive.js');
                     $this->template->add_js('assets/plugins/jquery-maskmoney/jquery.maskMoney.js');
                     $this->template->add_js('modules/js/'.$this->title.'/'.$this->filename.'.js');
-                }elseif(in_array($view, array($this->filename.'/edit')))
+                }elseif(in_array($view, array($this->filename.'/edit',
+                                              $this->filename.'/add'
+                    )))
                 {
                     $this->template->set_layout('default');
                     $this->template->add_css('assets/plugins/data-tables/DT_bootstrap.min.css');

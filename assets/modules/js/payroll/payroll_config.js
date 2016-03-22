@@ -4,7 +4,7 @@ $(document).ready(function() {
     $("#session_select").change(function(){
         var id = $(this).val();
         if(id != 0){
-           $('#component').load('payroll_config/get_table_component/'+id);
+           $('#table_matrix').load('payroll_config/get_table_matrix/'+id);
            $("#sess").val(id);
         }
     })
@@ -87,12 +87,13 @@ $(document).ready(function() {
     .change();
 
     $("#session_select_cola").change(function(){
-        var id = $(this).val();
+        var id = $(this).val(),
+        session_id = $('#session_select_cola option:selected').val();
         if(id != 0){
            $.ajax({
                 type: 'POST',
                 url: 'payroll_config/get_cola',
-                data: {id : id},
+                data: {id : id, session_id:session_id},
                 dataType: "JSON",
                 success: function(data) {
                     var value = addCommas(data.value);
@@ -156,9 +157,10 @@ $(document).ready(function() {
     $("#cola-value-text").keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){
-        var ID=$("#cola-id").val();
-        var value=$("#cola-value-text").val();
-          var dataString = 'id='+ ID +'&value='+value;
+        var ID=$("#cola-id").val(),
+        value=$("#cola-value-text").val(),
+        session_id = $('#session_select_cola option:selected').val();
+          var dataString = 'id='+ ID +'&value='+value + '&session_id=' + session_id;
           var img = "<?php echo assets_url('assets/img/loading.gif')?>"
           $("#cola-value-text").html('<img src="'+img+'" />'); // Loading image
           

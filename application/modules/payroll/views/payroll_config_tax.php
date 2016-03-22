@@ -175,7 +175,7 @@
 
 
 
-<!-- Bootstrap modal -->
+<!-- tax component modal -->
 <div class="modal fade" id="modal_form" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -205,7 +205,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+                <button type="button" id="btnSave" onclick="save_component()" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div><!-- /.modal-content -->
@@ -214,7 +214,7 @@
 <!-- End Bootstrap modal -->
 
 
-<!-- Bootstrap modal -->
+<!-- ptkp modal -->
 <div class="modal fade" id="modal_form_ptkp" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -244,7 +244,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+                <button type="button" id="btnSave" onclick="save_ptkp()" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div><!-- /.modal-content -->
@@ -255,7 +255,7 @@
 
 
 
-<!-- Bootstrap modal -->
+<!-- progressive modal -->
 <div class="modal fade" id="modal_form_progressive" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -292,7 +292,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+                <button type="button" id="btnSave" onclick="save_progressive()" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div><!-- /.modal-content -->
@@ -302,7 +302,7 @@
 
 
 
-<!-- Bootstrap modal -->
+<!-- Method modal -->
 <div class="modal fade" id="modal_form_method" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -326,7 +326,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+                <button type="button" id="btnSave" onclick="saveMethod()" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div><!-- /.modal-content -->
