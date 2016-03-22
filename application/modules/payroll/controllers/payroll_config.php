@@ -96,11 +96,18 @@ class payroll_config extends MX_Controller {
     }
 
     function edit_cola(){
-        $id = $this->input->post('id');
-        $value = str_replace(',', '', $this->input->post('value'));
+        $table = 'payroll_cola';
+        $session_id = $this->input->post('session_id');
+        permission();
+        $filter =  array('session_id'=>'where/'.$session_id);
+        $num_rows = getAll($table, $filter)->num_rows();//lastq();
+        $data = array('value' => str_replace(',', '', $this->input->post('value')),
+                      'session_id'=> $session_id,
+            );
+        if($num_rows>0)$this->db->where('session_id', $session_id)->update($table, $data);
+        else $this->db->insert($table, $data);
 
-        $this->db->where('id', $id)->update('payroll_cola', array('value'=>$value));
-        lastq();
+        return true;
     }
 
     //FOR JS FUNCTION
@@ -181,11 +188,16 @@ class payroll_config extends MX_Controller {
 
     function get_cola()
     {
-        $sess_id = $this->input->post('id');
-        $filter = array('session_id'=>'where/'.$sess_id
-                        );
-        $v = getAll('payroll_cola', $filter)->row();
-        echo json_encode(array('value'=>$v->value, 'id'=>$v->id));
+        $sess_id = $this->input->post('session_id');
+        $filter = array('session_id'=>'where/'.$sess_id                        );
+        $v = getAll('payroll_cola', $filter);
+        
+        if ($v->num_rows() > 0) {
+            $v = $v->row();
+            echo json_encode(array('value'=>$v->value, 'id'=>$v->id));
+        } else {
+            echo json_encode(array('value'=> 0, 'id'=> 0));
+        }
     }
 
     function _render_page($view, $data=null, $render=false)

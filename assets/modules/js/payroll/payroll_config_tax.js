@@ -1,27 +1,57 @@
 $(document).ready(function() {
-    $(".select2").select2();
+    //$(".select2").select2();
     $(".money").maskMoney({allowZero:true});
 
-    $("#session_select_rate").change(function(){
+    $("#session_select").change(function(){
         var id = $(this).val();
-        //alert(id);
         if(id != 0){
-           $.ajax({
-                type: 'POST',
-                url: 'payroll_config_tax/get_tax_rate',
-                data: {id : id},
-                dataType: "JSON",
-                success: function(data) {
-                  //alert(data.value);
-                    var value = addCommas(data.value);
-                    $('#rate-value').html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
-                    $('#rate-id').val(data.id);
-                    $('#rate-value-text').val(data.value);
-                }
-            });
+          $('#component').load('payroll_config_tax/get_tax_component/');
+          $('#ptkp').load('payroll_config_tax/get_ptkp/');
+          $('#progressive').load('payroll_config_tax/get_progressive/');
+          $('#method').load('payroll_config_tax/get_method/');
+          getRate(id);
+          getUmk(id);
         }
     })
     .change();
+
+    function getUmk(id)
+    {
+      if(id != 0){
+         $.ajax({
+              type: 'POST',
+              url: 'payroll_config_tax/get_umk',
+              data: {id : id},
+              dataType: "JSON",
+              success: function(data) {
+                //alert(data.value);
+                  var value = addCommas(data.value);
+                  $('#value').html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
+                  $('#id').val(data.id);
+                  $('#value-text').val(data.value);
+              }
+          });
+      }
+    }
+
+    function getRate(id)
+    {
+      if(id != 0){
+         $.ajax({
+              type: 'POST',
+              url: 'payroll_config_tax/get_tax_rate',
+              data: {id : id},
+              dataType: "JSON",
+              success: function(data) {
+                //alert(data.value);
+                  var value = addCommas(data.value);
+                  $('#rate-value').html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
+                  $('#rate-id').val(data.id);
+                  $('#rate-value-text').val(data.value);
+              }
+          });
+      }
+    }
 
     //EDIT RATE
     $("#rate-value").click(function(){
@@ -38,15 +68,17 @@ $(document).ready(function() {
     $("#rate-value-text").keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){
+        var session_id = $('#session_select option:selected').val();
+        //alert(session_id);
         var ID=$("#rate-id").val();
         var value=$("#rate-value-text").val();
-          var dataString = 'id='+ ID +'&value='+value;
+           var dataString = 'id='+ ID +'&value='+value +'&session_id='+session_id;
           var img = "<?php echo assets_url('assets/img/loading.gif')?>"
           $("#rate-value-text").html('<img src="'+img+'" />'); // Loading image
           
             $.ajax({
               type: "POST",
-              url: "payroll_config/edit_rate/",
+              url: "payroll_config_tax/edit_tax_rate/",
               data: dataString,
               cache: false,
               success: function(html){
@@ -89,6 +121,60 @@ $(document).ready(function() {
   });
 });
 
+
+
+
+//UMK
+$("#value").click(function(){
+      $("#value").hide();
+      $("#value-text").show();
+      $("#value-text").focus();
+    });
+
+    $("#value-text").add(".editbox").mouseup(function()
+    {
+      return false
+    });
+
+    $("#value-text").keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        var session_id = $('#session_select option:selected').val();
+        var ID=$("#id").val();
+        var value=$("#value-text").val();
+          var dataString = 'id='+ ID +'&value='+value +'&session_id='+session_id;
+          var img = "<?php echo assets_url('assets/img/loading.gif')?>"
+          $("#value-text").html('<img src="'+img+'" />'); // Loading image
+          
+            $.ajax({
+              type: "POST",
+              url: "payroll_umk/edit/",
+              data: dataString,
+              cache: false,
+              success: function(html){
+                $("#value").html('<a href="javascript:void(0)"><u>'+value+'</u></a>');
+              }
+            });
+              $("#value-text").hide();
+              $("#value").show();  
+              $("#value").change();
+          }
+        });
+
+
+  // Outside click action
+  $(document).mouseup(function(){
+    $("#value-text").hide();
+    $("#value").show();
+  });
+
+  $(document).keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){ 
+        $("#value-text").hide();
+        $("#value").show();
+    }
+  });
 function addCommas(nStr)
     {
       nStr += '';

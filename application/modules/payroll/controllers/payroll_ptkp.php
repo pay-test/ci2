@@ -33,8 +33,8 @@ class Payroll_ptkp extends MX_Controller {
             $row[] = $tax->title;
             $row[] = $tax->value;
 
-             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_user('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
+             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" username="Edit" onclick="edit_ptkp('."'".$tax->id."'".')"><i class="glyphicon glyphicon-pencil"></i> </a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" username="Hapus" onclick="delete_ptkp('."'".$tax->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
         
 
             $data[] = $row;
