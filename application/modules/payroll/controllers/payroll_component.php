@@ -138,7 +138,7 @@ class Payroll_component extends MX_Controller {
     }
 
     function edit_component($id)
-    {
+    {//print_mz($this->input->post('component_type_id'));
         permission();
         $data = array(
             'title' => $this->input->post('title'),

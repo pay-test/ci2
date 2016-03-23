@@ -89,7 +89,7 @@ class Payroll_setup extends MX_Controller {
         $period_id = $this->input->post('period_id');
         $status = $this->input->post('status');
         $data = array('status' => $status);
-        $this->db->where('id', $period_id)->update('payroll_period', $data);//lastq();
+        $this->db->where('id', $period_id)->update('payroll_period', $data);
         $this->update_monthly($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
@@ -170,7 +170,7 @@ class Payroll_setup extends MX_Controller {
                           'payroll_component_id' => $pph_component_id,
                           'value' => $pph_bulan,
              );
-            if($pph_num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $pph_component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);} 
+            if($pph_num_rows>0){$this->db->where('payroll_monthly_income_id', $monthly_income_id)->where('payroll_component_id', $pph_component_id)->update('payroll_monthly_income_component', $data);}else{$this->db->insert('payroll_monthly_income_component', $data);}
              /*
            echo '<pre>';
             print_r($this->db->last_query());
@@ -184,7 +184,6 @@ class Payroll_setup extends MX_Controller {
             $component_value = $value->value;
             $tax_component_id = $value->component_type_id;
         }
-        
         echo json_encode(array("result" => TRUE));
     }
 
@@ -252,12 +251,20 @@ class Payroll_setup extends MX_Controller {
             $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$e->employee_id, 'payroll_period_id'=>'where/'.$period_id));
             $old_group = getValue('payroll_group_id', 'payroll_monthly_income', array('employee_id'=>'where/'.$e->employee_id, 'payroll_period_id'=>'where/'.$period_id));
             $group_id = getValue('payroll_group_id', 'payroll_master', array('employee_id'=>'where/'.$e->employee_id));//print_mz($group_id);
+            $payroll_ptkp_id = getValue('payroll_ptkp_id', 'payroll_master', array('employee_id'=>'where/'.$e->employee_id));
+            $payroll_currency_id = getValue('payroll_currency_id', 'payroll_master', array('employee_id'=>'where/'.$e->employee_id));
+            $payroll_tax_method_id = getValue('payroll_tax_method_id', 'payroll_master', array('employee_id'=>'where/'.$e->employee_id));
+            $is_expatriate = getValue('is_expatriate', 'payroll_master', array('employee_id'=>'where/'.$e->employee_id));
             //print_mz($group_id);
             //if($old_group != $group_id)$this->db->where('payroll_monthly_income_id', $monthly_income_id)->update('payroll_monthly_income_component', array('is_deleted' => 1));
             $data = array(
                     'employee_id' => $e->employee_id,
                     'payroll_group_id' => $group_id,
                     'payroll_period_id' => $period_id,
+                    'payroll_ptkp_id'=>$payroll_ptkp_id,
+                    'payroll_currency_id'=>$payroll_currency_id,
+                    'payroll_tax_method_id'=>$payroll_tax_method_id,
+                    'is_expatriate'=>$is_expatriate
                 );
             if($num_rows>0)$this->db->where('employee_id', $e->employee_id)->where('payroll_period_id', $period_id)->update('payroll_monthly_income', $data);
                 else $this->db->insert('payroll_monthly_income', $data);//lastq();
@@ -277,8 +284,8 @@ class Payroll_setup extends MX_Controller {
                         'payroll_component_id' =>$c->payroll_component_id,
                         'value' =>$c->value,
                     );
-                if($component_num_rows>0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);}
-                    else{$this->db->insert('payroll_monthly_income_component', $data2);}
+                if($component_num_rows>0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);
+                }else{$this->db->insert('payroll_monthly_income_component', $data2);}
                     //print_r($this->db->last_query());
             endforeach;
         endforeach;
@@ -382,7 +389,7 @@ class Payroll_setup extends MX_Controller {
         //$employee = $this->db->query("SELECT * FROM (`hris_employee`) WHERE `status_cd` = 'normal' AND `employee_id` = '$employee_id'");//lastq();
         foreach ($employee->result_array() as $emp) {
             $employee_id = $emp['employee_id'];
-            $employee_id = 644;
+            //$employee_id = 644;
             $employee_jm = GetValue('jm','hris_employee_competency_final_recap',array('asid' => 'where/'.$asid, 'employee_id' => 'where/'.$employee_id))/100;
             //print_mz($employee_jm*100);
             //die($employee_id);

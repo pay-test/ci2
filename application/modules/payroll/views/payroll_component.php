@@ -247,6 +247,11 @@
                             <td>HOUS</td>
                             <td align="left">Housing Allowance</td>
                           </tr>
+                          <tr>
+                            <td>TK0</td>
+                            <td align="left">PTKP Single Person</td>
+                          </tr>
+                          
                           </tbody>
                         </table>
                         </div>

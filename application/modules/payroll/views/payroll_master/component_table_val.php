@@ -12,6 +12,7 @@
       <input type="hidden" name="master_component_id[]" value="<?php echo $master_comp_id ?>">
       <input type="hidden" name="component_id[]" value="<?php echo $c->component_id?>">
       <td><?php echo $c->code?></td>
+      <td><?php echo $c->component_type?></td>
       <td><input class="form-control auto text-right" data-a-sep="," type="text" value="<?php echo number_format($val, 2)?>" name="value[]"></td>
     </tr>
   <?php $i++;endforeach;?>

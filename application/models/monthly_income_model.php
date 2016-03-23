@@ -103,6 +103,10 @@ class Monthly_income_model extends CI_Model {
 			'.$this->table_join1.'.user_nm as user_nm,
 			'.$this->table_join2.'.person_nm as person_nm,
 			'.$this->table_join4.'.payroll_group_id as group_id,
+			'.$this->table_join4.'.payroll_currency_id,
+			'.$this->table_join4.'.is_expatriate,
+			'.$this->table_join4.'.payroll_ptkp_id,
+			'.$this->table_join4.'.payroll_tax_method_id,
 			'.$this->table_join3.'.title as group_title,
 			');
 
@@ -188,13 +192,17 @@ class Monthly_income_model extends CI_Model {
 		return $this->db->select('payroll_monthly_income_component.id as id,
 								  payroll_component.title as component, 
 							      payroll_component.code as code, 
+							      payroll_component_type.title as component_type, 
 							      payroll_monthly_income_component.value as value,
 							      payroll_monthly_income_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_monthly_income_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_monthly_income_component.payroll_component_id')
+				 ->join('payroll_component_type', 'payroll_component.component_type_id = payroll_component_type.id')
 				 ->where('payroll_monthly_income_component.payroll_monthly_income_id', $monthly_id)
 				 ->where('payroll_monthly_income_component.is_deleted', 0)
+				 ->order_by('payroll_monthly_income_component.value', 'desc')
+				 ->order_by('payroll_component.component_type_id', 'asc')
 				 ->get();
 	}
 
@@ -203,13 +211,17 @@ class Monthly_income_model extends CI_Model {
 		return $this->db->select('payroll_master_component.id as id,
 								  payroll_component.title as component, 
 							      payroll_component.code as code, 
+							      payroll_component_type.title as component_type,
 							      payroll_master_component.value as value,
 							      payroll_master_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_master_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id')
+				 ->join('payroll_component_type', 'payroll_component.component_type_id = payroll_component_type.id')
 				 ->where('payroll_master_component.payroll_master_id', $master_payroll_id)
 				 ->where('payroll_master_component.is_deleted', 0)
+				 ->order_by('payroll_monthly_income_component.value', 'desc')
+				 ->order_by('payroll_component.component_type_id', 'asc')
 				 ->get();
 	}
 
@@ -239,5 +251,25 @@ class Monthly_income_model extends CI_Model {
 		$this->db->where('hris_employee.employee_id', $employee_id);
 
 		return $this->db->get();
+	}
+
+
+	public function get_ptkp()
+	{	
+		$this->db->where('payroll_ptkp'.'.is_deleted',0);
+		$this->db->order_by('payroll_ptkp'.'.id','asc');
+		return $this->db->get('payroll_ptkp');
+	}
+
+	public function get_currency()
+	{	
+		$this->db->where('payroll_currency'.'.is_deleted',0);
+		$this->db->order_by('payroll_currency'.'.id','asc');
+		return $this->db->get('payroll_currency');
+	}
+
+	public function get_tax_method()
+	{	
+		return $this->db->get('payroll_tax_method');
 	}
 }

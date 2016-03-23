@@ -131,6 +131,10 @@ function edit_user(id)
                     $('[name="user_nm"]').val(data.data1.user_nm);
                     $('[name="person_nm"]').val(data.data1.person_nm);
                     $('[name="group_id"]').val(data.data1.group_id);
+                    $('[name="payroll_ptkp_id"]').select2().select2('val',data.data1.payroll_ptkp_id);
+                    $('[name="currency"]').select2().select2('val',data.data1.payroll_currency_id);
+                    $('[name="is_expatriate"]').select2().select2('val',data.data1.is_expatriate);
+                    $('[name="tax_method"]').select2().select2('val',data.data1.payroll_tax_method_id);
                     $('[name="group_title"]').val(data.data1.group_title);
                     $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
                     $('.modal-title').text('Monthly Income '+period); // Set title to Bootstrap modal title
@@ -158,6 +162,7 @@ function edit_user(id)
         var v = parseFloat(rowData.value);
         row.append($("<td>" + rowData.component + "</td>"));
         row.append($("<td>" + rowData.code + "</td>"));
+        row.append($("<td>" + rowData.component_type + "</td>"));
         row.append($("<td>" + "<input type='hidden' name='component_id[]'' value='"+rowData.component_id+"'><input type='hidden' name='monthly_component_id[]' value='"+rowData.id+"'><input class='text-right auto' type='text' name='value[]' value='"+v.formatMoney() +"'></td>"));
     }
 
