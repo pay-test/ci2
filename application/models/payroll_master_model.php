@@ -160,13 +160,16 @@ class Payroll_master_model extends CI_Model {
 	{
 		return $this->db->select('payroll_component.title as component, 
 							      payroll_component.code as code, 
+							      payroll_component_type.title as component_type,
 							      payroll_group_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_group_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_group_component.payroll_component_id')
 				 ->join('payroll_group','payroll_group.id = payroll_group_component.payroll_group_id')
+				 ->join('payroll_component_type', 'payroll_component.component_type_id = payroll_component_type.id')
 				 ->where('payroll_group.id', $id)
 				 ->order_by('payroll_component.component_type_id', 'asc')
+				 ->order_by('payroll_component.tax_component_id', 'asc')
 				 ->get();
 	}
 
@@ -176,16 +179,18 @@ class Payroll_master_model extends CI_Model {
 		return $this->db->select('payroll_master_component.id as id,
 								  payroll_component.title as component, 
 							      payroll_component.code as code, 
+							      payroll_component_type.title as component_type,
 							      payroll_master_component.value as value,
 							      payroll_master_component.payroll_component_id as component_id'
 						  		)
 				 ->from('payroll_master_component')
 				 ->join('payroll_component', 'payroll_component.id = payroll_master_component.payroll_component_id', 'left')
+				 ->join('payroll_component_type', 'payroll_component.component_type_id = payroll_component_type.id')
 				 ->where('payroll_master_component.payroll_master_id', $payroll_master_id)
 				 ->where('payroll_master_component.is_deleted', 0)
-				 //->where('payroll_component_value.from >=', $today)
-                 //->where('payroll_component_value.to <=', $today)
-                 ->order_by('payroll_master_component.id', 'asc')
+				 ->where('payroll_master_component.is_deleted', 0)
+				 ->order_by('payroll_master_component.value', 'desc')
+				 ->order_by('payroll_component.component_type_id', 'asc')
 				 ->get();
 	}
 

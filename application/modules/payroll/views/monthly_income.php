@@ -84,28 +84,71 @@
           <input type="hidden" name="employee_id" value="">
           <input type="hidden" name="period_id" value="">
           <div class="modal-body">
-              <div class="row form-row">
-                <label class="control-label col-md-3">NIK</label>
-                <div class="col-md-3">
-                  <input name="user_nm" placeholder="" class="form-control" type="text" disabled>
-                  <span class="help-block"></span>
-                </div>
+              <div class="col-md-6">
+            <div class="row form-row">
+              <label class="control-label col-md-4">NIK</label>
+              <div class="col-md-8">
+                <input name="user_nm" placeholder="" class="form-control" type="text" disabled>
+                <span class="help-block"></span>
               </div>
+            </div>
 
-              <div class="row form-row">
-                <label class="control-label col-md-3">Name</label>
-                <div class="col-md-3">
-                <input name="person_nm" placeholder="" class="form-control" type="text" disabled>
-                </div>
+            <div class="row form-row">
+              <label class="control-label col-md-4">Name</label>
+              <div class="col-md-8">
+              <input name="person_nm" placeholder="" class="form-control" type="text" disabled>
               </div>
+            </div>
 
-              <div class="row form-row">
-                <label class="control-label col-md-3">Payroll Group</label>
-                <div class="col-md-3">
-                  <input name="group_id" placeholder="" class="form-control" value="" type="hidden">
+            <div class="row form-row">
+              <label class="control-label col-md-4">Payroll Group</label>
+              <div class="col-md-8">
+                <input name="group_id" placeholder="" class="form-control" value="" type="hidden">
                   <input name="group_title" placeholder="" class="form-control" value="" type="text" disabled="">
-                </div>
               </div>
+            </div>
+
+            <div class="row form-row">
+              <label class="control-label col-md-4">Tax Method</label>
+              <div class="col-md-8">
+                <?php 
+                    $js = 'class="select2 form-control" style="width:100%" id="tax_method"';
+                    echo form_dropdown('tax_method', $tax_method,'',$js); 
+                ?>
+              </div>
+            </div><br/>
+
+          </div>
+
+          <div class="col-md-6">
+            <div class="row form-row">
+              <label class="control-label col-md-4">Expatriate</label>
+              <div class="col-md-8">
+                <select class="select2 form-control" style="width:100%" name="is_expatriate">
+                  <option value="0">Non-Expatriate</option>
+                  <option value="1">Expatriate</option>
+                </select>
+              </div>
+            </div><br/>
+            <div class="row form-row">
+              <label class="control-label col-md-4">Currency</label>
+              <div class="col-md-8">
+                <?php 
+                    $js = 'class="select2 form-control" style="width:100%" id="currency"';
+                    echo form_dropdown('currency', $currency,'',$js); 
+                ?>
+              </div>
+            </div><br/>
+            <div class="row form-row">
+              <label class="control-label col-md-4">Tax Status</label>
+              <div class="col-md-8">
+                <?php 
+                  $js = 'class="select2 form-control" style="width:100%" id="payroll_ptkp_id"';
+                  echo form_dropdown('payroll_ptkp_id', $ptkp,'',$js); 
+                ?>
+              </div>
+            </div><br/>
+          </div>
               <br/>
               <br/>
               <div class="row form-row">
@@ -116,6 +159,7 @@
                         <tr>
                           <th style="width:25%">Payroll Component</th>
                           <th style="width:25%">Code</th>
+                          <th style="width:25%">Component Type</th>
                           <th style="width:25%">Value</th>
                         </tr>
                       </thead>

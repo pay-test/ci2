@@ -84,8 +84,8 @@
                                   <label class="control-label col-md-3">Attribute</label>
                                   <div class="col-md-9">
                                       <select name="is_annualized" class="form-control" disabled>
-                                        <option value="0">Not Annualized</option>
-                                        <option value="1">Annualized</option>
+                                        <option value="0" <?php echo ($data->is_annualized == 0) ? 'selected="selected"' : '';?>>Not Annualized</option>
+                                        <option value="1" <?php echo ($data->is_annualized == 1) ? 'selected="selected"' : '';?>>Annualized</option>
                                       </select>
                                       <span class="help-block"></span>
                                   </div>
@@ -97,8 +97,9 @@
                                         <?php if ($tax_component->num_rows() > 0) {
                                           
                                           foreach ($tax_component->result() as $tax_comp) {
+                                              $selected = ($tax_comp->id == $data->tax_component_id) ? 'selected="selected"' : '';
                                             ?>
-                                            <option value="<?php echo $tax_comp->id; ?>"><?php echo $tax_comp->title; ?></option>
+                                            <option value="<?php echo $tax_comp->id; ?>" <?php echo $selected ?>><?php echo $tax_comp->title; ?></option>
                                         <?php }
                                         } ?>
                                       </select>
@@ -210,6 +211,59 @@
                         <?php } ?>
                       </fieldset>
                   </div>
+                  <div class="col-md-6">
+                  <div class="panel-group" id="accordion" data-toggle="collapse">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                        Formulas Legend&nbsp;&nbsp;&nbsp; 
+                        </a>
+                        </h4>
+                      </div>
+                      <div id="collapseOne" class="panel-collapse collapse">
+                      <div class="panel-body">
+                        <table class="table table-bordered">
+                          <thead>
+                            <th width="30%">Code</th>
+                            <th width="70%">Description</th>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td>BWGS</td>
+                            <td align="left">Basic Salary</td>
+                          </tr>
+                          <tr>
+                            <td>HOUS</td>
+                            <td align="left">Housing Allowance</td>
+                          </tr>
+                          <tr>
+                            <td>UMK</td>
+                            <td align="left">UMK</td>
+                          </tr>
+                          <tr>
+                            <td>K0</td>
+                            <td align="left">PTKP - Married Person With ZERO Dependant</td>
+                          </tr>
+                          <tr>
+                            <td>K1</td>
+                            <td align="left">PTKP - Married Person With ONE Dependant</td>
+                          </tr>
+                          <tr>
+                            <td>K2</td>
+                            <td align="left">PTKP - Married Person With TWO Dependant</td>
+                          </tr>
+                          <tr>
+                            <td>K3</td>
+                            <td align="left">PTKP - Married Person With THREE Dependant</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
                 </div>
               </div>
             </div>

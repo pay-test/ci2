@@ -155,6 +155,7 @@
                     <tr>
                       <th style="width:25%">Payroll Component</th>
                       <th style="width:25%">Code</th>
+                      <th style="width:25%">Component_type</th>
                       <th style="width:25%">Value</th>
                     </tr>
                   </thead>
