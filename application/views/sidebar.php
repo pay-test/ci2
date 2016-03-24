@@ -76,6 +76,19 @@
 
                 <li <?php echo $active3 ?>>
                   <a href="javascript:;">
+                    <i class="fa fa-money"></i>
+                    <span class="title">Deduction</span>
+                    <span class="arrow"></span>
+                  </a>
+                  <ul class="sub-menu">
+                    <li><a href="<?php echo base_url('payroll/cooperation')?>">Cooperation</a></li>
+                    <li><a href="<?php echo base_url('payroll/medical')?>">Medical</a></li>
+                    <li><a href="<?php echo base_url('payroll/pebeka')?>">Pebeka</a></li>
+                  </ul>
+                </li>
+
+                <li <?php echo $active3 ?>>
+                  <a href="javascript:;">
                     <i class="fa fa-gear"></i>
                     <span class="title">Setup</span>
                     <span class="arrow"></span>
