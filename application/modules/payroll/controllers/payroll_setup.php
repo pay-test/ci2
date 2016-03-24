@@ -502,6 +502,7 @@ class Payroll_setup extends MX_Controller {
                 //print_mz(round($var_value));
     */
                 $total_sal = $fix_value; //+ $var_value;
+                $total_sal = ($total_sal * $exchange_rate) / $divider;
                 //print_ag($total_sal);
             }else if($det->job_level == 'nonmanagement') {
                 $min_range = ($job_value_matrix_num!=0)?$jvm->value_min:0;
@@ -536,9 +537,10 @@ class Payroll_setup extends MX_Controller {
                 //SALARY
                 $total_sal = $salary_1 + $salary_2;
                 //print_mz($salary_1);
+                //$total_sal = $total_sal;
             }
             //print_mz($jvp);
-            $total_sal = ($total_sal * $exchange_rate) / $divider;
+            
             //print_mz($total_sal);
             $data = array('value' => $total_sal);
             $master_id = GetValue('id','payroll_master',array('employee_id' => 'where/'.$employee_id, 'session_id' => 'where/'.$session));
