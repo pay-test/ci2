@@ -27,18 +27,39 @@
             </div>
 
             <div class="grid-body">
-
-              <form method="post" enctype="multipart/form-data">
+              <div class="row">
+                <div class="col-md-4">
+                  <label class="control-label col-md-3">Period</label>
+                    <div class="col-md-9">
+                        <select class="form-control select2" name="periode" id="periode">
+                          <option value="0">Select session..</option>
+                          <?php if ($period->num_rows() > 0) {
+                            foreach ($period->result_array() as $p) { 
+                              $selected = ($p['year'] == date('Y') && $p['month'] == date('m')) ? "selected='selected'" : '';
+                            ?>
+                            <option value="<?php echo $p['id']; ?>" <?php echo $selected?>><?php echo $p['title']; ?></option>
+                            <?php }
+                          } ?>
+                        </select>
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                  <h3 class="text-center" id="periode-status"></h3>
+                </div>
+              </div>
+              <form method="post" id="upload_excel" action="<?php echo base_url('payroll/pebeka/upload_excel') ?>" enctype="multipart/form-data">
+                <input type="hidden" name="title" value="test">
                 <h3>Select file to upload</h3>
                 <div class="form-group">
-                  <input type="file" id="deduction_excel" name="deduction_excel">
+                  <input type="file" id="excelfile" name="excelfile">
                   
                 </div>
                 <div class="form-group">
                   <input type="submit" value="Submit" class="btn btn-default" name="submit">
                 </div> 
               </form>
-
+              <div id="files"></div>
             </div>
           </div>
         </div>
