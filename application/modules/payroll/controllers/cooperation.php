@@ -9,131 +9,128 @@ class Cooperation extends MX_Controller {
     function __construct()
     {
         parent::__construct();
+        $this->load->model('all_model');
         //$this->load->model('payroll_cooperation_model','payroll');
-        $this->load->library('phpexcel');
-        $this->load->library('PHPExcel/iofactory');
     }
     
     function index()
     {
         $this->data['title'] = ucfirst($this->title);
         $this->data['page_title'] = $this->page_title;
-
+        $this->data['period'] = getAll('payroll_period');
         permission();
         $this->_render_page($this->filename, $this->data);
     }
 
     function upload_excel() {
-        //die(base_url('upload/files/payroll/'));
         $config['upload_path'] = './upload/files/excel';
         $config['allowed_types'] = 'xlsx|xls|csv';
+        $config['overwrite'] = TRUE;
         $config['max_size']  = '10000';
+
+        $val = 0;
         
         $this->load->library('upload', $config);
 
-        if ( ! $this->upload->do_upload('deduction_excel')){
+        if ( ! $this->upload->do_upload('excelfile')){
             $error = array('error' => $this->upload->display_errors());
             die(print_r($error));
         }
         else{
             $data = array('upload_data' => $this->upload->data());
            // echo "success";
-            die($_FILES['deduction_excel']['name']);
-        }
-    }
+            $data_upload = $this->upload->data();
+            //die(print_r($data_upload));
+            $result = $this->run_import($data_upload);
 
-    function upload_barang(){
-               $file = fopen('D:\barang.csv', "r");
+            foreach ($result as $row) {
+                $employee_ext_id = $row['A'];
+                $val = $row['C'];
+                $employee_id = GetValue('employee_id','hris_employee',array('employee_ext_id' => 'where/'.$employee_ext_id));
 
-        $count = 0;
-        /*satuan :
-        Pcs
-        M
-        roll=300m
-        roll
-        pack
-        set
-        */
+                //count
+                $count = GetAll('payroll_monthly_deduction_cooperation',array('payroll_period_id' => 'where/'.sessNow(), 'employee_id' => 'where/'.$employee_id))->num_rows();
 
-        while (($emapData = fgetcsv($file, 10000, ",")) !== FALSE)
-        {
-            $count++; 
-            if($count>7){
-
-                switch ($emapData[5]) {
-                    case 'PCS':
-                        $satuan = 1;
-                        break;
-                    case 'ROLL':
-                        $satuan = 2;
-                        break;
-                    case 'roll=300m':
-                        $satuan = 3;
-                        break;
-                    case 'METER':
-                        $satuan = 4;
-                        break;
-                    case 'PACK':
-                        $satuan = 5;
-                        break;
-                    case 'SET':
-                        $satuan = 6;
-                        break;
-                    
-                    default:
-                        $satuan = 1;
-                        break;
-                }
-
-                if($emapData[4] == 'BARANG INVENTARIS'){
-                    $jenis = 3;
-                }elseif($emapData[4] == 'BARANG MENTAH'){
-                    $jenis = 2;
+                if ($count > 0) {
+                    $val_old = GetValue('value','payroll_monthly_deduction_cooperation',array('employee_id' => 'where/'.$employee_id, 'payroll_period_id' => 'where/'.sessNow()));
+                    $val_new = $val_old + $val;
+                    $data_update = array('value' => $val_new);
+                    $this->all_model->update('payroll_monthly_deduction_cooperation',$data_update,array('employee_id' => $employee_id, 'payroll_period_id' => sessNow()));
+                    //lastq();
                 }else{
-                    $jenis = 1;
+                    $data_insert = array(
+                        'payroll_period_id' => sessNow(),
+                        'employee_id' => $employee_id,
+                        'value' => $val,
+                        'created_by' => sessId(),
+                        'created_on' => date('Y-m-d H:i:s')
+                        );
+                    $this->all_model->insert('payroll_monthly_deduction_cooperation',$data_insert);
                 }
-                $data = array(
-                    'kode'=>$emapData[1],
-                    'title' => $emapData[2],
-                    'satuan' => $satuan,
-                    'jenis_barang_id'=>$jenis,
-                    'created_by'=>1,
-                    'created_on'=>dateNow(),
-                );
-                $cek = getAll('barang', array('kode'=>'where/'.$emapData[1]))->num_rows();
-
-                if($cek<1)$this->db->insert('barang', $data);else $this->db->where('kode', $emapData[1])->update('barang', $data);
-                echo '<pre>';
-                echo $count.'-'.$this->db->last_query();
-                echo '</pre>';
-            }                           
+            }
+            
         }
+        redirect('payroll/cooperation');
     }
 
-    public function run_import(){
-        $file   = explode('.',$_FILES['excelfile']['name']);
+    public function run_import($file_upload) {
+        $file_path = './upload/files/excel/'.$file_upload['file_name'];
+        //load the excel library
+        $this->load->library('excel');
+        //read file from path
+        $inputFileType = PHPExcel_IOFactory::identify($file_path);
+        //die(print_r($inputFileType));
+        /**  Create a new Reader of the type defined in $inputFileType  **/
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+
+        $objPHPExcel = $objReader->load($file_path);
+        //die(print_r($objPHPExcel));
+        //get only the Cell Collection
+        $cell_collection = $objPHPExcel->getActiveSheet()->getCellCollection();
+        //extract to a PHP readable array format
+        foreach ($cell_collection as $cell) {
+            $column = $objPHPExcel->getActiveSheet()->getCell($cell)->getColumn();
+            $row = $objPHPExcel->getActiveSheet()->getCell($cell)->getRow();
+            $data_value = $objPHPExcel->getActiveSheet()->getCell($cell)->getValue();
+            //header will/should be in row 1 only. of course this can be modified to suit your need.
+            if ($row == 1) {
+                $header[$row][$column] = $data_value;
+            } else {
+                $arr_data[$row][$column] = $data_value;
+            }
+        }
+        //send the data in an array format
+        $data['header'] = $header;
+        $data['values'] = $arr_data;
+
+        return $arr_data;
+    }
+
+    public function run_import_($file_upload){
+        $file   = explode('.',$file_upload['file_name']);
         //die(print_r($file));
         $length = count($file);
         //die(print_r($file[$length -1]));
         if($file[$length -1] == 'xlsx' || $file[$length -1] == 'xls'){//jagain barangkali uploadnya selain file excel <span class="wp-smiley wp-emoji wp-emoji-smile" title=":-)">:-)</span>
-            $tmp    = $_FILES['excelfile']['tmp_name'];//Baca dari tmp folder jadi file ga perlu jadi sampah di server :-p
+            //$tmp = $file_upload['full_path'];//Baca dari tmp folder jadi file ga perlu jadi sampah di server :-p
+            $tmp = $file_path = './upload/files/excel/'.$file_upload['file_name'];
+            $this->load->library('excel');
 
-            $this->load->library('phpexcel');
-            $this->load->library('PHPExcel/iofactory');
             /**  Identify the type of $inputFileName  **/
-            $inputFileType = IOFactory::identify($tmp);
+            $inputFileType = PHPExcel_IOFactory::identify($tmp);
+            //die($inputFileType);
             /**  Create a new Reader of the type that has been identified  **/
-            $objReader = IOFactory::createReader($inputFileType);
+            $objReader = PHPExcel_IOFactory::createReader($inputFileType);
             /**  Load $inputFileName to a PHPExcel Object  **/
             $objPHPExcel = $objReader->load($tmp);
 
-            $read   = IOFactory::createReaderForFile($tmp);
+            $read   = PHPExcel_IOFactory::createReaderForFile($tmp);
 
             $read->setReadDataOnly(true);
             $excel  = $read->load($tmp);
 
             $sheets = $read->listWorksheetNames($tmp);//baca semua sheet yang ada
-            die(print_r($sheets));
+           // die(print_r($sheets));
             foreach($sheets as $sheet){
                 if($this->db->table_exists($sheet)){//check sheet-nya itu nama table ape bukan, kalo bukan buang aja... nyampah doank :-p
                     $_sheet = $excel->setActiveSheetIndexByName($sheet);//Kunci sheetnye biar kagak lepas :-p
@@ -150,10 +147,10 @@ class Cooperation extends MX_Controller {
                             $sql[$field[$k]]  = $_sheet->getCell($coloumn.$i)->getCalculatedValue();
                         }
                         //$this->db->insert($sheet,$sql);//ribet banget tinggal insert doank...
+                        die(print_r($sql));
                     }
                 }
             }
-            die(print_r($file));
         }else{
             die("error");
             exit('do not allowed to upload');//pesan error tipe file tidak tepat
