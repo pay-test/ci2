@@ -22,7 +22,16 @@ if (!function_exists('permission')){
 	}
 }
 
-
+if(!function_exists('sessId')){
+	function sessId()
+	{
+		$CI =& get_instance();
+		$sess_id = $CI->session->userdata("person_id");
+		if(!empty($sess_id)){
+			return $sess_id;
+		}
+	}
+}
 
 if (!function_exists('getPersonIdFromNik')){
 function getPersonIdFromNik($nik)
@@ -97,5 +106,12 @@ if (!function_exists('get_total_hadir_satu_periode')){
 		$q = "select jh from kg_view_attendance WHERE (date_full BETWEEN '2015-09-29' AND '2016-01-30') and id_employee = $emp_id and jh=1";
 		$q = $CI->db->query($q)->num_rows();
 		return $q;
+	}
+}
+
+if(!function_exists('dateNow')){
+	function dateNow()
+	{
+		return date('Y-m-d H:i:s');
 	}
 }
