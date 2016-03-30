@@ -34,8 +34,26 @@
                 );
             if($num_rows>0)$this->db->where('session_id', $session_id)->update($table, $data);
             else $this->db->insert($table, $data);
-            lastq();
+            //lastq();
             return true;
+        }
+
+        function edit_umk($sess_id, $city_id)
+        {
+            $filter = array('session_id'=>'where/'.$sess_id, 'umk_city_id'=>'where/'.$city_id);
+            $umk_id = getValue('id', 'payroll_umk', $filter);
+            $value = str_replace(',','',$this->input->post('value'));
+            if(!empty($umk_id)){
+                $this->db->where('id', $umk_id)->update('payroll_umk', array('value'=>$value));
+            }else{
+                $data = array(
+                        'session_id' => $sess_id,
+                        'umk_city_id'=>$city_id,
+                        'value'=>$value
+                    );
+                $this->db->insert('payroll_umk', $data);
+            }
+            lastq();
         }
 
         //FOR JS FUNCTION
@@ -64,8 +82,8 @@
         }
 
         
-        function get_umk()    {
-            $sess_id = $this->input->post('id');
+        function get_umk($sess_id)    {
+            /*
             $filter = array('session_id'=>'where/'.$sess_id                        );
             $v = getAll('payroll_umk', $filter);
             
@@ -75,8 +93,12 @@
             } else {
                 echo json_encode(array('value'=> 0, 'id'=> 0));
             }
-
+            */
             //print_mz($v);
+            $this->data['sess_id'] = $sess_id;
+            //$this->data['umk_value'] = $this->payroll->get_umk($sess_id);print_mz($this->data['umk_value']->result());
+            $this->data['city'] = GetAllSelect('payroll_umk_city', 'id, title');//print_mz($this->data['city']->result());
+            $this->load->view('config_tax/umk', $this->data);
         }
 
         

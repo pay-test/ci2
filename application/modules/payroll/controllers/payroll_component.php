@@ -43,9 +43,9 @@ class Payroll_component extends MX_Controller {
             }
             //status attribute
             if ($p_comp->is_annualized == 1) {
-                $is_annualized = "Annualized";
+                $is_annualized = "Regular";
             }else{
-                $is_annualized = "Not Annualized";
+                $is_annualized = "Iregular";
             }
             $no++;
             $row = array();
@@ -126,6 +126,7 @@ class Payroll_component extends MX_Controller {
         $this->data['component_job_value'] = getAll('payroll_component_job_value');
         $this->data['job_value'] = getAll('payroll_job_value');
         $this->data['session_id'] = $session_id;
+        $this->data['id'] = $id;
         $this->data['data'] = $data = $this->payroll->get_by_id($id);//print_ag($data);
         $filter = array('payroll_component_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id);
         $component_session_num_rows = getAll('payroll_component_session', $filter)->num_rows();//print_mz($component_session_id);

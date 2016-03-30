@@ -15,7 +15,7 @@
           <p>YOU ARE HERE</p>
         </li>
         <li><a href="#" class="active"><?php echo 'Payroll'; ?></a> </li>
-        <li><a href="#" class="active"><?php echo 'Config'; ?></a> </li>
+        <li><a href="#" class="active"><?php echo 'Tax-Config'; ?></a> </li>
       </ul>
         <div class="row">
             <div class="span12">
@@ -132,7 +132,8 @@
                     <div class="container-fluid container-fullw bg-white">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="umk">
+                                <div id="umk">
+                                    <!--
                                     <div class="col-md-2">
                                         <label class="label-form">UMK Value</label>
                                     </div>
@@ -141,6 +142,7 @@
                                         <input type="hidden" class="form-control" id="id">
                                         <input type="text" style="display:none" class="form-control money" id="value-text">
                                     </div>
+                                    -->
                                 </div>
                             </div>
                         </div>

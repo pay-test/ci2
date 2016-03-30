@@ -9,12 +9,15 @@ $(document).ready(function() {
           $('#ptkp').load('payroll_config_tax/get_ptkp/');
           $('#progressive').load('payroll_config_tax/get_progressive/');
           $('#method').load('payroll_config_tax/get_method/');
+          $('#umk').load('payroll_config_tax/get_umk/'+id);
           getRate(id);
-          getUmk(id);
+          //getUmk(id);
         }
     })
     .change();
 
+
+    /*
     function getUmk(id)
     {
       if(id != 0){
@@ -33,6 +36,7 @@ $(document).ready(function() {
           });
       }
     }
+    */
 
     function getRate(id)
     {
@@ -163,8 +167,10 @@ $("#value").click(function(){
 
 
   // Outside click action
-  $(document).mouseup(function(){
+  $(document).dblclick(function(){
+    $(".umk-text-value").hide();
     $("#value-text").hide();
+    $(".umk-text").show();
     $("#value").show();
   });
 
@@ -173,6 +179,8 @@ $("#value").click(function(){
     if(keycode == '13'){ 
         $("#value-text").hide();
         $("#value").show();
+        $(".umk-text-value").hide();
+        $(".umk-text").show();
     }
   });
 function addCommas(nStr)

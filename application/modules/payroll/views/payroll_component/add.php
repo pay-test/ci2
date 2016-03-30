@@ -15,11 +15,10 @@
       <li>
         <p>YOU ARE HERE</p>
       </li>
-      <li><a href="" class="active"><?php echo $title; ?></a> </li>
+      <li><a href="#"><?php echo $title; ?></a> </li>
+      <li><a href="<?php echo base_url('payroll/payroll_component')?>" class="active"><?php echo $title.' - Component'; ?></a> </li>
+      <li><a href="<?php echo base_url('payroll/payroll_component/add')?>" class="active"><?php echo 'Add'; ?></a> </li>
     </ul>
-    <div class="page-title"> <a href="<?php echo base_url('payroll/payroll_component')?>"><i class="icon-custom-left"></i></a>
-      <h3><?php echo $title ?> - <span class="semi-bold"><?php echo $page_title; ?></span></h3>
-    </div>
     <div class="row-fluid">
       <div class="span12">
         <div class="grid simple ">
@@ -90,8 +89,8 @@
                                   <label class="control-label col-md-3">Attribute</label>
                                   <div class="col-md-9">
                                       <select name="is_annualized" class="form-control">
-                                        <option value="0">Not Annualized</option>
-                                        <option value="1">Annualized</option>
+                                        <option value="0">Iregular</option>
+                                        <option value="1">Regular</option>
                                       </select>
                                       <span class="help-block"></span>
                                   </div>
@@ -117,7 +116,7 @@
                         <div class="col-md-12">
                           <div class="row pull-right edit-com">
                             <button type="button" href="javascript:void(0)" title="Save" onclick='addComponent()' class="btn btn-primary">Save</button>
-                            <button type="button" id="btnCancel" href="javascript:void(0)" title="Cancel" onclick='cancel()' class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <a href="<?php echo base_url('payroll/payroll_component')?>"><button type="button" title="Cancel" class="btn btn-danger" data-dismiss="modal">Cancel</button></a>
                           </div>
                         </div>
                       </form>

@@ -20,8 +20,8 @@ class Payroll_setup extends MX_Controller {
 
         $year_now = date('Y');
         $this->data['period'] = $this->payroll->render_periode($year_now);
-        $this->data['period'] = getAll('payroll_period');
-
+        $this->data['period'] = getAll('payroll_period', array('year'=>'order/asc', 'month'=>'order/asc'));
+        $this->data['ireg_comp'] = GetAllSelect('payroll_component', 'id, title', array('is_annualized'=>'where/0'));
         permission();
         $this->_render_page($this->filename, $this->data);
     }
@@ -34,7 +34,7 @@ class Payroll_setup extends MX_Controller {
         echo json_encode(array("status" => $status));
     }
 
-    //FUNGSI BUAT COPY DATA DATA DARI SESSION KEMAREN KE SESSION SEKARANG
+    //FUNGSI BUAT COPY DATA DATA DARI SESSION SEBELUMNYA KE SESSION SEKARANG
     public function generate_new_session()
     {
         $sess_now = sessNow();
@@ -94,10 +94,12 @@ class Payroll_setup extends MX_Controller {
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
         //Biaya Jabatan
+        
         $bj_persen = getValue('value', 'payroll_biaya_jabatan', array('id'=>'where/1'))/100;
         $bj_max = getValue('max', 'payroll_biaya_jabatan', array('id'=>'where/1'));
        foreach ($query as $value) {
             $emp_id = $value->employee_id;
+            $emp_id = 133;
             $filter = array('employee_id'=>'where/'.$emp_id);
             //Nilai PTKP Tiap Karyawan
             $emp_ptkp_id = getValue('payroll_ptkp_id', 'payroll_master', $filter);
@@ -176,6 +178,7 @@ class Payroll_setup extends MX_Controller {
             print_r($this->db->last_query());
             echo '</pre>';
             */
+            //die();
         }
         $query = $this->payroll->get_monthly_income($period_id)->result(); //get all monthly income on the same period
         foreach ($query as $row => $value) {
@@ -243,8 +246,6 @@ class Payroll_setup extends MX_Controller {
     //FUNGSI BUAT UPDATE NILAI GAJI BULANAN NGAMBIL DARI MASTER
     public function update_monthly($period_id)
     {
-        //$this->_validate();
-        //$employee_id = $this->input->post('employee_id');
         $employee_id = GetAllSelect('payroll_master', 'employee_id', array())->result();
         foreach($employee_id as $e):
             $num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$e->employee_id, 'payroll_period_id'=>'where/'.$period_id))->num_rows();
@@ -284,8 +285,11 @@ class Payroll_setup extends MX_Controller {
                         'payroll_component_id' =>$c->payroll_component_id,
                         'value' =>$c->value,
                     );
-                if($component_num_rows>0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);
-                }else{$this->db->insert('payroll_monthly_income_component', $data2);}
+                $is_reguler = getValue('is_annualized', 'payroll_component', array('id'=>'where/'.$c->payroll_component_id));
+                if($is_reguler == 1){
+                    if($component_num_rows>0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);
+                    }else{$this->db->insert('payroll_monthly_income_component', $data2);}
+                }
                     //print_r($this->db->last_query());
             endforeach;
         endforeach;
