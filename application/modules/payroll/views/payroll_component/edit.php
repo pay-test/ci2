@@ -15,11 +15,10 @@
       <li>
         <p>YOU ARE HERE</p>
       </li>
-      <li><a href="" class="active"><?php echo $title; ?></a> </li>
+      <li><a href="#"><?php echo $title; ?></a> </li>
+      <li><a href="<?php echo base_url('payroll/payroll_component')?>" class="active"><?php echo $title.' - Component'; ?></a> </li>
+      <li><a href="<?php echo base_url('payroll/payroll_component/edit/'.$id.'/'.$session_id)?>" class="active"><?php echo 'Edit'; ?></a> </li>
     </ul>
-    <div class="page-title"> <a href="<?php echo base_url('payroll/payroll_component')?>"><i class="icon-custom-left"></i></a>
-      <h3><?php echo $title ?> - <span class="semi-bold"><?php echo $page_title; ?></span></h3>
-    </div>
     <div class="row-fluid">
       <div class="span12">
         <div class="grid simple ">
@@ -84,8 +83,8 @@
                                   <label class="control-label col-md-3">Attribute</label>
                                   <div class="col-md-9">
                                       <select name="is_annualized" class="form-control" disabled>
-                                        <option value="0" <?php echo ($data->is_annualized == 0) ? 'selected="selected"' : '';?>>Not Annualized</option>
-                                        <option value="1" <?php echo ($data->is_annualized == 1) ? 'selected="selected"' : '';?>>Annualized</option>
+                                        <option value="0" <?php echo ($data->is_annualized == 0) ? 'selected="selected"' : '';?>>IRegular</option>
+                                        <option value="1" <?php echo ($data->is_annualized == 1) ? 'selected="selected"' : '';?>>Regular</option>
                                       </select>
                                       <span class="help-block"></span>
                                   </div>
@@ -240,6 +239,10 @@
                           <tr>
                             <td>UMK</td>
                             <td align="left">UMK</td>
+                          </tr>
+                          <tr>
+                            <td>TK0</td>
+                            <td align="left">PTKP - Not Married Person With ZERO Dependant</td>
                           </tr>
                           <tr>
                             <td>K0</td>

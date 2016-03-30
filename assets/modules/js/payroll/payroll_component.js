@@ -9,7 +9,6 @@ $(document).ready(function() {
         autoclose: true,
         todayHighlight: true
     });
-
     var session_id = $('#session_select option:selected').val();
     //alert(session_id);
     $("#session_select").change(function(){

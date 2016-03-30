@@ -22,7 +22,8 @@ $(document).ready(function() {
         })
         //console.log("Session: ", e.target.value)
     });
-
+    
+    $("#multi").select2();
     $("#period").datepicker( {
         format: "mm-yyyy",
         startView: "months", 

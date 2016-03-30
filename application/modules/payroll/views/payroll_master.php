@@ -14,11 +14,9 @@
         <li>
           <p>YOU ARE HERE</p>
         </li>
-        <li><a href="" class="active"><?php echo $title; ?></a> </li>
+        <li><a href="#"><?php echo $title; ?></a> </li>
+        <li><a href="<?php echo base_url('payroll/payroll_master')?>" class="active"><?php echo $title.' - Master'; ?></a> </li>
       </ul>
-      <div class="page-title"> <i class="icon-custom-left"></i>
-        <h3><?php echo $title ?> - <span class="semi-bold"><?php echo $page_title; ?></span></h3>
-      </div>
       <div class="row-fluid">
         <div class="span12">
           <div class="grid simple ">

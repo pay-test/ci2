@@ -92,7 +92,7 @@
           cache: false,
           success: function(html){
             $("#text"+ID).hide();
-            $("#td"+ID).html(first);
+            $("#td"+ID).html(addCommas(first));
             $("#td"+ID).show();
           }
         });
@@ -138,7 +138,7 @@
           cache: false,
           success: function(html){
             $("#text_max"+ID).hide();
-            $("#td_max"+ID).html(first);
+            $("#td_max"+ID).html(addCommas(first));
             $("#td_max"+ID).show();
           }
         });
