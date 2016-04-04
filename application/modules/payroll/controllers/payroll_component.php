@@ -346,6 +346,7 @@ class Payroll_component extends MX_Controller {
     {
         $today = date('Y-m-d');
         $master_id = GetAllSelect('payroll_master_component', 'payroll_component_id, payroll_master_id', array('payroll_component_id'=>'where/'.$component_id))->result();
+        $emp_id = getValue('employee_id', 'payroll_master', array('id'=>'where/'.$master_id));
         $filter = array('payroll_component_id'=>'where/'.$component_id, 'session_id'=>'where/'.$this->session_id);
         $component_session_id = getValue('id', 'payroll_component_session', $filter);//lastq();
         $com_val = $this->db->select('*')->where('payroll_component_session_id', $component_session_id)->get('payroll_component_value')->result();
@@ -372,7 +373,7 @@ class Payroll_component extends MX_Controller {
                 if(!in_array('IF', $tx)){
                     for($i=0;$i<sizeof($tx);$i++)://print_mz($tx);
                         if(preg_match("/[a-z]/i", $tx[$i])){
-                            
+                            $session_id = '2015';
                             $g = getValue('id', 'payroll_component', array('code'=>'where/'.$tx[$i]));
                             $detail = $this->payroll->get_employee_detail($emp_id);
                             $det = $detail->row();
