@@ -13,7 +13,23 @@ class Payroll_component_model extends CI_Model {
 		$this->load->database();
 	}
 
+	public function get_employee_detail($employee_id = 0) {
+		$this->db->select('a.employee_id,f.person_nm,c.job_id,c.job_nm,d.job_class_id,d.job_class_cd,d.gradeval_top,d.job_level,e.org_id,e.org_cd,e.org_nm');
+		$this->db->from('hris_employee AS a');
+		$this->db->join('hris_employee_job AS b', 'b.employee_id = a.employee_id', 'left');
+		$this->db->join('hris_jobs AS c', 'c.job_id = b.job_id', 'left');
+		$this->db->join('hris_job_class AS d', 'd.job_class_id = c.job_class_id', 'left');
+		$this->db->join('hris_orgs AS e', 'e.org_id = c.org_id', 'left');
+		$this->db->join('hris_persons AS f', 'f.person_id = a.person_id', 'left');
+		$this->db->where('a.status_cd', 'normal');
+		$this->db->where('a.employee_id', $employee_id);
+		$query = $this->db->get();
+
+		return $query;
+
+	}
 	//custom model
+
 
 	function get_component_type() {
 		$this->db->from('payroll_component_type');
