@@ -90,7 +90,7 @@ class Payroll_setup extends MX_Controller {
         $status = $this->input->post('status');
         $data = array('status' => $status);
         $this->db->where('id', $period_id)->update('payroll_period', $data);
-        $this->update_monthly($period_id);
+        $this->update_monthly($period_id);//lastq();
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
         //Biaya Jabatan
@@ -99,7 +99,7 @@ class Payroll_setup extends MX_Controller {
         $bj_max = getValue('max', 'payroll_biaya_jabatan', array('id'=>'where/1'));
        foreach ($query as $value) {
             $emp_id = $value->employee_id;
-            $emp_id = 133;
+            //$emp_id = 133;
             $filter = array('employee_id'=>'where/'.$emp_id);
             //Nilai PTKP Tiap Karyawan
             $emp_ptkp_id = getValue('payroll_ptkp_id', 'payroll_master', $filter);
@@ -373,7 +373,7 @@ class Payroll_setup extends MX_Controller {
         $session = (date('Y-m-d H:i:s') < $start_ses) ? $y-1 : $y;//print_mz($session); 
         //$session = 2016;
         $asid = 14;
-        $employee_id = 644;
+        //$employee_id = 644;
         //generate configuration
         $actual_allowance = 2000;
         $employee_jam = 75/100;
