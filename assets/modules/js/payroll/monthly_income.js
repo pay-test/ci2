@@ -97,7 +97,7 @@ function print(id)
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
-                alert('Error get data from ajax');
+                alert('Employee Payroll Is Empty In This Period');
             }
         });
     }
@@ -144,7 +144,7 @@ function edit_user(id)
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
-                alert('Error get data from ajax');
+                alert('Employee Payroll Is Empty In This Period');
             }
         });
     }
