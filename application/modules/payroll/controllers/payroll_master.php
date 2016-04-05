@@ -65,7 +65,7 @@ class Payroll_master extends MX_Controller {
         $data = $this->payroll->get_by_id($id, $session_id);//print_mz($data); 
         $payroll_master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$id, 'session_id'=>'where/'.$session_id));//print_mz($payroll_master_id);
         $this->cek_master_component($payroll_master_id, $session_id);
-        $this->get_formula($payroll_master_id, $session_id);
+        //$this->get_formula($payroll_master_id, $session_id);//lastq();
         $ptkp = getValue('payroll_ptkp_id', 'payroll_master', array('id'=>'where/'.$payroll_master_id));
         $data2 = $this->payroll->get_master_component($payroll_master_id)->result_array();//print_mz($data2);
         //$data2 = $this->payroll->get_master_component_s($payroll_master_id, $session_id)->result_array();//print_mz($data2);
@@ -119,7 +119,7 @@ class Payroll_master extends MX_Controller {
                 //print_ag($is_condition);
             //die();
             //echo $formula;
-            $t = $formula;//print_r("idnya $value->component formulanya $value->formula <br/>");
+            $t = $formula;//print_ag($formula);//print_r("idnya $value->component formulanya $value->formula <br/>");
             //$t = 'IF ( BWGS * HOUS ) > 2 * 5000000 ; 2 * 5000000 * 4 / 100';
             //$t = getValue('formula', 'payroll_component_value', array('id'=>'where/28'));//print_mz($t);
             $tx = explode(' ', $t);$r='';//print_mz($tx);
@@ -298,6 +298,7 @@ class Payroll_master extends MX_Controller {
                 //echo '<pre>';print_r($this->db->last_query());echo "</pre><br/>";
             endif;
         }
+        //die();
        return true;
     }
 
