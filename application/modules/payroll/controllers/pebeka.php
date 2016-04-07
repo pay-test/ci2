@@ -49,23 +49,103 @@ class Pebeka extends MX_Controller {
                 $employee_id = GetValue('employee_id','hris_employee',array('employee_ext_id' => 'where/'.$employee_ext_id));
 
                 //count
-                $count = GetAll('payroll_monthly_deduction_pebeka',array('payroll_period_id' => 'where/'.sessNow(), 'employee_id' => 'where/'.$employee_id))->num_rows();
+                $count = GetAll('payroll_monthly_deduction_pebeka',array('payroll_period_id' => 'where/'.$this->input->post('periode'), 'employee_id' => 'where/'.$employee_id))->num_rows();
 
                 if ($count > 0) {
-                    $val_old = GetValue('value','payroll_monthly_deduction_pebeka',array('employee_id' => 'where/'.$employee_id, 'payroll_period_id' => 'where/'.sessNow()));
+                    $val_old = GetValue('value','payroll_monthly_deduction_pebeka',array('employee_id' => 'where/'.$employee_id, 'payroll_period_id' => 'where/'.$this->input->post('periode')));
                     $val_new = $val_old + $val;
                     $data_update = array('value' => $val_new);
-                    $this->all_model->update('payroll_monthly_deduction_pebeka',$data_update,array('employee_id' => $employee_id, 'payroll_period_id' => sessNow()));
+                    $this->all_model->update('payroll_monthly_deduction_pebeka',$data_update,array('employee_id' => $employee_id, 'payroll_period_id' => $this->input->post('periode')));
                     //lastq();
                 }else{
                     $data_insert = array(
-                        'payroll_period_id' => sessNow(),
+                        'payroll_period_id' => $this->input->post('periode'),
                         'employee_id' => $employee_id,
                         'value' => $val,
                         'created_by' => sessId(),
                         'created_on' => date('Y-m-d H:i:s')
                         );
                     $this->all_model->insert('payroll_monthly_deduction_pebeka',$data_insert);
+                }
+            }
+            
+        }
+        redirect('payroll/pebeka');
+    }
+
+    function upload_excel_import_data() {
+        set_time_limit(0);
+
+        $config['upload_path'] = './upload/files/excel';
+        $config['allowed_types'] = 'xlsx|xls|csv';
+        $config['overwrite'] = TRUE;
+        $config['max_size']  = '10000';
+
+        $val = 0;
+        
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('excelfile')){
+            $error = array('error' => $this->upload->display_errors());
+            die(print_r($error));
+        }
+        else{
+            $data = array('upload_data' => $this->upload->data());
+           // echo "success";
+            $data_upload = $this->upload->data();
+            //die(print_r($data_upload));
+            $result = $this->run_import($data_upload);
+            //die(print_r($result));
+            foreach ($result as $row) {
+                $employee_ext_id = $row['A'];
+                $month = $row['B'];
+                $code_comp = $row['C'];
+                $val = $row['D'];
+                $employee_id = GetValue('employee_id','hris_employee',array('employee_ext_id' => 'where/'.$employee_ext_id));
+                $id_comp = GetValue('id','payroll_component', array('code' => 'where/'.$code_comp));
+                if ($month == 1) {
+                    $id_periode = 1;
+                }else{
+                    $id_periode = 2;
+                }
+
+                if ($val == NULL) {
+                    $val = 0;
+                }
+
+                //count
+                $count = GetAll('payroll_monthly_income',array('payroll_period_id' => 'where/2', 'employee_id' => 'where/'.$employee_id))->num_rows();
+
+                if ($count > 0) {
+                    if ($id_periode == 1) {
+                        continue;
+                    }
+                    $monthly_id = GetValue('id','payroll_monthly_income',array('payroll_period_id' => 'where/2', 'employee_id' => 'where/'.$employee_id));
+                    $data_comp_insert = array(
+                        'payroll_monthly_income_id' => $monthly_id,
+                        'payroll_component_id' => $id_comp,
+                        'value' => $val
+                    );
+
+                    $this->all_model->insert('payroll_monthly_income_component',$data_comp_insert);
+                }else{
+                    if ($id_periode == 1) {
+                        continue;
+                    }
+                    $data_insert = array(
+                    'employee_id' => $employee_id,
+                    'payroll_period_id' => $id_periode
+                    );
+
+                    $monthly_id = $this->all_model->insert('payroll_monthly_income',$data_insert);
+
+                    $data_comp_insert = array(
+                        'payroll_monthly_income_id' => $monthly_id,
+                        'payroll_component_id' => $id_comp,
+                        'value' => $val
+                    );
+
+                    $this->all_model->insert('payroll_monthly_income_component',$data_comp_insert);
                 }
             }
             
