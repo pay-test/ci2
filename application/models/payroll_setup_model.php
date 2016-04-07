@@ -7,6 +7,7 @@ class Payroll_setup_model extends CI_Model {
 	var $table_join1 = 'payroll_monthly_income';
 	var $table_join2 = 'payroll_monthly_income_component';
 	var $table_join3 = 'payroll_component';
+	var $table_join4 = 'payroll_tax_component';
 
 	var $column = array('title','code','component_type_id','tax_component_id'); //set column field database for order and search
 	var $order = array('id' => 'asc'); // default order 
@@ -26,11 +27,15 @@ class Payroll_setup_model extends CI_Model {
 			'.$this->table_join2.'.value as value,
 			'.$this->table_join3.'.id as component_id,
 			'.$this->table_join3.'.component_type_id as component_type_id,
-			');
+			'.$this->table_join3.'.is_annualized as is_annualized,
+			'.$this->table_join3.'.tax_component_id as tax_component_id,
+			'.$this->table_join4.'.column as tax_component_column'
+			);
 
 		$this->db->from($this->table_join1);
 		$this->db->join($this->table_join2, $this->table_join1.'.id = '.$this->table_join2.'.payroll_monthly_income_id', 'left');
 		$this->db->join($this->table_join3, $this->table_join2.'.payroll_component_id = '.$this->table_join3.'.id', 'left');
+		$this->db->join($this->table_join4, $this->table_join3.'.tax_component_id = '.$this->table_join4.'.id', 'left');
 		$this->db->where('payroll_monthly_income_id', $monthly_id);
 
 		$result = $this->db->get();

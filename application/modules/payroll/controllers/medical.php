@@ -49,17 +49,17 @@ class Medical extends MX_Controller {
                 $employee_id = GetValue('employee_id','hris_employee',array('employee_ext_id' => 'where/'.$employee_ext_id));
 
                 //count
-                $count = GetAll('payroll_monthly_deduction_medical',array('payroll_period_id' => 'where/'.sessNow(), 'employee_id' => 'where/'.$employee_id))->num_rows();
+                $count = GetAll('payroll_monthly_deduction_medical',array('payroll_period_id' => 'where/'.$this->input->post('periode'), 'employee_id' => 'where/'.$employee_id))->num_rows();
 
                 if ($count > 0) {
-                    $val_old = GetValue('value','payroll_monthly_deduction_medical',array('employee_id' => 'where/'.$employee_id, 'payroll_period_id' => 'where/'.sessNow()));
+                    $val_old = GetValue('value','payroll_monthly_deduction_medical',array('employee_id' => 'where/'.$employee_id, 'payroll_period_id' => 'where/'.$this->input->post('periode')));
                     $val_new = $val_old + $val;
                     $data_update = array('value' => $val_new);
-                    $this->all_model->update('payroll_monthly_deduction_medical',$data_update,array('employee_id' => $employee_id, 'payroll_period_id' => sessNow()));
+                    $this->all_model->update('payroll_monthly_deduction_medical',$data_update,array('employee_id' => $employee_id, 'payroll_period_id' => $this->input->post('periode')));
                     //lastq();
                 }else{
                     $data_insert = array(
-                        'payroll_period_id' => sessNow(),
+                        'payroll_period_id' => $this->input->post('periode'),
                         'employee_id' => $employee_id,
                         'value' => $val,
                         'created_by' => sessId(),
