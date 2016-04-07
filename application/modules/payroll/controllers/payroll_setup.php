@@ -81,9 +81,207 @@ class Payroll_setup extends MX_Controller {
         echo json_encode(array("result" => TRUE));
     }
 
+    //deni_dev
     //FUNGSI BUAT NGITUNG PPH
 
     public function process() {
+        $i = 0;
+        //$employee_id = 300;
+        $period_id = $this->input->post('period_id');
+        $status = $this->input->post('status');
+        $data = array('status' => $status);
+        $this->db->where('id', $period_id)->update('payroll_period', $data);
+        //$this->cek_master_component();
+        
+        $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
+        //print_mz($query);
+
+        //Biaya Jabatan
+        $bj_persen = getValue('value', 'payroll_biaya_jabatan', array('id'=>'where/1'))/100;
+        $bj_max = getValue('max', 'payroll_biaya_jabatan', array('id'=>'where/1'));
+        foreach ($query as $value) {
+            $emp_id = $value->employee_id;
+            $deduction = 0;
+            $income_tax = 0;
+            $total_biaya_jabatan = 0;
+            $total_income = 0;
+            $total_ireguler_income = 0;
+            $total_jk_jkk = 0;
+
+            //get component from master
+            $this->update_monthly($emp_id,$period_id);//lastq();
+            //hitung pph bulan berjalan
+            $curr_month = getValue('month','payroll_period',array('id' => 'where/'.$period_id));
+            $curr_year = getValue('year','payroll_period',array('id' => 'where/'.$period_id));
+            //print_mz($curr_month);
+            for ($i=1; $i <= (int)$curr_month; $i++) {
+                $income = 0;
+                $ireguler_income = 0;
+                $jk_jkk = 0;
+                $income_periode = $i;
+                $period_id = getValue('id','payroll_period',array('year' => 'where/'.$curr_year, 'month' => 'where/'.str_pad($i,2,'0',STR_PAD_LEFT)));
+                $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));//lastq();print_mz($monthly_income_id);
+                //get overtime
+               // $ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
+               // $ot = 1800000;
+                //print_mz($ot);
+                $q = $this->payroll->get_monthly_income($monthly_income_id)->result();//print_mz($q);
+                //print_mz($i);
+
+                foreach ($q as $valuex) {
+                    //print_r('*'.$valuex->tax_component_id);
+                    
+                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 1) {
+                        //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
+                        $income = $income + $valuex->value;
+                        //print_r($income."<br>");
+                    }
+
+                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 0) {
+                        //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
+                        $ireguler_income = $ireguler_income + $valuex->value;
+                        //print_r($income."<br>");
+                    }
+
+                    if ($valuex->component_id == 2 OR $valuex->component_id == 8) {
+                       //print_r($valuex->component_id.'-'.'<br/>'.$valuex->value.'-');
+                        $jk_jkk = $jk_jkk + $valuex->value;
+                        //print_r($income."<br>");
+                    }
+
+                    if ($valuex->component_type_id == 2 && $valuex->component_id != 55 && $valuex->tax_component_column != 0) {
+                        //print_r($valuex->component_id.'-'.'<br/>'.$valuex->value.'-');
+                        $deduction = $deduction + $valuex->value;
+                        //print_r($income."<br>");
+                    }
+
+                    if ($valuex->component_id == 55 AND $i < (int)$curr_month) {
+                        $income_tax = $income_tax + $valuex->value;
+                    }
+                }
+
+                //total income
+                $total_income = $total_income + $income;
+                //total ireguler income
+                $total_ireguler_income = $total_ireguler_income + $ireguler_income;
+                //total jamsostek jk_jkk
+                $total_jk_jkk = $total_jk_jkk + $jk_jkk;
+            }
+            //total regular income
+            $total_regular_income = $total_income + $total_jk_jkk;
+            //print_mz($total_regular_income);
+
+            //biaya jabatan
+            if ((($total_regular_income/$income_periode)*$bj_persen) < $bj_max) {
+                $total_biaya_jabatan = ($total_regular_income/$income_periode) * $bj_persen * $income_periode;
+            }else{
+                $total_biaya_jabatan = $bj_max * $income_periode;
+            }
+            //print_mz(round($total_biaya_jabatan));
+            //total deduction
+            $total_deduction = $deduction + round($total_biaya_jabatan);
+            //print_mz($total_biaya_jabatan);
+            $curr_monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));//lastq();print_mz($curr_monthly_income_id);
+           //print_mz($income_periode." - ".$total_regular_income." - ".$total_deduction." - ".$income_tax);
+            $pph_value = $this->get_pph($emp_id,$income_periode,$bj_max,$bj_persen,$total_biaya_jabatan,$total_regular_income,$total_deduction,$total_ireguler_income,$income_tax);
+            //print_mz($pph_value);
+            //insert/update pph
+            $pph_component_id = 55;
+            $pph_num_rows = GetAllSelect('payroll_monthly_income_component','payroll_component_id', array('payroll_monthly_income_id' => 'where/'.$curr_monthly_income_id, 'payroll_component_id'=>'where/'.$pph_component_id))->num_rows();
+            $data = array('payroll_monthly_income_id' => $curr_monthly_income_id,
+                          'payroll_component_id' => $pph_component_id,
+                          'value' => $pph_value,
+             );
+            if($pph_num_rows>0) {
+                $this->db->where('payroll_monthly_income_id', $curr_monthly_income_id)->where('payroll_component_id', $pph_component_id)->update('payroll_monthly_income_component', $data);
+            }else {
+                $this->db->insert('payroll_monthly_income_component', $data);
+            }
+        }
+
+        echo json_encode(array("result" => TRUE));
+    }
+
+    function get_pph($emp_id,$income_periode,$bj_max,$bj_persen,$total_biaya_jabatan,$total_regular_income,$total_deduction,$total_ireguler_income,$income_tax) {
+        $filter = array('employee_id'=>'where/'.$emp_id);
+        //Nilai PTKP Tiap Karyawan
+        $emp_ptkp_id = getValue('payroll_ptkp_id', 'payroll_master', $filter);
+        $emp_ptkp = getValue('value', 'payroll_ptkp', array('id'=>'where/'.$emp_ptkp_id));
+        $ptkp = $emp_ptkp;
+
+        $income_netto = $total_regular_income - $total_deduction;//echo $income_netto.'-';
+        //print_mz($income_netto);
+        $income_netto_year = ($income_netto * 12) / $income_periode;
+        //print_mz($income_netto_year);
+        //pendapatan sebelum kena pajak
+        $pskp = $income_netto_year - $ptkp;//print_r('pkp = '.$pkp.'-');
+
+        $pph_x = $this->get_hitung_pphx($pskp,$total_ireguler_income);
+        //print_mz($pph_x);
+        $pph_y = $this->get_hitung_pphy($pskp,$income_periode,$total_ireguler_income,$total_biaya_jabatan,$bj_max,$bj_persen);
+        //print_mz($pph_y);
+        //pph iregeguler
+        $pph_ireg = $pph_x - $pph_y;
+        //print_mz($pph_ireg);
+        $pph_ireg = round($pph_ireg); 
+        //pph reguler
+        $pph_reg = ($pph_y * $income_periode) / 12;
+        $pph_reg = round($pph_reg);
+        //print_mz($pph_reg);
+        //pph disetahunkan
+        $pph_disetahunkan = $pph_ireg + $pph_reg;
+        //pph yang sudah dibayar
+        $pph_dibayar = $income_tax;
+        //pph bulan berjalan
+        $pph_value = $pph_disetahunkan - $pph_dibayar;
+        //print_mz($pph_value);
+
+        return $pph_value;
+    }
+
+    //fungsi hitung pph termasuk ireguler income
+    function get_hitung_pphx($pskp,$total_ireguler_income) {
+        //pengurangan pendapatan ireguler
+        /*if (($total_ireguler_income + $pskp) >= $bj_max * $income_periode) {
+            $sisa_biaya_jabatan = $bj_max * $income_periode - $total_biaya_jabatan;
+        }else{
+            $sisa_biaya_jabatan = $total_ireguler_income * $bj_persen;
+        }*/
+        //print_mz($sisa_biaya_jabatan);
+        //pendapatan kena pajak
+        $pkp = $pskp + $total_ireguler_income;// - $sisa_biaya_jabatan;
+        $pkp_pembulatan = 1000 * floor($pkp/1000);
+        //print_mz($pkp_pembulatan);
+
+        // Pajak Progressif
+        $pph_tahun = $this->hitung_pajak_progressif($pkp_pembulatan);
+        //print_mz($pph_tahun);
+        return $pph_tahun;
+    }
+    //fungsi hitung pph diluar ireguler income
+    function get_hitung_pphy($pskp,$income_periode,$total_ireguler_income,$total_biaya_jabatan,$bj_max,$bj_persen) {
+        //pengurangan pendapatan ireguler
+        if (($total_ireguler_income + $pskp) >= $bj_max * $income_periode) {
+            $sisa_biaya_jabatan = $bj_max * $income_periode - $total_biaya_jabatan;
+        }else{
+            $sisa_biaya_jabatan = $total_ireguler_income * $bj_persen;
+        }
+        //print_mz($sisa_biaya_jabatan);
+        //pendapatan kena pajak
+        $pkp = $pskp;// - $sisa_biaya_jabatan;
+        $pkp_pembulatan = 1000 * floor($pkp/1000);
+        //print_mz($pkp_pembulatan);
+
+        // Pajak Progressif
+        $pph_tahun = $this->hitung_pajak_progressif($pkp_pembulatan);
+        //print_mz($pph_tahun);
+        return $pph_tahun;
+    }
+    //e.o. deni_dev
+
+    //FUNGSI BUAT NGITUNG PPH
+
+    public function process_() {
         $i = 0;
         //$employee_id = "113";
         $period_id = $this->input->post('period_id');
@@ -129,7 +327,7 @@ class Payroll_setup extends MX_Controller {
                     //print_r($income."<br>");
                 }
 
-                if ($valuex->component_type_id == 2 && $valuex->component_id != 55) {
+                if ($valuex->component_type_id == 2 && $valuex->component_id != 55 && $valuex->component_tax_id != 0) {
                     //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
                     $deduction = $deduction + $valuex->value;
                     //print_r($income."<br>");
@@ -245,7 +443,60 @@ class Payroll_setup extends MX_Controller {
     }
 
     //FUNGSI BUAT UPDATE NILAI GAJI BULANAN NGAMBIL DARI MASTER
-    public function update_monthly($period_id)
+    public function update_monthly($employee_id,$period_id)
+    {
+        //$employee_id = GetAllSelect('payroll_master', 'employee_id', array())->result();
+        //foreach($employee_id as $e):
+            $num_rows = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_period_id'=>'where/'.$period_id))->num_rows();
+            $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_period_id'=>'where/'.$period_id));
+            $old_group = getValue('payroll_group_id', 'payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_period_id'=>'where/'.$period_id));
+            $group_id = getValue('payroll_group_id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));//print_mz($group_id);
+            $payroll_ptkp_id = getValue('payroll_ptkp_id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
+            $payroll_currency_id = getValue('payroll_currency_id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
+            $payroll_tax_method_id = getValue('payroll_tax_method_id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
+            $is_expatriate = getValue('is_expatriate', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
+            //print_mz($group_id);
+            //if($old_group != $group_id)$this->db->where('payroll_monthly_income_id', $monthly_income_id)->update('payroll_monthly_income_component', array('is_deleted' => 1));
+            $data = array(
+                    'employee_id' => $employee_id,
+                    'payroll_group_id' => $group_id,
+                    'payroll_period_id' => $period_id,
+                    'payroll_ptkp_id'=>$payroll_ptkp_id,
+                    'payroll_currency_id'=>$payroll_currency_id,
+                    'payroll_tax_method_id'=>$payroll_tax_method_id,
+                    'is_expatriate'=>$is_expatriate
+                );
+            if($num_rows>0)$this->db->where('employee_id', $employee_id)->where('payroll_period_id', $period_id)->update('payroll_monthly_income', $data);
+                else $this->db->insert('payroll_monthly_income', $data);//lastq();
+                //print_r($this->db->last_query());
+            $monthly_income_id = ($num_rows>0) ? $monthly_income_id : $this->db->insert_id();
+            $monthly_group = getAll('payroll_monthly_income', array('employee_id'=>'where/'.$employee_id, 'payroll_group_id'=>'where/'.$old_group))->num_rows();//print_mz($monthly_group);
+            $master_id = getValue('id', 'payroll_master', array('employee_id'=>'where/'.$employee_id));
+            $component= GetAllSelect('payroll_master_component', 'payroll_component_id, value', array('payroll_master_id'=>'where/'.$master_id))->result();
+            
+            //print_mz($component);
+            
+            foreach($component as $c):
+                $component_num_rows = getAll('payroll_monthly_income_component', array('payroll_component_id'=>'where/'.$c->payroll_component_id,'payroll_monthly_income_id'=>'where/'.$monthly_income_id))->num_rows;
+                $master_component_id = getValue('id', 'payroll_monthly_income_component', array('payroll_component_id'=>'where/'.$c->payroll_component_id,'payroll_monthly_income_id'=>'where/'.$monthly_income_id));
+                $data2 = array(
+                        'payroll_monthly_income_id'=>$monthly_income_id,
+                        'payroll_component_id' =>$c->payroll_component_id,
+                        'value' =>$c->value,
+                    );
+                $is_reguler = getValue('is_annualized', 'payroll_component', array('id'=>'where/'.$c->payroll_component_id));
+                if($is_reguler == 1){
+                    if($component_num_rows>0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);
+                    }else{$this->db->insert('payroll_monthly_income_component', $data2);}
+                }
+                    //print_r($this->db->last_query());
+            endforeach;
+        //endforeach;
+        return true;
+    }
+
+    //FUNGSI BUAT UPDATE NILAI GAJI BULANAN NGAMBIL DARI MASTER
+    public function update_monthly_($period_id)
     {
         $employee_id = GetAllSelect('payroll_master', 'employee_id', array())->result();
         foreach($employee_id as $e):
@@ -596,28 +847,28 @@ class Payroll_setup extends MX_Controller {
     }
 
 
-    function cek_master_component()
+    function cek_master_component($session_id = 2015)
     {
         $master = GetAllSelect('payroll_master', 'id')->result();
         foreach($master as $m){
             $master_id= $m->id;
             //$filter =  array('id'=>'where/'.$m->id, 'session_id'=>'where/'.sessNow());
             $filter =  array('id'=>'where/'.$m->id);
-        $group_id = getValue('payroll_group_id', 'payroll_master',$filter);//print_mz($group_id);
-        $group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq()
-        $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//print_mz($cek_group_component->result());
-        foreach ($cek_group_component->result() as $r) {
-            $component_num_rows = GetAllSelect('payroll_master_component', 'payroll_component_id', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/'.$r->payroll_component_id))->num_rows();//print_r("num_rows-".$component_num_rows);
-            if($component_num_rows<1):
-                $data = array('payroll_master_id' => $master_id,
-                              'payroll_component_id'=> $r->payroll_component_id,
-                              'value' => 0
-                    );
-                $this->db->insert('payroll_master_component', $data);
-            endif;
-        }
+            $group_id = getValue('payroll_group_id', 'payroll_master',$filter);//print_mz($group_id);
+            $group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq()
+            $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//print_mz($cek_group_component->result());
+            foreach ($cek_group_component->result() as $r) {
+                $component_num_rows = GetAllSelect('payroll_master_component', 'payroll_component_id', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/'.$r->payroll_component_id))->num_rows();//print_r("num_rows-".$component_num_rows);
+                if($component_num_rows<1):
+                    $data = array('payroll_master_id' => $master_id,
+                                  'payroll_component_id'=> $r->payroll_component_id,
+                                  'value' => 0
+                        );
+                    $this->db->insert('payroll_master_component', $data);
+                endif;
+            }
 
-        $this->get_formula($m->id, 2016);
+            $this->get_formula($m->id, $session_id);
         }
     }
 
