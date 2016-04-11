@@ -223,6 +223,7 @@ class overtime_model extends CI_Model {
 		if(!isset($param['rekap'])) {
 			if($_POST['length'] != -1) $this->db->limit($_POST['length'], $_POST['start']);
 		}
+		$this->db->limit(20, 0);
 		$query = $this->db->get();
 		//lastq();
 		return $query;

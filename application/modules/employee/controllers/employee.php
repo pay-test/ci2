@@ -17,7 +17,7 @@ class employee extends CI_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->lang->load('attendance');
+		$this->lang->load('employee');
 	}
 	
 	function index()
@@ -63,47 +63,15 @@ class employee extends CI_Controller {
         }
     }
     
-	function main($dep=0,$user=0)
+	function list_employee($dep=0,$user=0)
 	{
-		//Set Global
 		permission();
-    $data = GetHeaderFooter();
-		$data['path_file'] = $this->filename;
-		//permissionkaryawan($this->session->userdata('webmaster_id'), $data['path_file']);
-		$data['main_content'] = $data['path_file'];
-		$data['filename'] = $this->filename;
-		$data['title'] = $this->title;
-		
-		$path_paging = base_url().$this->filename."/main/".$dep."/".$user;
-		$uri_segment = 5;
-		$pg = $this->uri->segment($uri_segment);
-		$per_page=1000;
-		//End Global
-		
-		$filter = array();
-		$filter_where_in = array("employee_grup"=> array("A", "B", "C", "D"));
-		
-		//Grup Admin
-		$id_grup = $this->session->userdata("webmaster_grup");
-		//End Grup Admin1
-		
-		$data['grid'] = array("Name","NIK","Group","Gender","BOD");
-		$data['query_all'] = GetAll("hris_view_".$this->tabel, $filter, $filter_where_in);
-		$filter['limit'] = $pg."/".$per_page;
-		$filter['person_nm'] = "order/asc";
-		$data['query_list'] = GetAll("hris_view_".$this->tabel, $filter, $filter_where_in);
-		$data['list'] = array("person_nm","ext_id","employee_grup","adm_gender_cd","ttl");
-		
-		//Page
-		$pagination = Page($data['query_all']->num_rows(),$per_page,$pg,$path_paging,$uri_segment);
-		if(!$pagination) $pagination = "<strong>1</strong>";
-		$data['pagination'] = $pagination;
-		//End Page
-		
-		$this->load->view('employee',$data);		
+    $data['path_file'] = $this->filename;
+
+		$this->load->view('employee', $data);
 	}
 	
-	function detail($id=0)
+	function detail_employee($id=0)
 	{
 		//Set Global
 		permission();
@@ -116,7 +84,7 @@ class employee extends CI_Controller {
 		else $data['val_button'] = lang("add");
 		//End Global
 		
-		$q = GetAll("hris_view_".$this->tabel, array("person_id"=> "where/".$id));
+		$q = GetAll("kg_view_".$this->tabel, array("person_id"=> "where/".$id));
 		$r = $q->result_array();
 		if($q->num_rows() > 0) $data['val'] = $r[0];
 		else $data['val'] = array();
@@ -136,7 +104,7 @@ class employee extends CI_Controller {
 		$this->load->view('employee_form',$data);
 	}
 	
-	function update()
+	function update_employee()
 	{
 		$webmaster_id = permission();
 		$id = $this->input->post('id');
@@ -181,7 +149,7 @@ class employee extends CI_Controller {
 			}
 		}
 		$dt = date("Y-m-d H:i:s");
-		//$data['employee_grup'] = $this->input->post("employee_grup");
+		//$data['group_shift'] = $this->input->post("group_shift");
 		//print_mz($data);
 		if($id > 0)
 		{
@@ -195,10 +163,7 @@ class employee extends CI_Controller {
 			$this->db->where("person_id", $id);
 			$this->db->update("hris_persons", $data);
 			
-			$this->db->where("person_id", $id);
-			$this->db->update("kg_hris_employee", array("employee_grup"=> $this->input->post("employee_grup"), "employee_grup_active"=> $this->input->post("employee_grup_active")));
-			
-			$this->exe_shift($id, $this->input->post('employee_grup_active'));
+			$this->exe_shift($id, $this->input->post('group_shift_active'));
 			//Admin Log
 			//$logs = $this->db->last_query();
 			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
@@ -218,22 +183,7 @@ class employee extends CI_Controller {
 			//$this->session->set_flashdata("message", lang('add')." ".$this->title." ".lang('msg_sukses'));
 		}
 		
-		/*$k=0;
-		$filter = array("urut_position"=> "order/asc");
-		$q = GetAll("view_employee", $filter);
-		foreach($q->result_array() as $r)
-		{
-			$k++;
-			if($r['id'] == $id)
-			{
-				if($k%15) $pg = floor($k/15) * 15;
-				else $pg = (floor($k/15)-1) * 15;
-				break;
-			}
-		}
-		
-		if($this->input->post("stay")) redirect($this->filename.'/detail/'.$id);
-		else redirect($this->filename."/main/0/0/".$pg);*/
+		$this->list_employee();
 	}
 	
 	function delete()
@@ -265,32 +215,35 @@ class employee extends CI_Controller {
 		$this->session->set_flashdata("message", lang('delete')." ".count($data)." ".lang($this->filename)." ".lang('msg_sukses'));
 	}
 	
-	function exe_shift($person_id, $tgl, $thn=2016) 
+	function exe_shift($person_id, $tgl) 
 	{
 		$webmaster_id = permission();
 		$exp = explode("-", $tgl);
 		$thn=$exp[0];
-		$grup=array("A", "B", "C", "D");
+		$grup=array("N.A.", "A", "B", "C", "D");
 		$bln=array("01","02","03","04","05","06","07","08","09","10","11","12");
 		if($thn == "2016") {
+			$jadwal_grup['N.A.'] = array("reg","off","off","reg","reg","reg","reg","reg","off","off","reg","reg","reg","reg","reg","off","off","reg","reg","reg","reg","reg","off","off","reg","reg","reg","reg");
 			$jadwal_grup['A'] = array(1,2,2,2,"off",3,3,"off",1,1,1,2,2,"off",3,3,"off","off",1,1,2,2,"off",3,3,3,"off",1);
 			$jadwal_grup['B'] = array("off",1,1,1,2,2,"off",3,3,"off","off",1,1,2,2,"off",3,3,3,"off",1,1,2,2,2,"off",3,3);
 			$jadwal_grup['C'] = array(3,3,"off","off",1,1,2,2,"off",3,3,3,"off",1,1,2,2,2,"off",3,3,"off",1,1,1,2,2,"off");
 			$jadwal_grup['D'] = array(2,"off",3,3,3,"off",1,1,2,2,2,"off",3,3,"off",1,1,1,2,2,"off",3,3,"off","off",1,1,2);
 		} else if($thn == "2015") {
+			$jadwal_grup['N.A.'] = array("reg","reg","off","off","reg","reg","reg","reg","reg","off","off","reg","reg","reg","reg","reg","off","off","reg","reg","reg","reg","reg","off","off","reg","reg","reg");
 			$jadwal_grup['A'] = array(1,1,2,2,2,"off",3,3,"off",1,1,1,2,2,"off",3,3,"off","off",1,1,2,2,"off",3,3,3,"off");
 			$jadwal_grup['B'] = array(3,"off",1,1,1,2,2,"off",3,3,"off","off",1,1,2,2,"off",3,3,3,"off",1,1,2,2,2,"off",3);
 			$jadwal_grup['C'] = array("off",3,3,"off","off",1,1,2,2,"off",3,3,3,"off",1,1,2,2,2,"off",3,3,"off",1,1,1,2,2);
 			$jadwal_grup['D'] = array(2,2,"off",3,3,3,"off",1,1,2,2,2,"off",3,3,"off",1,1,1,2,2,"off",3,3,"off","off",1,1);
 		}
+		//echo $thn."<br>";
 		//print_mz($jadwal_grup);
 		
 		//foreach($grup as $g) {
-			$emp = GetAll("kg_hris_employee", array("person_id"=> "where/".$person_id));
+			$emp = GetAll("kg_view_employee", array("person_id"=> "where/".$person_id));
 			foreach($emp->result_array() as $r) {
-				$g=$r['employee_grup'];
+				$g=$r['group_shift'];
 				if(isset($jadwal_grup[$g])) {
-					$id_employee=$r['person_id'];
+					$id_employee=$person_id;
 					$loop=0;
 					foreach($bln as $b) {
 						if($b >= $exp[1]) {
@@ -313,13 +266,13 @@ class employee extends CI_Controller {
 							if(!isset($hitung['1'])) $hitung['1']=0;
 							if(!isset($hitung['2'])) $hitung['2']=0;
 							if(!isset($hitung['3'])) $hitung['3']=0;
-							if(!isset($hitung['ns'])) $hitung['ns']=0;
+							if(!isset($hitung['reg'])) $hitung['reg']=0;
 							if(!isset($hitung['off'])) $hitung['off']=0;	
 								
 							$datanginput['jum_p']=$hitung['1'];
 							$datanginput['jum_s']=$hitung['2'];
 							$datanginput['jum_m']=$hitung['3'];
-							$datanginput['jum_ns']=$hitung['ns'];
+							$datanginput['jum_ns']=$hitung['reg'];
 							$datanginput['jum_off']=$hitung['off'];
 							
 							$cekdata=GetValue("id", "kg_jadwal_shift", array("id_employee"=> "where/".$id_employee, "bulan"=> "where/".$b, "tahun"=> "where/".$thn));
@@ -353,5 +306,31 @@ class employee extends CI_Controller {
 			}
 		//}
 	}
+	
+	function ajax_list_employee()
+  {
+  	permission();
+  	$this->load->model('employee_model','emp');
+  	$param = array();
+	  $list = $this->emp->get_datatables($param);
+	  $data = array();
+	  $no = $_POST['start'];
+	  foreach ($list->result() as $r) {
+	    $no++;
+	    $gender = $r->adm_gender_cd=="m" ? "Male" : "Female";
+	    if(!$r->adm_gender_cd) $gender="-";
+	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="detailEmp('."'".$r->person_id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
+	    $data[] = array($no, $r->ext_id, $r->person_nm, $r->group_shift, intval($r->grade), $gender, FormatTanggalShort($r->birth_dttm), $edit);
+	  }
+	
+	  $output = array(
+	                  "draw" => $_POST['draw'],
+	                  "recordsTotal" => $this->emp->count_all($param),
+	                  "recordsFiltered" => $this->emp->count_all($param),
+	                  "data" => $data
+	                 );
+	  //output to json format
+	  echo json_encode($output);
+  }
 }
 ?>

@@ -91,8 +91,8 @@ class Payroll_setup extends MX_Controller {
         $status = $this->input->post('status');
         $data = array('status' => $status);
         $this->db->where('id', $period_id)->update('payroll_period', $data);
-        //$this->cek_master_component();
-        
+        $this->cek_master_component();
+        $this->update_monthly_($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
 
@@ -107,9 +107,8 @@ class Payroll_setup extends MX_Controller {
             $total_income = 0;
             $total_ireguler_income = 0;
             $total_jk_jkk = 0;
-
             //get component from master
-            $this->update_monthly($emp_id,$period_id);//lastq();
+            //$this->update_monthly($emp_id,$period_id);//lastq();
             //hitung pph bulan berjalan
             $curr_month = getValue('month','payroll_period',array('id' => 'where/'.$period_id));
             $curr_year = getValue('year','payroll_period',array('id' => 'where/'.$period_id));
@@ -623,7 +622,7 @@ class Payroll_setup extends MX_Controller {
         $y = date('Y');
         $start_ses = $y."-04-01 00:00:00";
         $session = (date('Y-m-d H:i:s') < $start_ses) ? $y-1 : $y;//print_mz($session); 
-        //$session = 2016;
+        //$session = 2015;
         $asid = 14;
         //$employee_id = 644;
         //generate configuration
