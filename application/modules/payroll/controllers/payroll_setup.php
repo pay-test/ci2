@@ -92,7 +92,6 @@ class Payroll_setup extends MX_Controller {
         $data = array('status' => $status);
         $this->db->where('id', $period_id)->update('payroll_period', $data);
         //$this->cek_master_component();
-        //$this->cek_master_component();
         $this->update_monthly_($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
@@ -109,13 +108,13 @@ class Payroll_setup extends MX_Controller {
             $total_ireguler_income = 0;
             $total_jk_jkk = 0;
             //get component from master
-            //$this->update_monthly($emp_id,$period_id);//lastq();
+            $this->update_monthly($emp_id,$period_id);//lastq();
             //hitung pph bulan berjalan
             $curr_month = getValue('month','payroll_period',array('id' => 'where/'.$period_id));
             $curr_year = getValue('year','payroll_period',array('id' => 'where/'.$period_id));
             //print_mz($curr_month);
             $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));
-            //$ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
+            $ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
             for ($i=1; $i <= (int)$curr_month; $i++) {
                 $income = 0;
                 $ireguler_income = 0;
@@ -128,18 +127,18 @@ class Payroll_setup extends MX_Controller {
                // $ot = 1800000;
                 //print_mz($ot);
                 $q = $this->payroll->get_monthly_income($monthly_income_id)->result();//print_mz($q);
-                //print_mz($q);
+                //print_mz($i);
 
                 foreach ($q as $valuex) {
                     //print_r('*'.$valuex->tax_component_id);
                     
-                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 1 && $valuex->tax_component_id != 10) {
+                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 1) {
                         //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
                         $income = $income + $valuex->value;
                         //print_r($income."<br>");
                     }
 
-                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 0  && $valuex->tax_component_id != 10) {
+                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 0) {
                         //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
                         $ireguler_income = $ireguler_income + $valuex->value;
                         //print_r($income."<br>");
@@ -151,7 +150,7 @@ class Payroll_setup extends MX_Controller {
                         //print_r($income."<br>");
                     }
 
-                    if ($valuex->component_type_id == 2 && $valuex->component_id != 55 && $valuex->tax_component_column != 0  && $valuex->tax_component_id != 10) {
+                    if ($valuex->component_type_id == 2 && $valuex->component_id != 55 && $valuex->tax_component_column != 0) {
                         //print_r($valuex->component_id.'-'.'<br/>'.$valuex->value.'-');
                         $deduction = $deduction + $valuex->value;
                         //print_r($income."<br>");
@@ -875,29 +874,6 @@ class Payroll_setup extends MX_Controller {
         }
     }
 
-        function cek_master_component_monthly($session_id = 2015)
-    {
-        $master = GetAllSelect('payroll_master', 'id')->result();
-        foreach($master as $m){
-            $master_id= $m->id;
-            //$filter =  array('id'=>'where/'.$m->id, 'session_id'=>'where/'.sessNow());
-            $filter =  array('id'=>'where/'.$m->id);
-            $group_id = getValue('payroll_group_id', 'payroll_master',$filter);//print_mz($group_id);
-            $group_id = getValue('id', 'payroll_group', array('job_class_id'=>'where/'.$group_id));//lastq()
-            $cek_group_component = GetAllSelect('payroll_group_component', 'payroll_component_id', array('payroll_group_id'=>'where/'.$group_id));//print_mz($cek_group_component->result());
-            foreach ($cek_group_component->result() as $r) {
-                $component_num_rows = GetAllSelect('payroll_master_component', 'payroll_component_id', array('payroll_master_id'=>'where/'.$master_id, 'payroll_component_id'=>'where/'.$r->payroll_component_id))->num_rows();//print_r("num_rows-".$component_num_rows);
-                if($component_num_rows<1):
-                    $data = array('payroll_master_id' => $master_id,
-                                  'payroll_component_id'=> $r->payroll_component_id,
-                                  'value' => 0
-                        );
-                    $this->db->insert('payroll_master_component', $data);
-                endif;
-            }
-        }
-    }
-
     function get_formula($payroll_master_id, $session_id){
         $this->load->model('payroll_master_model','master');
         $today = date('Y-m-d');
@@ -1026,9 +1002,8 @@ class Payroll_setup extends MX_Controller {
                                             $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K3'));
                                             break;
                                         case 'UMK':
-                                            //$xj[$i]=$this->get_umk_value($emp_id, $session_id);
-                                            
-                                            $xj[$i]=3000000;
+                                            $xj[$i]=$this->get_umk_value($emp_id, $session_id);
+                                            //$xj[$i]=3000000;
                                             break;
                                         
                                         default:
