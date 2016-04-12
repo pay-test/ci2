@@ -142,7 +142,7 @@ class attendance extends MX_Controller {
 	  foreach ($list->result() as $r) {
 	    $no++;
 	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="detailAtt('."'".$r->a_id."'".')"><i class="glyphicon glyphicon-info-sign"></i> Detail</a>';
-	    $data[] = array($no, $r->ext_id, $r->person_nm, $r->jhk, $r->jh, $r->off, $r->cuti, $r->ijin, $r->sakit, $r->alpa, $edit);
+	    $data[] = array($no, $r->ext_id, $r->person_nm, $r->jhk, $r->jh, $r->late, $r->off, $r->cuti, $r->ijin, $r->sakit, $r->alpa, $edit);
 	  }
 	
 	  $output = array(
@@ -157,7 +157,7 @@ class attendance extends MX_Controller {
   
   function ajax_list_detail_att($tgl=NULL, $id_emp=NULL)
   {
-  	permission();
+  	$person_id=permission();
   	$this->load->model('attendance_model','att');
   	$param = array("tgl"=> $tgl, "id_emp"=> $id_emp, "detailz"=> 1);
 	  $list = $this->att->get_datatables($param);
@@ -166,7 +166,8 @@ class attendance extends MX_Controller {
 	  foreach ($list->result() as $r) {
 	    $no++;
 	    $shift = GetValue("tgl_".intval($r->tanggal), "kg_jadwal_shift", array("id_employee"=> "where/".$id_emp, "bulan"=> "where/".$r->bulan, "tahun"=> "where/".$r->tahun));
-	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="editAtt('."'".$r->id."'".', '."'".$tgl."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
+	    if($person_id > 1 && $person_id == $r->person_id) $edit = '';
+	    else $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="editAtt('."'".$r->id."'".', '."'".$tgl."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
 	    $data[] = array($no, GetDayName($r->date_full).", ".FormatTanggalShort($r->date_full), $r->jh, $r->off, $r->cuti, $r->ijin, $r->sakit, $r->alpa, $r->scan_masuk, $r->scan_pulang, strtoupper($shift), $edit);
 	  }
 	
@@ -468,7 +469,7 @@ class attendance extends MX_Controller {
   
   function ajax_list_detail_ovt($tgl=NULL, $id_emp=NULL)
   {
-  	permission();
+  	$person_id = permission();
   	$this->load->model('overtime_model','ovt');
   	$param = array("tgl"=> $tgl, "id_emp"=> $id_emp, "detailz"=> 1);
 	  $list = $this->ovt->get_datatables($param);
@@ -476,7 +477,6 @@ class attendance extends MX_Controller {
 	  $no = $_POST['start'];
 	  foreach ($list->result() as $r) {
 	    $no++;
-	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="detailAtt('."'".$r->id."'".')"><i class="glyphicon glyphicon-info-sign"></i> Detail</a>';
 	    $data[] = array($no, GetDayName($r->date_full).", ".FormatTanggalShort($r->date_full), $r->ovt_hour_sum, $r->ovt_flag, $r->ovt_reason, $r->ovt_detail_reason);
 	  }
 	

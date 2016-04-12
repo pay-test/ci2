@@ -109,6 +109,7 @@ class report extends MX_Controller {
 	  
 	  foreach ($list->result() as $r) {
 	    $no++;
+	    //$dataz[] = array($no, $r->ext_id, $r->person_nm, $r->jh, $r->late, $r->off, $r->cuti, $r->ijin, $r->sakit, $r->alpa);
 	    $dataz[] = array($no, $r->ext_id, $r->person_nm, $r->jh, $r->off, $r->cuti, $r->ijin, $r->sakit, $r->alpa);
 	  }
 	  

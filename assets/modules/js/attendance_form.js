@@ -87,9 +87,27 @@ $(document).ready(function() {
     $('.clockpicker ').clockpicker({
        autoclose: true
     });
+    $('.clock_start').change(function(){
+    	var time_out = $("#time_out").val();
+    	if($(this).val() < time_out) {
+    		$("#notif_error2").html("Start Overtime not allowed");
+    		$(".btn-success").attr("disabled",true);
+    	} else {
+    		$("#notif_error2").html("");
+	    	$(".btn-success").attr("disabled",false);
+    	}
+    });
     $('.clock_end').change(function(){
     	var scan_out = $("#scan_out").val();
     	if($(this).val() > scan_out) $(".clock_end").val(scan_out);
+    	var clock_start = $(".clock_start").val();
+    	if($(this).val() <= clock_start) {
+    		$("#notif_error2").html("End Overtime not allowed");
+    		$(".btn-success").attr("disabled",true);
+    	} else {
+    		$("#notif_error2").html("");
+	    	$(".btn-success").attr("disabled",false);
+    	}
     });
     
     //Search

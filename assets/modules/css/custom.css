@@ -60,8 +60,4 @@ table.shift select{background:none !important;border:0px !important;text-align:c
 #grafik_att{position:relative;}
 .item-title{color:#fff !important;}
 
-@media screen and (min-width: 768px) {
-    .custom-class {
-        width: 90%; /* either % (e.g. 60%) or px (400px) */
-    }
-}
+#notif_error, #notif_error2{color:#fd0000;}

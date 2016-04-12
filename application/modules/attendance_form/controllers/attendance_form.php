@@ -4,7 +4,7 @@ class attendance_form extends MX_Controller {
 	
 	var $title = "Attendance";
   var $filename = "attendance_form";
-	var $period = "Dec 2015";
+	var $period = "Apr 2016";
 	public $data;
 	function __construct()
 	{
@@ -189,6 +189,7 @@ class attendance_form extends MX_Controller {
 			$data['id_reason'] = $this->input->post('ovt_reason');
 			$data['ovt_detail_reason'] = $this->input->post('ovt_detail_reason');
 			$data['ovt_feedback'] = $this->input->post('ovt_feedback');
+			$data['is_read'] = 0;
 			//print_mz($data);
 			
 			$data['modify_date'] = date("Y-m-d H:i:s");
@@ -492,6 +493,7 @@ class attendance_form extends MX_Controller {
 		$data['id_pengganti'] = $this->input->post('id_pengganti');
 		$data['keterangan'] = $this->input->post('keterangan');
 		$data['feedback'] = $this->input->post('feedback');
+		$data['is_read'] = 0;
 		//print_mz($data);
 		
 		$data['modify_date'] = date("Y-m-d H:i:s");

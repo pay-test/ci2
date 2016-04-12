@@ -95,6 +95,7 @@
             <th style="width:15%">Name</th>
             <th>JHK</th>
             <th>Attend</th>
+            <th>Late</th>
             <th>OFF</th>
             <th>Cuti</th>
             <th>Ijin</th>
@@ -133,13 +134,9 @@ $(document).ready(function() {
       //Set column definition initialisation properties.
       "columnDefs": [
       {
-          "targets": [0], //index column
+          "targets": [0, 11], //index column
           "orderable": false, //set not orderable
-      },
-      {
-          "targets": [10], //last column
-          "orderable": false, //set not orderable
-      },
+      }
       ],
   });
 });

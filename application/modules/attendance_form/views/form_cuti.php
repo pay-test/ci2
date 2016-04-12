@@ -40,8 +40,8 @@
 		           	<div class="form-group">
 		           		<div class="row">
 			           		<div class="col-md-12">
-				            	<div class="col-md-6 no-padding">
-					              <label class="form-label-long"><b>Annual Leave Balance</b></label>
+				            	<div class="col-md-4 no-padding">
+					              <label class="form-label-long"><b>Annual Balance</b></label>
 					              <div class="row">
 					              	<div class="col-md-12">
 					                  <?php echo $max_leave_day;?>
@@ -49,12 +49,20 @@
 					                </div>
 					              </div>
 					            </div>
-					            <div class="col-md-6 no-padding">
-					            	<label class="form-label-long"><b>Leave Duration in Day(s)</b></label>
+					            <div class="col-md-4 no-padding">
+					            	<label class="form-label-long"><b>Duration in Day(s)</b></label>
 					              <div class="row">
 					              	<div class="col-md-12">
 					                  <div id="durasi"><?php echo $duration;?></div>
 					                  <input type="hidden" class="duration" name="duration" value="<?php echo $duration;?>">
+					                </div>
+					              </div>
+					            </div>
+					            <div class="col-md-4 no-padding">
+					            	<label class="form-label-long"><b>Actual Leave</b></label>
+					              <div class="row">
+					              	<div class="col-md-12">
+					                  <div id="durasi"><?php echo $max_leave_day-$duration;?></div>
 					                </div>
 					              </div>
 					            </div>
@@ -116,7 +124,11 @@
 		              <label class="form-label-long"><b>Replacement Employees</b></label>
 		              <div class="row">
 		              	<div class="col-md-12">
-		              		<?php if($dis) echo GetValue("ext_id", "hris_persons", array("person_id"=> "where/".$id_pengganti))." - ".GetValue("person_nm", "hris_persons", array("person_id"=> "where/".$id_pengganti));
+		              		<?php 
+		              		if($dis) {
+		              			if($id_pengganti) echo GetValue("ext_id", "hris_persons", array("person_id"=> "where/".$id_pengganti))." - ".GetValue("person_nm", "hris_persons", array("person_id"=> "where/".$id_pengganti));
+		              			else echo "-";
+		              		}
 		              		else echo form_dropdown("id_pengganti", $opt_pengganti, $id_pengganti, " ");?>
 		              	</div>
 		              </div>

@@ -51,6 +51,15 @@
               <ul class="sub-menu">
                 <li <?php echo $active2_1;?>><a href="<?php echo base_url('attendance')?>"><i class="fa fa-list-ul"></i> List of Attendance</a></li>
                 <li <?php echo $active2_2;?>><a href="<?php echo base_url('report/overtime')?>"><i class="fa fa-clock-o"></i> Overtime</a></li>
+                <li <?php echo $active4;?>>
+                  <a href="<?php echo base_url('report')?>">
+                    <i class="fa fa-puzzle-piece"></i>
+                    <span class="title">Report</span>
+                  </a>
+                  <!--<ul class="sub-menu">
+                    <li <?php echo $active4_1;?>><a href="<?php echo base_url('report/overtime')?>">Overtime</a></li>
+                  </ul>-->
+                </li>
                 <li <?php echo $active3;?>>
                   <a href="#">
                     <i class="fa fa-puzzle-piece"></i>
@@ -59,6 +68,7 @@
                   </a>
                   <ul class="sub-menu">
                     <li <?php echo $active3_1;?>><a href="<?php echo base_url('config')?>">Parameter</a></li>
+                    <li <?php echo $active3_3;?>><a href="<?php echo base_url('config/email_alert')?>">Email Alert</a></li>
                     <li <?php echo $active3_2;?>><a href="<?php echo base_url('config/holiday')?>">Holiday</a></li>
                   </ul>
                 </li>
@@ -139,7 +149,9 @@
                 <!--<span class="arrow"></span>-->
               </a>
               <ul class="sub-menu">
+               <li <?php echo $active2_3;?>><a href="<?php echo base_url('attendance')?>"> List of Attendance</a></li>
                 <li <?php echo $active2_2;?>><a href="<?php echo base_url('attendance_form/overtime')?>">Overtime</a></li>
+                <li <?php echo $active2_1;?>><a href="<?php echo base_url('attendance_form/cuti')?>">Leave</a></li>
               </ul>
             </li>
             <?php }?>

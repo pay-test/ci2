@@ -25,7 +25,7 @@
 
   </head>
   <body class="">
-
+<input type="hidden" id="base_url" value="<?php echo base_url()?>"></input>
   <?php echo $body; ?>
 
     <!-- BEGIN CORE JS FRAMEWORK-->

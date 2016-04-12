@@ -91,7 +91,7 @@ class Payroll_setup extends MX_Controller {
         $status = $this->input->post('status');
         $data = array('status' => $status);
         $this->db->where('id', $period_id)->update('payroll_period', $data);
-        $this->cek_master_component();
+        //$this->cek_master_component();
         $this->update_monthly_($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
@@ -108,11 +108,13 @@ class Payroll_setup extends MX_Controller {
             $total_ireguler_income = 0;
             $total_jk_jkk = 0;
             //get component from master
-            //$this->update_monthly($emp_id,$period_id);//lastq();
+            $this->update_monthly($emp_id,$period_id);//lastq();
             //hitung pph bulan berjalan
             $curr_month = getValue('month','payroll_period',array('id' => 'where/'.$period_id));
             $curr_year = getValue('year','payroll_period',array('id' => 'where/'.$period_id));
             //print_mz($curr_month);
+            $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));
+            $ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
             for ($i=1; $i <= (int)$curr_month; $i++) {
                 $income = 0;
                 $ireguler_income = 0;
@@ -121,7 +123,7 @@ class Payroll_setup extends MX_Controller {
                 $period_id = getValue('id','payroll_period',array('year' => 'where/'.$curr_year, 'month' => 'where/'.str_pad($i,2,'0',STR_PAD_LEFT)));
                 $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));//lastq();print_mz($monthly_income_id);
                 //get overtime
-               // $ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
+               //$ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
                // $ot = 1800000;
                 //print_mz($ot);
                 $q = $this->payroll->get_monthly_income($monthly_income_id)->result();//print_mz($q);
@@ -622,7 +624,7 @@ class Payroll_setup extends MX_Controller {
         $y = date('Y');
         $start_ses = $y."-04-01 00:00:00";
         $session = (date('Y-m-d H:i:s') < $start_ses) ? $y-1 : $y;//print_mz($session); 
-        //$session = 2015;
+        $session = 2015;
         $asid = 14;
         //$employee_id = 644;
         //generate configuration
@@ -842,6 +844,7 @@ class Payroll_setup extends MX_Controller {
             }
             //echo'<pre>';print_r($this->db->last_query());echo '</pre>';
         }
+        $this->cek_master_component();
             echo json_encode(array('st'=>1));
     }
 
@@ -874,6 +877,7 @@ class Payroll_setup extends MX_Controller {
     function get_formula($payroll_master_id, $session_id){
         $this->load->model('payroll_master_model','master');
         $today = date('Y-m-d');
+        $today = date('Y-m-d', strtotime('2015-10-1'));
         $data2 = $this->master->get_master_component($payroll_master_id)->result();
         //lastq();
         //print_mz($data2);
@@ -908,6 +912,7 @@ class Payroll_setup extends MX_Controller {
                     //print_ag("$today lebih besar dari $from , $today kurang dari $to");
                     //print_mz($from);
                     //if($today > $from && $today < $to)die('s');
+                    //if($today >= $from && $today <= $to){
                     if($today >= $from && $today <= $to){
                         $formula = $c->formula;//echo $formula;
                         $is_condition = $c->is_condition;
@@ -997,8 +1002,8 @@ class Payroll_setup extends MX_Controller {
                                             $xj[$i]=getValue('value', 'payroll_ptkp', array('title'=>'where/'.'K3'));
                                             break;
                                         case 'UMK':
-                                            //$xj[$i]=getValue('value', 'UMK', array('session'=>'where/'.$session_id));
-                                            $xj[$i]=3000000;
+                                            $xj[$i]=$this->get_umk_value($emp_id, $session_id);
+                                            //$xj[$i]=3000000;
                                             break;
                                         
                                         default:
@@ -1134,6 +1139,14 @@ class Payroll_setup extends MX_Controller {
         */
         return $equation;
 
+    }
+
+    function get_umk_value($emp_id, $session_id){
+        $location_id = getValue('location_id', 'hris_employee_job', array('employee_id'=>'where/'.$emp_id));
+        $umk_jakarta = getValue('value', 'payroll_umk', array('umk_city_id'=>'where/2', 'session_id'=>'where/'.$session_id));
+        $umk_cilegon = getValue('value', 'payroll_umk', array('umk_city_id'=>'where/1', 'session_id'=>'where/'.$session_id));
+        $umk = ($location_id == 1) ? $umk_jakarta : $umk_cilegon;
+        return $umk;
     }
 }
 ?>
