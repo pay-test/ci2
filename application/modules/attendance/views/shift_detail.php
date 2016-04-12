@@ -93,6 +93,7 @@
     <div class="grid-body">
     	<form id="form_edit_shift" action="attendance/update_shift" method="post" enctype="multipart/form-data">
     	<?php
+    	$person_id = permission();
     	$holiday = GetHoliday();
     	$opt_shift = array("1"=> 1, "2"=> 2, "3"=> 3, "OFF"=> "OFF", "REG"=> "REG");
     	foreach($shift->result_array() as $r) {
@@ -133,11 +134,14 @@
 						else if(strtoupper($shift_ril['tgl_'.$a]) != strtoupper($r['tgl_'.$a])) $cls="tukeran";
 						else $cls="";
 						
-						if($cls=="tukeran") echo "<td class='".$cls."' alt='".strtoupper($shift_ril['tgl_'.$a])."' title='".strtoupper($shift_ril['tgl_'.$a])."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
-						else echo "<td class='".$cls."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
+						if($person_id != $r['id_employee']) $do =	form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'");
+						else $do=strtoupper($r['tgl_'.$a]);
+						
+						if($cls=="tukeran") echo "<td class='".$cls."' alt='".strtoupper($shift_ril['tgl_'.$a])."' title='".strtoupper($shift_ril['tgl_'.$a])."'>".$do."</td>";
+						else echo "<td class='".$cls."'>".$do."</td>";
 					}
 					
-					if($i==2 && $jml_hari%2 == 1) echo "<td width='50' style='border:0px !important;'>&nbsp;</td>";
+					//if($i==2 && $jml_hari%2 == 1) echo "<td width='50' style='border:0px !important;'>&nbsp;</td>";
 					echo "</tr></table>";
 				//}
 				//
@@ -181,11 +185,14 @@
 						else if(strtoupper($shift_ril_2['tgl_'.$a]) != strtoupper($r['tgl_'.$a])) $cls="tukeran";
 						else $cls="";
 						
-						if($cls=="tukeran") echo "<td class='".$cls."' alt='".strtoupper($shift_ril_2['tgl_'.$a])."' title='".strtoupper($shift_ril_2['tgl_'.$a])."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
-						else echo "<td class='".$cls."'>".form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'")."</td>";
+						if($person_id != $r['id_employee']) $do =	form_dropdown("tgl_".$a, $opt_shift, strtoupper($r['tgl_'.$a]), "class='span1 ".$cls."'");
+						else $do=strtoupper($r['tgl_'.$a]);
+						
+						if($cls=="tukeran") echo "<td class='".$cls."' alt='".strtoupper($shift_ril['tgl_'.$a])."' title='".strtoupper($shift_ril['tgl_'.$a])."'>".$do."</td>";
+						else echo "<td class='".$cls."'>".$do."</td>";
 					}
 					
-					if($i==2 && $jml_hari%2 == 1) echo "<td width='50' style='border:0px !important;'>&nbsp;</td>";
+					//if($i==2 && $jml_hari%2 == 1) echo "<td width='50' style='border:0px !important;'>&nbsp;</td>";
 					echo "</tr></table>";
 				//}
 				//

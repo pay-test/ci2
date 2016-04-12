@@ -39,9 +39,20 @@ class attendance_model extends CI_Model {
 			else if($param['regs']=="shift") $where .= "AND group_shift in ('A', 'B', 'C', 'D') ";//$this->db->where_in("group_shift", array("A","B","C","D"));
 		}
 		
+		$person_id = permission();
+		if($person_id != 1) {
+			$bawahan = CekBawahan($person_id);
+			$id_bawahan = "('".$person_id."',";
+			foreach($bawahan as $r) {
+				$id_bawahan .= "'".$r."',"; 
+			}
+			$id_bawahan = substr($id_bawahan,0,-1).")";
+			$where .= "AND person_id in ".$id_bawahan." ";
+		}
+		
 		//Query
 		$select = "id, ext_id, person_nm, id_employee as a_id, SUM(jhk) as jhk, SUM(sakit) as sakit,
-            SUM(cuti) as cuti,SUM(ijin) as ijin, SUM(alpa) as alpa,SUM(off) as off, SUM(jh) as jh";
+            SUM(cuti) as cuti,SUM(ijin) as ijin, SUM(late) as late, SUM(alpa) as alpa,SUM(off) as off, SUM(jh) as jh";
 		$this->db->select($select);
 		$this->db->from($this->table);
 		

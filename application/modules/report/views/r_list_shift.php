@@ -24,7 +24,7 @@
 
 <?php
 $jml_hari_start = date("t", strtotime($start_date));
-$cols_start = ($jml_hari_start%2 == 1) ? round($jml_hari_end/2) : $jml_hari_start/2;
+$cols_start = ($jml_hari_start%2 == 1) ? round($jml_hari_start/2) : $jml_hari_start/2;
 $jml_hari_end = date("t", strtotime($end_date));
 $cols_end = ($jml_hari_end%2 == 1) ? floor($jml_hari_end/2) : $jml_hari_end/2;
 ?>

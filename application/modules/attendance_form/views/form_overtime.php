@@ -150,6 +150,9 @@
 				                  </span>
 				                </div>
 				              </div>
+				              <div class="col-md-12 no-padding">
+			            			<label id="notif_error2"></label>
+			            		</div>
 			            	</div>
 			            </div>
 		            </div>

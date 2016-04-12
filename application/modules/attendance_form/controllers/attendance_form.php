@@ -4,7 +4,7 @@ class attendance_form extends MX_Controller {
 	
 	var $title = "Attendance";
   var $filename = "attendance_form";
-	var $period = "Dec 2015";
+	var $period = "Apr 2016";
 	public $data;
 	function __construct()
 	{
@@ -355,7 +355,7 @@ class attendance_form extends MX_Controller {
 					$data['feedback'] = $r['feedback']==0 ? "" : $r['feedback'];
 					$data['cuti_status'] = $r['cuti_status'];
 					
-					if($r['create_user_id']==$webmaster_id) {
+					if($r['create_user_id']==$webmaster_id && $data['cuti_status'] != "Waiting") {
 						$data['flag']="";
 						$this->db->where("id", $flag);
 						$this->db->update("kg_cuti", array("is_read"=> 1));

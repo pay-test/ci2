@@ -29,6 +29,7 @@
         <th style="width:5%">NIK</th>
         <th style="width:15%">Name</th>
         <th>Attend</th>
+        <!--<th>Late</th>-->
         <th>OFF</th>
         <th>Cuti</th>
         <th>Ijin</th>

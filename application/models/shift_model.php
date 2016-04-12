@@ -35,6 +35,17 @@ class shift_model extends CI_Model {
 			else if($param['regs']=="shift") $where .= "AND group_shift in ('A', 'B', 'C', 'D') ";//$this->db->where_in("group_shift", array("A","B","C","D"));
 		}
 		
+		$person_id = permission();
+		if($person_id != 1) {
+			$bawahan = CekBawahan($person_id);
+			$id_bawahan = "('".$person_id."',";
+			foreach($bawahan as $r) {
+				$id_bawahan .= "'".$r."',"; 
+			}
+			$id_bawahan = substr($id_bawahan,0,-1).")";
+			$where .= "AND person_id in ".$id_bawahan." ";
+		}
+		
 		//Query
 		$this->db->select("*");
 		$this->db->from($this->table);
