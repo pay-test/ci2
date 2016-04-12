@@ -92,7 +92,7 @@ class Payroll_setup extends MX_Controller {
         $data = array('status' => $status);
         $this->db->where('id', $period_id)->update('payroll_period', $data);
         //$this->cek_master_component();
-        //$this->cek_master_component();
+        //$this->cek_master_component_monthly();
         $this->update_monthly_($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);

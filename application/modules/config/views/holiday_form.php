@@ -11,7 +11,7 @@
     	<div class="grid-body no-border">
         <div class="row">
           <div class="col-md-12 col-sm-12 col-xs-12">
-          	<input type="hidden" name="id" value="<?php echo $val['id'];?>">
+          	<input type="hidden" name="id" value="<?php echo isset($val['id']) ? $val['id'] : "";?>">
           	<div class="form-group">
 							<label class="form-label">Date</label>
 							<?php
