@@ -189,6 +189,7 @@ class attendance_form extends MX_Controller {
 			$data['id_reason'] = $this->input->post('ovt_reason');
 			$data['ovt_detail_reason'] = $this->input->post('ovt_detail_reason');
 			$data['ovt_feedback'] = $this->input->post('ovt_feedback');
+			$data['is_read'] = 0;
 			//print_mz($data);
 			
 			$data['modify_date'] = date("Y-m-d H:i:s");
@@ -355,7 +356,7 @@ class attendance_form extends MX_Controller {
 					$data['feedback'] = $r['feedback']==0 ? "" : $r['feedback'];
 					$data['cuti_status'] = $r['cuti_status'];
 					
-					if($r['create_user_id']==$webmaster_id && $data['cuti_status'] != "Waiting") {
+					if($r['create_user_id']==$webmaster_id) {
 						$data['flag']="";
 						$this->db->where("id", $flag);
 						$this->db->update("kg_cuti", array("is_read"=> 1));
@@ -492,6 +493,7 @@ class attendance_form extends MX_Controller {
 		$data['id_pengganti'] = $this->input->post('id_pengganti');
 		$data['keterangan'] = $this->input->post('keterangan');
 		$data['feedback'] = $this->input->post('feedback');
+		$data['is_read'] = 0;
 		//print_mz($data);
 		
 		$data['modify_date'] = date("Y-m-d H:i:s");

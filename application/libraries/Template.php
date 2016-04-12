@@ -169,6 +169,8 @@ class Template {
 				$data['person_nm'] = getValue('person_nm', 'hris_persons', array('person_id'=>'where/'.$person_id));
 				if(!$data['person_nm']) $data['person_nm']="Administrator";
         $data['person_img'] = file_exists('assets/assets/img/profiles/PICTURE_'.$person_id.'.JPG') ? assets_url('assets/img/profiles/PICTURE_'.$person_id.'.JPG') : assets_url('assets/img/profiles/photo-default.png');
+        
+
         //Inbox
         $inbox = 0;
                 $list_notif = "";
@@ -225,7 +227,7 @@ class Template {
                     </div></a>";
                     }
                 }
-                
+                //die($list_notif);
                 //OT Notif User Pribadi
                 $q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Approve", "is_read"=> "where/0", "create_user_id"=> "where/".$person_id));
                 foreach($q->result_array() as $r) {
@@ -263,67 +265,7 @@ class Template {
                 }
                 $data['inbox'] = $inbox;
                 $data['list_notif'] = $list_notif;
-                
-        //Inbox Overtime
-        $inbox = 0;
-				$list_notif = "";
-				//Alert No Slide
-				$bawahan = CekBawahan($person_id);
-				if(count($bawahan) > 0) {
-					$q = GetAll("kg_view_attendance", array("no_slide"=> "where/1", "date_full "=> "order/asc", "date_full"=> "group"), array("id_employee"=> $bawahan));
-	      	if($q->num_rows() > 0) {
-	      		foreach($q->result_array() as $r) {
-							$inbox++;
-							$list_notif .= "<a href='".site_url('dashboard/index_slide/'.$r['date_full'])."'>
-							<div class='notification-messages notification-messages-full info'>
-	                    <div class='message-wrapper'>
-	                      <div class='heading'>Alert - No Slide Attend</div>
-	                      <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
-	                    </div>
-	                    <div class='clearfix'></div>
-	                  </div></a>";
-	          }
-					}
-					
-	        //Cek Bawahan
-	      	$q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Waiting"), array("id_employee"=> $bawahan));
-					foreach($q->result_array() as $r) {
-						$inbox++;
-						$img = GetPP($r['id_employee']);
-						$list_notif .= "<a href='".site_url('attendance_form/overtime/'.$r['id'])."'><div class='notification-messages info'>
-	                  <div class='user-profile'>
-	                    <img src='".$img."' width='35' height='35'>
-	                  </div>
-	                  <div class='message-wrapper'>
-	                    <div class='heading'>".$r['person_nm']." - Overtime</div>
-	                    <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
-	                    <!--<div class='date pull-left'>A min ago</div>-->
-	                  </div>
-	                  <div class='clearfix'></div>
-	                </div></a>";
-					}
-					
-					$q = GetAll("kg_view_overtime", array("ovt_status"=> "where/Approve", "is_read"=> "where/0", "create_user_id"=> "where/".$person_id));
-					foreach($q->result_array() as $r) {
-						$inbox++;
-						$img = GetPP($r['modify_user_id']);
-						$list_notif .= "<a href='".site_url('attendance_form/overtime/'.$r['id'])."'><div class='notification-messages info'>
-	                  <div class='user-profile'>
-	                    <img src='".$img."' width='35' height='35'>
-	                  </div>
-	                  <div class='message-wrapper'>
-	                    <div class='heading'>".strtok(GetValue("person_nm", "hris_persons", array("person_id"=> "where/".$r['modify_user_id'])), " ")." - Approval Overtime</div>
-	                    <div class='description'>".FormatTanggalShort($r['date_full'])."</div>
-	                    <!--<div class='date pull-left'>A min ago</div>-->
-	                  </div>
-	                  <div class='clearfix'></div>
-	                </div></a>";
-					}
-				}
-				$data['inbox'] = $inbox;
-				$data['list_notif'] = $list_notif;
-				
-        
+                       
         $menu = $this->_ci->uri->segment(1, 0);
         $data['active']=$data['active1']=$data['active2']=$data['active3']=$data['active4']="";
         switch ($menu) {
