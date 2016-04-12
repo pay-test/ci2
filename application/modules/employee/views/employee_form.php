@@ -3,11 +3,11 @@
 </style>
 <div class="grid simple transparent">
 	<div class="grid-title">
-		<h4>Edit <span class="semi-bold">Employee</span></h4></a>
+		<h4>Edit of <span class="semi-bold">Employee</span></h4></a>
 	</div>
 </div>
 
-<form id="form_edit_emp" action="employee/update" method="post" enctype="multipart/form-data">
+<form id="form_edit_emp" action="employee/update_employee" method="post" enctype="multipart/form-data">
 <div class="row">
   <div class="col-md-6">
     <div class="grid simple">
@@ -36,15 +36,15 @@
 						<div class="form-group">
               <label class="form-label">Group</label>
               <?php
-	              $nm_f = "employee_grup";
+	              $nm_f = "group_shift";
 	              echo form_dropdown($nm_f, $opt_emp_grup, isset($val[$nm_f]) ? $val[$nm_f] : 0, "id='".$nm_f."' class='span2'");
               ?>
             </div>
             
             <div class="form-group">
-              <label class="form-label">Group Active</label>
+              <label class="form-label" style="float:left;margin-top:3px;">Group Active</label>
               <div id="datepicker_start" class="input-append date success no-padding">
-              	<input type="text" class="tgl form-control" value="<?php echo $val['employee_grup_active'];?>" name="employee_grup_active">
+              	<input type="text" class="tgl form-control" value="<?php echo $val['group_shift_active'];?>" name="group_shift_active">
                 <span class="add-on"><span class="arrow"></span><i class="fa fa-th"></i></span> 
               </div>
             </div>
@@ -88,7 +88,7 @@
 							<label class="form-label">Date of Birth</label>
 							<?php 
 								$nm_f = "birth_dttm";
-								echo form_input($nm_f, isset($val[$nm_f]) ? substr($val[$nm_f],0,10) : "", "id='".$nm_f."' class='span3 required'");
+								echo form_input($nm_f, isset($val[$nm_f]) ? substr($val[$nm_f],0,10) : "", "id='".$nm_f."' class='span3 tgl'");
 								echo form_hidden($nm_f."_temp", isset($val[$nm_f]) ? substr($val[$nm_f],0,10) : "");
 							?>
 						</div>

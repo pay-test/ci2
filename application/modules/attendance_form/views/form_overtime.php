@@ -1,6 +1,5 @@
 <div class="row column-seperation">
   <div class="col-md-12">
-
   	<div id="coba" class="grid simple transparent">
 			<div class="grid-title">
 				<h4>Form <span class="semi-bold"><?php echo ucwords(lang('overtime'))?></span></h4></a>
@@ -9,7 +8,6 @@
 		
 		<form id="form_edit_att" action="<?php echo site_url('attendance_form/update_overtime');?>" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="id" value="<?php echo $id;?>">
-		<input type="hidden" id="base_url" value="<?php echo base_url()?>">
 		<input type="hidden" name="id_emp" value="<?php echo $id_emp;?>">
 		<!--<table class="table table-striped">-->
 		<div class="row">
@@ -120,6 +118,10 @@
 				                  </span>
 				                </div>
 				              </div>
+				              
+				              <div class="col-md-12 no-padding">
+			            			<label id="notif_error"></label>
+			            		</div>
 			            	</div>
 			            </div>
 		            </div>
@@ -133,7 +135,7 @@
 			            		<div class="col-md-6 no-padding">
 				                <label class="form-label">Start Overtime</label>
 				                <div class="input-group transparent clockpicker col-md-10">
-				                  <input type="text" style="border-color:#0000ff;" class="form-control" placeholder="Pick a time" name="start_ovt" value="<?php echo $start_ovt;?>" required <?php echo $dis;?> readonly>
+				                  <input type="text" style="border-color:#0000ff;" class="form-control clock_start" placeholder="Pick a time" name="start_ovt" value="<?php echo $start_ovt;?>" required <?php echo $dis;?> readonly>
 				                  <span class="input-group-addon" style="border-color:#0000ff;">
 				                   <i class="fa fa-clock-o"></i>
 				                  </span>
@@ -142,7 +144,7 @@
 				              <div class="col-md-6 no-padding">
 				                <label class="form-label">End Overtime</label>
 				                <div class="input-group transparent clockpicker col-md-10">
-				                  <input type="text" style="border-color:#0000ff;" class="form-control" placeholder="Pick a time" name="end_ovt" value="<?php echo $end_ovt;?>" required <?php echo $dis;?> readonly>
+				                  <input type="text" style="border-color:#0000ff;" class="form-control clock_end" placeholder="Pick a time" name="end_ovt" value="<?php echo $end_ovt;?>" required <?php echo $dis;?> readonly>
 				                  <span class="input-group-addon" style="border-color:#0000ff;">
 				                   <i class="fa fa-clock-o"></i>
 				                  </span>
@@ -281,4 +283,5 @@ $(document).ready(function() {
 	});
 });
 </script>
+<script src="<?php echo assets_url('modules/js/explode.js')?>"></script>
 <script src="<?php echo assets_url('modules/js/attendance_form.js')?>"></script>

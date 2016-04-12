@@ -37,18 +37,18 @@ class config extends CI_Controller {
       {
           $this->load->library('template');
 
-              if(in_array($view, array('index', 'config_edit', 'index_holiday')))
-              {
-                  $this->template->set_layout('default');
+          if(in_array($view, array('index', 'config_edit', 'index_holiday', 'index_email_alert')))
+          {
+              $this->template->set_layout('default');
 
-                  $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
-                  $this->template->add_css('assets/plugins/bootstrap-datepicker/css/datepicker.css');
-                  $this->template->add_css('assets/plugins/boostrap-clockpicker/bootstrap-clockpicker.min.css');
+              $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
+              $this->template->add_css('assets/plugins/bootstrap-datepicker/css/datepicker.css');
+              $this->template->add_css('assets/plugins/boostrap-clockpicker/bootstrap-clockpicker.min.css');
 
-                  $this->template->add_js('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
-                  $this->template->add_js('assets/plugins/boostrap-clockpicker/bootstrap-clockpicker.min.js');
-                  $this->template->add_js('modules/js/'.$this->filename.'.js');
-              }
+              $this->template->add_js('assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js');
+              $this->template->add_js('assets/plugins/boostrap-clockpicker/bootstrap-clockpicker.min.js');
+              $this->template->add_js('modules/js/'.$this->filename.'.js');
+          }
 
           if ( ! empty($data['title']))
           {
@@ -184,6 +184,93 @@ class config extends CI_Controller {
 	                  "draw" => $_POST['draw'],
 	                  "recordsTotal" => $this->holiday->count_all($param),
 	                  "recordsFiltered" => $this->holiday->count_all($param),
+	                  "data" => $data
+	                 );
+	  //output to json format
+	  echo json_encode($output);
+  }
+  
+  
+  /* Email Alert */
+	function email_alert()
+	{
+		$data['title'] = "Template Alert";
+    permission();
+		$this->_render_page('index_email_alert', $data);
+	}
+	
+	function email_alert_list()
+  {
+  	permission();
+    $data['path_file'] = $this->filename;
+
+  	$this->load->view('email_alert', $data);
+  }
+  
+  function email_alert_edit($id=0)
+  {
+  	permission();
+  	if($id) {
+	    $q = GetAll("kg_config_email_alert", array("id"=> "where/".$id));
+			$r = $q->result_array();
+			$data['val'] = $r[0];
+		} else $data['val']=array();
+		$this->load->view('email_alert_form', $data);
+  }
+  
+  function email_alert_update()
+	{
+		$webmaster_id = permission();
+		$id = $this->input->post('id');
+		$GetColumns = GetColumns("kg_config_email_alert");
+		foreach($GetColumns as $r)
+		{
+			if($this->input->post($r['Field'])) $data[$r['Field']] = $this->input->post($r['Field']);
+		}
+		//print_mz($data);
+		if($id > 0)
+		{
+			$this->db->where("id", $id);
+			$this->db->update("kg_config_email_alert", $data);
+			
+			//Admin Log
+			//$logs = $this->db->last_query();
+			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
+			
+			//$this->session->set_flashdata("message", lang('edit')." ".$this->title." ".lang('msg_sukses'));
+		}
+		else
+		{
+			//print_mz($data);
+			$this->db->insert("kg_config_email_alert", $data);
+			//$id = $this->db->insert_id();
+			//Admin Log
+			//$logs = $this->db->last_query();
+			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
+			
+			//$this->session->set_flashdata("message", lang('add')." ".$this->title." ".lang('msg_sukses'));
+		}
+		
+		$this->email_alert();
+	}
+    
+	function ajax_list_email_alert()
+  {
+  	permission();
+  	$this->load->model('config_email_alert_model','email_alert');
+	  $list = $this->email_alert->get_datatables();
+	  $data = array();
+	  $no = $_POST['start'];
+	  foreach ($list->result() as $r) {
+	    $no++;
+	    $edit = '<a class="btn btn-sm btn-primary" href="javascript:void(0);" onclick="editAlert('."'".$r->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
+	    $data[] = array($no, $r->title, $r->ket, $r->days, $edit);
+	  }
+	
+	  $output = array(
+	                  "draw" => $_POST['draw'],
+	                  "recordsTotal" => $this->email_alert->count_all(),
+	                  "recordsFiltered" => $this->email_alert->count_all(),
 	                  "data" => $data
 	                 );
 	  //output to json format

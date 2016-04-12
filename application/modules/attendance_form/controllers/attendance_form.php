@@ -27,7 +27,7 @@ class attendance_form extends MX_Controller {
     $data = (empty($data)) ? $this->data : $data;
     if(!$render) {
       $this->load->library('template');
-      if(in_array($view, array('index'))) {
+      if(in_array($view, array('index', 'index_cuti'))) {
 	      $this->template->set_layout('default');
 	
 	      $this->template->add_css('assets/plugins/bootstrap-select2/select2.css');
@@ -90,7 +90,7 @@ class attendance_form extends MX_Controller {
 					$data['ovt_flag'] = $r['ovt_flag'];
 					$data['ovt_reason'] = $r['id_reason'];
 					$data['ovt_detail_reason'] = $r['ovt_detail_reason'];
-					$data['ovt_feedback'] = $r['ovt_feedback'];
+					$data['ovt_feedback'] = $r['ovt_feedback']==0 ? "" : $r['ovt_feedback'];
 					$data['ovt_status'] = $r['ovt_status'];
 					
 					if($r['create_user_id']==$webmaster_id) {
@@ -200,7 +200,7 @@ class attendance_form extends MX_Controller {
 					if($this->input->post('ovt_status')) $data['ovt_status'] = $this->input->post('ovt_status');
 					$data['modify_user_id'] = $webmaster_id;
 					
-					if($data['ovt_status']=="Approve") {
+					if(isset($data['ovt_status'])=="Approve") {
 						unset($data['start_ovt']);
 						unset($data['end_ovt']);
 						$data['start_ovt_ref'] = $this->input->post('start_ovt');
@@ -311,6 +311,235 @@ class attendance_form extends MX_Controller {
 	  //output to json format
 	  echo json_encode($output);
   }
+  
+  /* Cuti */
+  function cuti($flag=NULL)
+  {
+  	$webmaster_id=permission();
+  	$data['path_file'] = $this->filename;
+  	$data['flag'] = $flag;
+		
+  	$this->_render_page('index_cuti', $data);
+  }
+  
+  function form_cuti($flag=NULL)
+  {
+  	$webmaster_id = permission();
+  	$data['path_file'] = $this->filename;
+  	$data['flag'] = $data['id'] = $flag;
+  	
+  	$data['tgl_start']=$data['tgl_end']=$data['keterangan']="";
+  	$data['cuti_reason']=$data['telp_cuti']=$data['feedback']=$data['cuti_status']="";
+  	$data['id_emp']=$data['id_pengganti']=$data['total_cuti']=$data['cuti_berjalan']="";
+  	$data['max_leave_day'] = GetSisaCuti($webmaster_id, date("2016-12-31"));
+  	$data['duration']=0;
+  	$data['opt_reason'] = GetOptReasonCuti();
+  	$data['opt_pengganti'] = GetOptPengganti($webmaster_id, 1);
+  	$data['opt_status'] = GetOptStatusForm();
+  	
+		if($flag) {
+			$q = GetAll("kg_view_cuti", array("id"=> "where/".$flag));
+			foreach($q->result_array() as $r) {
+				if(in_array($r['create_user_id'], CekBawahan($webmaster_id)) || $r['create_user_id']==$webmaster_id) {
+					$data['employee_nm'] = $r['ext_id']." - ".$r['person_nm'];
+					$data['id_emp'] = $r['id_employee'];
+					$data['opt_pengganti'] = GetOptPengganti($data['id_emp'], 1);
+					$data['duration']=$r['hari_ref'] ? $r['hari_ref'] : $r['hari'];
+					$data['max_leave_day'] = GetSisaCuti($webmaster_id, date("Y-m-d"));
+					$data['tgl_start'] = $r['tgl_start_ref'] != "0000-00-00" ? $r['tgl_start_ref'] : $r['tgl_start'];
+					$data['tgl_end'] = $r['tgl_end_ref'] != "0000-00-00" ? $r['tgl_end_ref'] : $r['tgl_end'];
+					$data['cuti_reason'] = $r['id_reason_cuti'];
+					$data['id_pengganti'] = $r['id_pengganti'];
+					$data['telp_cuti'] = $r['telp_cuti'];
+					$data['keterangan'] = $r['keterangan'];
+					$data['feedback'] = $r['feedback']==0 ? "" : $r['feedback'];
+					$data['cuti_status'] = $r['cuti_status'];
+					
+					if($r['create_user_id']==$webmaster_id) {
+						$data['flag']="";
+						$this->db->where("id", $flag);
+						$this->db->update("kg_cuti", array("is_read"=> 1));
+					}
+					
+					//Cek Revisi
+					if(($r['tgl_start'] != $r['tgl_start_ref'] || $r['tgl_end'] != $r['tgl_end_ref']) && $r['cuti_status'] == "Approve") $revisi=1;
+					else $revisi=0;
+					$data['revisi'] = $revisi;
+					
+				} else $data['flag'] = "";
+			}
+		}
+
+  	$this->load->view('form_cuti', $data);
+  }
+  
+  function history_cuti()
+  {
+  	permission();
+  	$data['path_file'] = $this->filename;
+  	
+  	if($this->input->post("start_att")) {
+			$data['start_date'] = $this->input->post("start_att");
+      if(!$this->input->post("end_att")) $data['end_date'] = $data['start_date'];
+      //else if(!$exp[1]) $data['end_date'] = $exp[0];
+      else $data['end_date'] = $this->input->post("end_att");
+      
+      $data['period'] = GetMonth(substr($data['end_date'],5,2))." ".substr($data['end_date'],0,4);
+    } else {
+	    $dt = $this->period;//date("M Y");
+	  	$period = GetPeriod($dt);
+	  	$data['start_date']=substr($period,0,10);
+	  	$data['end_date']=substr($period,11,10);
+	  	$data['period']=$dt;
+	  }
+  	
+  	$this->load->view('history_cuti', $data);
+  }
+    
+	function ajax_list_cuti($tgl=NULL)
+  {
+  	permission();
+  	$this->load->model('cuti_model','cuti');
+  	if($this->session->userdata('person_id') > 1) $person_id=$this->session->userdata('person_id');
+  	else $person_id=0;
+  	$param = array("tgl"=> $tgl, "history"=> 1, "person_id"=> $person_id);
+	  $list = $this->cuti->get_datatables($param);
+	  $data = array();
+	  $no = $_POST['start'];
+	  foreach ($list->result() as $r) {
+	    $no++;
+	    if($r->cuti_status=="Waiting") $status = '<a class="error" href="javascript:void(0);" onclick="detailCuti('."'".$r->id."'".')">Waiting</a>';
+	    else $status=$r->cuti_status;
+	    $data[] = array($no, GetDayName($r->tgl_start_ref).", ".FormatTanggalShort($r->tgl_start_ref)." - ".GetDayName($r->tgl_end_ref).", ".FormatTanggalShort($r->tgl_end_ref), $r->hari_ref, $r->reason, $r->keterangan, $r->feedback);
+	  }
+	
+	  $output = array(
+	                  "draw" => $_POST['draw'],
+	                  "recordsTotal" => $this->cuti->count_all($param),
+	                  "recordsFiltered" => $this->cuti->count_all($param),
+	                  "data" => $data
+	                 );
+	  //output to json format
+	  echo json_encode($output);
+  }
+  
+  function approval_cuti()
+  {
+  	permission();
+  	$data['path_file'] = $this->filename;
+  	
+  	if($this->input->post("start_att")) {
+			$data['start_date'] = $this->input->post("start_att");
+      if(!$this->input->post("end_att")) $data['end_date'] = $data['start_date'];
+      //else if(!$exp[1]) $data['end_date'] = $exp[0];
+      else $data['end_date'] = $this->input->post("end_att");
+      
+      $data['period'] = GetMonth(substr($data['end_date'],5,2))." ".substr($data['end_date'],0,4);
+    } else {
+	    $dt = $this->period;//date("M Y");
+	  	$period = GetPeriod($dt);
+	  	$data['start_date']=substr($period,0,10);
+	  	$data['end_date']=substr($period,11,10);
+	  	$data['period']=$dt;
+	  }
+
+  	$this->load->view('approval_cuti', $data);
+  }
+    
+	function ajax_list_cuti_app($tgl=NULL)
+  {
+  	$webmaster_id=permission();
+  	$this->load->model('cuti_model','cuti');
+  	if($this->session->userdata('person_id') > 1) $person_id=$this->session->userdata('person_id');
+  	else $person_id=0;
+  	$param = array("tgl"=> $tgl, "approve"=> 1, "person_id"=> $person_id);
+	  $list = $this->cuti->get_datatables($param);
+	  $data = array();
+	  $no = $_POST['start'];
+	  foreach ($list->result() as $r) {
+	    $no++;
+	    if($r->cuti_status=="Waiting") {
+	    	$cls="blue";
+	    	if($r->id_employee!=$webmaster_id) $r->cuti_status="Waiting Your Approval";
+	    }
+	    else if($r->cuti_status=="Approve") $cls="green";
+	    else if($r->cuti_status=="Reject") $cls="red";
+	    $status = '<a class="'.$cls.'" href="javascript:void(0);" onclick="detailCuti('."'".$r->id."'".')">'.$r->cuti_status.'</a>';
+	    $data[] = array($no, FormatTanggalShort($r->tgl_start)." - ".FormatTanggalShort($r->tgl_end), FormatTanggalShort($r->tgl_start_ref)." - ".FormatTanggalShort($r->tgl_end_ref), $r->hari, $r->reason, $r->feedback, $status);
+	  }
+	
+	  $output = array(
+	                  "draw" => $_POST['draw'],
+	                  "recordsTotal" => $this->cuti->count_all($param),
+	                  "recordsFiltered" => $this->cuti->count_all($param),
+	                  "data" => $data
+	                 );
+	  //output to json format
+	  echo json_encode($output);
+  }
+  
+  function update_cuti()
+	{
+		$webmaster_id = permission();
+		$id = $this->input->post('id');
+		
+		//Cek Scan
+		$data['tgl_start'] = $this->input->post('tgl_start');
+		$data['tgl_end'] = $this->input->post('tgl_end');
+		$data['hari'] = $this->input->post('duration');
+		$data['telp_cuti'] = $this->input->post('telp_cuti');
+		$data['id_reason_cuti'] = $this->input->post('cuti_reason');
+		$data['id_pengganti'] = $this->input->post('id_pengganti');
+		$data['keterangan'] = $this->input->post('keterangan');
+		$data['feedback'] = $this->input->post('feedback');
+		//print_mz($data);
+		
+		$data['modify_date'] = date("Y-m-d H:i:s");
+		//print_mz($data);
+		if($id > 0)
+		{
+			$cek_status = GetValue("cuti_status", "kg_cuti", array("id"=> "where/".$id));
+			if($this->input->post('cuti_status')) $data['cuti_status'] = $this->input->post('cuti_status');
+			$data['modify_user_id'] = $webmaster_id;
+			
+			if(isset($data['cuti_status'])=="Approve") {
+				//Insert kg_kehadirandetil set cuti=1
+				unset($data['tgl_start']);
+				unset($data['tgl_end']);
+				unset($data['hari']);
+				$data['tgl_start_ref'] = $this->input->post('tgl_start');
+				$data['tgl_end_ref'] = $this->input->post('tgl_end');
+				$data['hari_ref'] = $this->input->post('duration');
+			}
+			//print_mz($data);
+			$this->db->where("id", $id);
+			$this->db->update("kg_cuti", $data);
+			//Admin Log
+			//$logs = $this->db->last_query();
+			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
+			
+			//$this->session->set_flashdata("message", lang('edit')." ".$this->title." ".lang('msg_sukses'));
+			$this->session->set_userdata("message", "Submitted");
+		} else {
+			$data['tgl_permohonan'] = date("Y-m-d");
+			$data['id_employee'] = $webmaster_id;
+			$data['create_user_id'] = $webmaster_id;
+			$data['create_date'] = $data['modify_date'];
+			//print_mz($data);
+			$this->db->insert("kg_cuti", $data);
+			$id = $this->db->insert_id();
+			//Admin Log
+			//$logs = $this->db->last_query();
+			//$this->model_admin_all->LogActivities($webmaster_id,$this->tabel,$this->db->insert_id(),$logs,lang($this->filename),$data[$this->title_table],$this->filename,"Add");
+			
+			$this->session->set_userdata("message", "Your request has been submitted");
+		}
+		
+		//die($this->session->flashdata('message')."S");
+		redirect(site_url('attendance_form/cuti/'.$id));
+	}
+  
+  
 	
 	function get_period($bln)
 	{
@@ -319,11 +548,13 @@ class attendance_form extends MX_Controller {
   
   function get_current_schedule($tgl)
 	{
+		$msg = "Actual In/Out not allowed empty, please contact your supervisor";
+		$err="";
 		$webmaster_id = permission();
 		$exp = explode("-", $tgl);
 		$cek_jadwal = GetValue("tgl_".intval($exp[2]), "kg_jadwal_shift", array("id_employee"=> "where/".$webmaster_id, "bulan"=> "where/".$exp[1], "tahun"=> "where/".$exp[0]));
 		if($cek_jadwal == "reg") {echo GetConfigDirect('reguler_start')."~".GetConfigDirect('reguler_end');}
-		else if($cek_jadwal == "off") echo "00:00~00:00";
+		else if($cek_jadwal == "off") echo "--:--~--:--";
 		else {
 			$time = GetConfigDirect('shift_'.$cek_jadwal);
 			if($cek_jadwal == 3) $time .= "~".GetConfigDirect('shift_1');
@@ -335,11 +566,13 @@ class attendance_form extends MX_Controller {
 		$q = GetAll("kg_view_attendance", array("id_employee"=> "where/".$webmaster_id, "date_full"=> "where/".$tgl));
 		if($q->num_rows() > 0) {
 			foreach($q->result_array() as $r) {
-				if($r['scan_masuk']=="-") $r['scan_masuk']="--:--";
-				if($r['scan_pulang']=="-") $r['scan_pulang']="--:--";
-				echo "~".$r['scan_masuk']."~".$r['scan_pulang'];
+				if($r['scan_masuk']=="-") {$r['scan_masuk']="--:--";$err=$msg;}
+				if($r['scan_pulang']=="-") {$r['scan_pulang']="--:--";$err=$msg;}
+				echo "~".$r['scan_masuk']."~".$r['scan_pulang']."~".$err;
 			}
-		} else echo "~--:--~--:--";
+		} else {
+			echo "~--:--~--:--~".$msg;
+		}
 	}
   
   

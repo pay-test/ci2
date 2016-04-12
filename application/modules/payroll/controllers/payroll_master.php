@@ -451,6 +451,14 @@ class Payroll_master extends MX_Controller {
         echo $status;
     }
 
+    function get_umk_value($emp_id, $session_id){
+        $location_id = getValue('location_id', 'hris_employee_job', array('employee_id'=>'where/'.$emp_id));
+        $umk_jakarta = getValue('value', 'payroll_umk', array('umk_city_id'=>'where/2', 'session_id'=>'where/'.$session_id));
+        $umk_cilegon = getValue('value', 'payroll_umk', array('umk_city_id'=>'where/1', 'session_id'=>'where/'.$session_id));
+        $umk = ($location_id == 1) ? $umk_jakarta : $umk_cilegon;
+        return $umk;
+    }
+
 	function _render_page($view, $data=null, $render=false)
     {
         // $this->viewdata = (empty($data)) ? $this->data: $data;

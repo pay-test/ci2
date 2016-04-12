@@ -43,7 +43,7 @@ class shift_model extends CI_Model {
 	  $like="";
 		foreach ($this->column as $item) 
 		{
-			if($_POST['search']['value'])
+			if(isset($_POST['search']['value']))
 			{
 				//($i===0) ? $this->db->like($item, $_POST['search']['value']) : $this->db->or_like($item, $_POST['search']['value']);
 				$like .= ($i===0) ? " AND (".$item." LIKE '%".$_POST['search']['value']."%' " : " OR ".$item." LIKE '%".$_POST['search']['value']."%' ";
@@ -73,7 +73,9 @@ class shift_model extends CI_Model {
 	function get_datatables($param=NULL)
 	{
 		$this->_get_datatables_query($param);
-		if($_POST['length'] != -1) $this->db->limit($_POST['length'], $_POST['start']);
+		if(!isset($param['report'])) {
+			if($_POST['length'] != -1) $this->db->limit($_POST['length'], $_POST['start']);
+		}
 		$query = $this->db->get();
 		//lastq();
 		return $query;

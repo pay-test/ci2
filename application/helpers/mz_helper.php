@@ -474,7 +474,9 @@ if (!function_exists('GetSum')){
 		{
 			$val = 0;
 			//die($CI->db->last_query());
-			foreach($q->result_array() as $r) $val=$r['total'];
+			foreach($q->result_array() as $r) {
+				if($r['total']) $val=$r['total'];
+			}
 			return $val;
 		}
 		else return $q;
@@ -852,6 +854,22 @@ if (!function_exists('GetOptAll')){
 	}
 }
 
+if (!function_exists('GetOptMenuReport')){
+	function GetOptMenuReport()
+	{
+		$opt[''] = "- Type Report -";
+		$filter = array("status"=> "where/1", "urut"=> "order/asc");
+		$q = GetAll("kg_menu_report", $filter);
+		foreach($q->result_array() as $r)
+		{
+			$opt[$r['url']] = $r['title'];
+		}
+		
+		return $opt;
+	}
+}
+
+
 if (!function_exists('GetOptPublish')){	
 	function GetOptPublish()
 	{
@@ -949,15 +967,35 @@ if (!function_exists('GetOptReason')){
 	}
 }
 
-if (!function_exists('GetOptPICExit')){	
-	function GetOptPICExit()
+if (!function_exists('GetOptReasonCuti')){	
+	function GetOptReasonCuti()
 	{
-		$filter = array("name"=> "order/asc", "id_admin_grup !="=> "where/1", "is_active"=> "where/InActive");
-		$q = GetAll("admin", $filter);
-		$opt[''] = "- Karyawan -";
+		$q = GetAll("kg_ref_reason_cuti");
+		$opt[''] = "- Kind of Leave -";
 		foreach($q->result_array() as $r)
 		{
-			$opt[$r['id']] = $r['name'];
+			$opt[$r['id_reason_cuti']] = $r['title'];
+		}
+		
+		return $opt;
+	}
+}
+
+if (!function_exists('GetOptPengganti')){	
+	function GetOptPengganti($id_emp=NULL, $id_job=NULL)
+	{
+		if($id_job) {
+			$job_id = GetValue("job_id", "kg_view_employee", array("person_id"=> "where/".$id_emp));
+			$filter = array("person_nm"=> "order/asc", "status_cd"=> "where/normal", "person_id !="=> "where/".$id_emp, "job_id"=> "where/".$job_id);
+		} else {
+			$filter = array("person_nm"=> "order/asc", "status_cd"=> "where/normal", "person_id !="=> "where/".$id_emp);
+		}
+		$q = GetAll("kg_view_employee", $filter);
+		$opt[''] = "- Employee -";
+		foreach($q->result_array() as $r)
+		{
+			if(strlen($r['ext_id'])==7) $r['ext_id'] = "&nbsp;&nbsp;".$r['ext_id'];
+			$opt[$r['person_id']] = $r['ext_id']." - ".$r['person_nm'];
 		}
 		
 		return $opt;
@@ -1221,37 +1259,6 @@ if (!function_exists('GetKehadiranTahunan')){
 	}
 }
 
-if (!function_exists('GetOptAtasan')){
-	function GetOptAtasan()
-	{
-		$CI =& get_instance();
-		$id_user = $CI->session->userdata("webmaster_id");
-		$opt[''] = "- Atasan -";
-		$atasan = GetValue("id_atasan","admin",array("id"=> "where/".$id_user));
-		if(strlen($atasan) > 2)
-		{
-			if(is_array(unserialize($atasan)))
-			{
-				foreach(unserialize($atasan) as $s)
-				{
-					if($s > 0)
-					{
-						$nama = GetValue("name","admin", array("id"=> "where/".$s));
-						$opt[$s] = $nama;
-					}
-				}
-			}
-		}
-		else
-		{
-			$nama = GetValue("name","admin", array("id"=> "where/".$atasan));
-			$opt[0] = $nama;
-		}
-		
-		return $opt;
-	}
-}
-
 if (!function_exists('GetHRDIntendent')){
 	function GetHRDIntendent()
 	{
@@ -1342,6 +1349,17 @@ if (!function_exists('GetJumHari')){
 		$jml_hari = date("t", mktime(0, 0, 0, $bln, 1, $thn));
 		
 		return $jml_hari;
+	}
+}
+
+if (!function_exists('GetSisaCuti')){
+	function GetSisaCuti($id_emp, $date)
+	{
+		$hak_cuti = GetValue("hak_cuti", "kg_cuti_platfon", array("id_employee"=> "where/".$id_emp));
+		$cuti = GetSum("kg_cuti", "hari_ref", array("create_user_id"=> "where/".$id_emp, "tgl_start <="=> "where/".$date, "cuti_status !="=> "where/Reject"), "value");
+		$sisa_cuti = $hak_cuti - $cuti;
+		
+		return $sisa_cuti;
 	}
 }
 
@@ -1534,20 +1552,24 @@ if (!function_exists('CekBawahanByGrade')){
 }
 
 if (!function_exists('GetOTRasio')){
-	function GetOTRasio($id_emp, $date)
+	function GetOTRasio($id_emp, $date, $flag_reason=NULL)
 	{
 		$exp = explode("-", $date);
 		$att_start_period = GetConfigDirect('att_start_period');
 		if($exp[2] < $att_start_period) $awal = date("Y-m", mktime(0, 0, 0, $exp[1]-1, $exp[2], $exp[0]))."-".$att_start_period;
 		else $awal = $exp[0]."-".$exp[1]."-".$att_start_period;
 
-		$acc=0;$upah=0;
+		$acc=0;$upah=0;$reason=array();
     $qq = GetAll("kg_view_overtime", array("id_employee"=> "where/".$id_emp, "ovt_status"=> "where/Approve", "date_full >="=> "where/".$awal, "date_full <="=> "where/".$date, "date_temp"=> "where/0000-00-00"));
     if($qq->num_rows() > 0) {
 	    foreach($qq->result_array() as $ss) {
 	    	if($ss['job_level'] != "nonmanagement") {
 	    		if($ss['ovt_hour_sum'] >= 2) $acc += $ss['ovt_hour_sum'];
 	    	} else $acc += $ss['ovt_hour_cal'];
+	    	
+	    	//Hitung Jumlah Alasan
+	    	if(!isset($reason[$ss['id_reason']])) $reason[$ss['id_reason']]=0;
+	    	$reason[$ss['id_reason']]++;
 	    }
 	  }
 	  if(!isset($ss['job_level'])) $ss['job_level'] = "";
@@ -1558,15 +1580,27 @@ if (!function_exists('GetOTRasio')){
 	    	if($ss['job_level'] != "nonmanagement") {
 	    		if($ss['ovt_hour_sum'] >= 2) $acc += $ss['ovt_hour_sum'];
 	    	} else $acc += $ss['ovt_hour_cal'];
+	    	
+	    	//Hitung Jumlah Alasan
+	    	if(!isset($reason[$ss['id_reason']])) $reason[$ss['id_reason']]=0;
+	    	$reason[$ss['id_reason']]++;
 	    }
 	  }
 		if(!isset($ss['job_level'])) $ss['job_level'] = "";
 		if($ss['job_level'] != "nonmanagement") {
     	$upah = $acc * GetConfigDirect('rest_time');
     } else $upah = $acc * ( GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) ) / GetConfigDirect('total_hour_ovt');
+    
+    //Var Reason
+    $alasan="";arsort($reason);
+    foreach($reason as $key=> $val) {
+    	$alasan .= $key."~".$val."-";
+    }
+    $alasan = substr($alasan,0,-1);
 
     $ot_rasio = $upah / (GetGapok($id_emp, $exp[0]) + GetHA($id_emp, $exp[0]) + $upah) * 100;
-    return Decimal($ot_rasio)."%";
+    if($flag_reason) return Decimal($ot_rasio)."%".$alasan;
+    else return Decimal($ot_rasio)."%";
   }
 }
 

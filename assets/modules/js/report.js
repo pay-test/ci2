@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    $('.type_report').change(function(){
+    	$("#content").html('<img src="'+$("#base_url").val()+'assets/assets/img/loading.gif"> loading...').load('report/search/'+$(this).val());
+    });
+    
     //Date Pickers
     $('.tgl').datepicker({
         format: 'yyyy-mm-dd', 
@@ -16,7 +20,7 @@ $(document).ready(function() {
     $('.s_periode').change(function(){
     	$.ajax({
 			 type: "POST",
-			 url: "../attendance/get_period/"+$(this).val(),
+			 url: $("#base_url").val()+"attendance/get_period/"+$(this).val(),
 			 data: 'flag=hitung',
 			 cache: false,
 			 success: function(data) 
@@ -37,17 +41,16 @@ $(document).ready(function() {
     $(".btn-search").click(function(){
 			var act = $("#search_att").attr("action");
     	var dataz = $("#search_att").serialize();
-			$("#content").html('<img src="../assets/assets/img/loading.gif"> loading...');
+			$("#content").html('<img src="'+$("#base_url").val()+'assets/assets/img/loading.gif"> loading...');
 			$.post(act, dataz,  function(response) {
 				$("#content").html(response);
-		  	//$("#content").load('attendance/list_attendance');
 		  });
 		});
 		
 		//Back Att
 		$(".btn-cancel-ovt").click(function(){
 			var rel=$(this).attr("rel");
-			$("#content").html('<img src="../assets/assets/img/loading.gif"> loading...').load('report/list_ovt/'+rel);
+			$("#content").html('<img src="'+$("#base_url").val()+'assets/assets/img/loading.gif"> loading...').load('report/list_ovt/'+rel);
 		});
 		
 		
@@ -55,12 +58,12 @@ $(document).ready(function() {
 
 function loadOvertime()
 {
-	$("#content").html('<img src="../assets/assets/img/loading.gif"> loading...').load('report/list_ovt');
+	$("#content").html('<img src="'+$("#base_url").val()+'assets/assets/img/loading.gif"> loading...').load('report/list_ovt');
 }
 
 function detailOvertime(id)
 {
 	var start = $(".start_att").val();
 	var end = $(".end_att").val();
-  $("#content").html('<img src="../assets/assets/img/loading.gif"> loading...').load('report/detail_ovt/'+id+'/'+start+'~'+end);
+  $("#content").html('<img src="'+$("#base_url").val()+'assets/assets/img/loading.gif"> loading...').load('report/detail_ovt/'+id+'/'+start+'~'+end);
 }
