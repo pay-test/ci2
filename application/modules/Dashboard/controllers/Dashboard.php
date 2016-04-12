@@ -177,7 +177,13 @@ class dashboard extends MX_Controller {
     else $this->data['flagz'] = 0;
     //die($data['flagz']."D");
     rsort($bawahan);
-    //print_mz($bawahan);
+    
+    $q = GetAll("kg_ref_reason");
+    $title_reason = array();
+    foreach($q->result_array() as $r) {
+    	$title_reason[$r['id_reason']] = $r['title'];
+    }
+
     $avg_rasio=0;$legend=array();
     foreach($bawahan as $val) {
     	$b=$val['id_emp'];
@@ -194,9 +200,18 @@ class dashboard extends MX_Controller {
     	}
     	$nik[] = "'".$new_nm."'";
     	$where[] = "'".$b."'";
-    	$val_rasio = str_replace("%","",GetOTRasio($b, "2015-12-15"));
+    	$get_rasio = explode("%", GetOTRasio($b, "2015-12-15", 1));
+    	$val_rasio = $get_rasio[0];
     	if($val_rasio > 0) $avg_rasio += $val_rasio;
-    	$rasio[$b] = "{titlez: '".$person_nm."', y: ".str_replace("%","",GetOTRasio($b, "2015-12-15")).", id_emp: '".$b."', color: '#".$val['color']."'}";
+    	//Reason
+    	$info="";
+    	$exp = explode("-", $get_rasio[1]);
+    	foreach($exp as $alasan) {
+    		$exp2 = explode("~", $alasan);
+    		$info .= "<tr><td><small>".$title_reason[$exp2[0]]."</td><td>:</td><td>".$exp2[1]."</small></td></tr>";
+    	}
+    	
+    	$rasio[$b] = "{info: '".$info."', titlez: '".$person_nm."', y: ".str_replace("%","",GetOTRasio($b, "2015-12-15")).", id_emp: '".$b."', color: '#".$val['color']."'}";
     	if($val['grade'] != 100) $legend[$val['grade']] = "<label class='legend_grafik' style='background:#".$val['color'].";'>&nbsp;</label><label class='title_legend_grafik'>GRADE ".$val['grade']."</label>";
     }
     $this->data['avg_rasio'] = Decimal($avg_rasio / count($bawahan));

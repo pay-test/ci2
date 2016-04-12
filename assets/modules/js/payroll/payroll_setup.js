@@ -55,6 +55,30 @@ $(document).ready(function() {
     e.preventDefault();
     });
 
+    $("#form-process-irregular").submit(function(e) {
+    // ajax adding data to database
+    $("#loading3").show();
+    $("#form-irregular-process").hide();
+    $.ajax({
+        url : 'payroll_setup/process/true',
+        type: "POST",
+        data: $('#form-irregular').serialize(),
+        dataType: "JSON",
+        success: function(data)
+        {
+            alert('Process Finished');
+            $("#loading3").hide();
+            $("#form-irregular-process").show();
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert(errorThrown+textStatus);
+
+        }
+    });
+    e.preventDefault();
+    });
+
     $("#form-period").submit(function(e) {
     // ajax adding data to database
     $.ajax({

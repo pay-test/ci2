@@ -26,13 +26,13 @@
             	<?php if($flag) {$cls1="";$cls3="active";}
             	else {$cls3="";$cls1="active";}?>
               <li class="<?php echo $cls1;?>">
-                <a href="#" onclick="loadFormOvt()" role="tab" data-toggle="tab"><?php echo "Form ".ucwords(lang('overtime'))?></a>
+                <a href="#" onclick="loadFormCuti()" role="tab" data-toggle="tab"><?php echo "Form ".ucwords(lang('cuti'))?></a>
               </li>
               <li>
-                <a href="#" onclick="loadHistoryOvt()" role="tab" data-toggle="tab"><?php echo  "List of ".ucwords(lang('overtime'))?></a>
+                <a href="#" onclick="loadHistoryCuti()" role="tab" data-toggle="tab"><?php echo  "List of ".ucwords(lang('cuti'))?></a>
               </li>
               <li class="<?php echo $cls3;?>">
-                <a href="#" onclick="loadApprovalOvt()" role="tab" data-toggle="tab"><?php echo  "Overtime Request Status"?></a>
+                <a href="#" onclick="loadApprovalCuti()" role="tab" data-toggle="tab"><?php echo  "Leave Request Status"?></a>
               </li>
             </ul>
           	<div class="tools"> <a href="javascript:;" class="collapse"></a> <a href="#grid-config" data-toggle="modal" class="config"></a> <a href="javascript:;" class="reload"></a> <a href="javascript:;" class="remove"></a> </div>
@@ -46,4 +46,4 @@
   </div>
 </div>
 
-<script type="text/javascript">window.onload = function(){loadFormOvt(<?php echo $flag;?>);};</script>
+<script type="text/javascript">window.onload = function(){loadFormCuti(<?php echo $flag;?>);};</script>

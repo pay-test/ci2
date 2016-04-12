@@ -93,9 +93,9 @@ $(function () {
       headerFormat: '<b>{point.key}</b><table>',
       pointFormat: '{point.info}',
       footerFormat: '</table>',
-      /*positioner: function () {
-          return { x: 200, y: 50 };
-      },*/
+      positioner: function () {
+          return { y: 50 };
+      },
     },
     plotOptions: {
       column: {
