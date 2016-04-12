@@ -151,7 +151,7 @@ class Payroll_setup extends MX_Controller {
                         //print_r($income."<br>");
                     }
 
-                    if ($valuex->component_type_id == 2 && $valuex->component_id != 55 && $valuex->tax_component_column != 0  && $valuex->tax_component_id != 10) {
+                    if ($valuex->component_type_id == 2 && $valuex->component_id != 55 && $valuex->tax_component_column != 0) {
                         //print_r($valuex->component_id.'-'.'<br/>'.$valuex->value.'-');
                         $deduction = $deduction + $valuex->value;
                         //print_r($income."<br>");
@@ -541,7 +541,7 @@ class Payroll_setup extends MX_Controller {
                     );
                 $is_reguler = getValue('is_annualized', 'payroll_component', array('id'=>'where/'.$c->payroll_component_id));
                 if($is_reguler == 1){
-                    if($component_num_rows>0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);
+                    if($component_num_rows>0 && $c->value != 0){$this->db->where('id', $master_component_id)->update('payroll_monthly_income_component', $data2);
                     }else{$this->db->insert('payroll_monthly_income_component', $data2);}
                 }
                     //print_r($this->db->last_query());
