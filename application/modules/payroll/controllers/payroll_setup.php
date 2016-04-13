@@ -93,7 +93,7 @@ class Payroll_setup extends MX_Controller {
         $this->db->where('id', $period_id)->update('payroll_period', $data);
         //$this->cek_master_component();
         //$this->cek_master_component_monthly();
-        $this->update_monthly_($period_id);
+        //$this->update_monthly_($period_id);
         $query = GetAllSelect('payroll_monthly_income','employee_id', array('payroll_period_id' => 'where/'.$period_id))->result();//lastq();
         //print_mz($query);
 
@@ -115,7 +115,7 @@ class Payroll_setup extends MX_Controller {
             $curr_year = getValue('year','payroll_period',array('id' => 'where/'.$period_id));
             //print_mz($curr_month);
             $monthly_income_id = getValue('id', 'payroll_monthly_income', array('employee_id'=>'where/'.$emp_id, 'payroll_period_id'=>'where/'.$period_id));
-            //$ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
+            if($period_id == 14)$ot = $this->get_ot_value($emp_id, $period_id, $monthly_income_id);
             for ($i=1; $i <= (int)$curr_month; $i++) {
                 $income = 0;
                 $ireguler_income = 0;
@@ -133,13 +133,13 @@ class Payroll_setup extends MX_Controller {
                 foreach ($q as $valuex) {
                     //print_r('*'.$valuex->tax_component_id);
                     
-                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 1 && $valuex->tax_component_id != 10) {
+                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 1 && $valuex->tax_component_column != 0) {
                         //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
                         $income = $income + $valuex->value;
                         //print_r($income."<br>");
                     }
 
-                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 0  && $valuex->tax_component_id != 10) {
+                    if ($valuex->component_type_id == 1 && $valuex->is_annualized == 0  && $valuex->tax_component_column != 0) {
                         //print_r($valuex->employee_id.'-'.'<br/>'.$valuex->value.'-');
                         $ireguler_income = $ireguler_income + $valuex->value;
                         //print_r($income."<br>");
